@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.*
+
+# Logs
+logs
+*.log
+*.log.*
+npm-debug.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment files
+.env
+.env.*
+.env.*.local
+!.env.example
+
+# Next.js
+.next/
+/.next/
+out/
+/out/
+
+# Build output
+dist/
+build/
+/build
+.cache/
+
+# Testing
+coverage/
+/coverage
+tests/
+**/tests/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel
+.vercel
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.pem
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Misc
+*.tgz
+*.zip

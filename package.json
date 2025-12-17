@@ -1,0 +1,31 @@
+{
+    "name": "project",
+    "version": "0.0.1",
+    "description": "This is my Project! OK ?",
+    "type": "module",
+    "scripts": {
+        "format": "prettier --write \"**/*.{js,ts,tsx,json,css}\"",
+        "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css}\"",
+        "lint": "eslint . --ext .js,.ts,.tsx",
+        "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
+        "install:all": "node ./scripts/install-all.js",
+        "clean:all": "node ./scripts/clean-all.js",
+        "reset:all": "node ./scripts/reset-all.js",
+        "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"pnpm --filter client dev\" \"pnpm --filter server dev\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "UNLICENSED",
+    "packageManager": "pnpm@10.18.2",
+    "dependencies": {
+        "prettier": "^3.7.4"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.2",
+        "concurrently": "^9.2.1",
+        "eslint": "^9.39.2",
+        "globals": "^16.5.0",
+        "jiti": "^2.6.1",
+        "typescript-eslint": "^8.50.0"
+    }
+}

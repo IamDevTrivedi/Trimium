@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "rootDir": "./src",
+        "outDir": "./build",
+        "baseUrl": "./src",
+        "paths": {
+            "@config/*": ["config/*"],
+            "@db/*": ["db/*"],
+            "@utils/*": ["utils/*"],
+            "@/*": ["*"],
+            "@modules/*": ["modules/*"],
+            "@middlewares/*": ["middlewares/*"]
+        },
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true
+    },
+    "include": ["src/**/*"]
+}
