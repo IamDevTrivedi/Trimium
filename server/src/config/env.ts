@@ -51,4 +51,6 @@ export const config = {
     REDIS_HOST: process.env.REDIS_HOST as string,
     REDIS_PORT: Number(process.env.REDIS_PORT),
     LOCAL_REDIS: Number(process.env.LOCAL_REDIS),
+
+    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY as string,
 } as const;

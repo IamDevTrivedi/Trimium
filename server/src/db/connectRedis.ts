@@ -5,6 +5,8 @@ import { createClient, RedisClientType } from "redis";
 let client: RedisClientType;
 
 if (config.LOCAL_REDIS) {
+    client = createClient();
+} else {
     client = createClient({
         username: config.REDIS_USERNAME,
         password: config.REDIS_PASSWORD,
@@ -13,8 +15,6 @@ if (config.LOCAL_REDIS) {
             port: config.REDIS_PORT,
         },
     });
-} else {
-    client = createClient();
 }
 
 client.on("error", (error: Error) => {

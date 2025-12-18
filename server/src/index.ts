@@ -7,12 +7,14 @@ import { logger } from "@utils/logger";
 import { httpLogger } from "@/middlewares/httpLogger";
 import { connectMongo } from "@db/connectMongo";
 import { connectRedis } from "@db/connectRedis";
+import { verifyEmailTransporter } from "@config/mailer";
 
 const init = async () => {
     // PRE CONDITIONS
     checkEnv();
     await connectMongo();
     await connectRedis();
+    await verifyEmailTransporter();
 
     // INITIALIZE EXPRESS APP & CORE MIDDLEWARES
     const app = express();

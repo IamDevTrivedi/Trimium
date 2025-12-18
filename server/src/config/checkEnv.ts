@@ -26,6 +26,8 @@ export const envSchema = z
         REDIS_HOST: z.string().min(1),
         REDIS_PORT: z.number().min(1).max(65535),
         LOCAL_REDIS: z.union([z.literal(0), z.literal(1)]),
+
+        SENDGRID_API_KEY: z.string().min(1),
     })
     .strict();
 
