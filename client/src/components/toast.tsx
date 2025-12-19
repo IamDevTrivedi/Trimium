@@ -1,5 +1,5 @@
-'use client';
-import { toast } from 'sonner';
+"use client";
+import { toast } from "sonner";
 
 interface ToastOptions {
     description?: string;
@@ -56,9 +56,9 @@ export const Toast = {
         });
     },
 
-    loading: (title: string, options?: Pick<ToastOptions, 'description'>) => {
+    loading: (title: string, options?: Pick<ToastOptions, "description">) => {
         return toast.loading(title, {
-            description: options?.description ?? 'Processing your request...',
+            description: options?.description ?? "Processing your request...",
             richColors: false,
             dismissible: false,
         });

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Monitor, Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { useState, useEffect } from "react";
+import { Monitor, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 export function ModeToggle() {
     const { setTheme, theme } = useTheme();
@@ -22,34 +22,34 @@ export function ModeToggle() {
     return (
         <div className="inline-flex items-center rounded-full border border-border bg-background p-1">
             <Button
-                variant={theme === 'system' ? 'default' : 'ghost'}
+                variant={theme === "system" ? "default" : "ghost"}
                 size="icon"
-                onClick={() => setTheme('system')}
+                onClick={() => setTheme("system")}
                 className="rounded-full h-6 w-6"
-                aria-pressed={theme === 'system'}
-                data-active={theme === 'system'}
+                aria-pressed={theme === "system"}
+                data-active={theme === "system"}
             >
                 <Monitor className="h-4 w-4" />
                 <span className="sr-only">System mode</span>
             </Button>
             <Button
-                variant={theme === 'light' ? 'default' : 'ghost'}
+                variant={theme === "light" ? "default" : "ghost"}
                 size="icon"
-                onClick={() => setTheme('light')}
+                onClick={() => setTheme("light")}
                 className="rounded-full h-6 w-6"
-                aria-pressed={theme === 'light'}
-                data-active={theme === 'light'}
+                aria-pressed={theme === "light"}
+                data-active={theme === "light"}
             >
                 <Sun className="h-4 w-4" />
                 <span className="sr-only">Light mode</span>
             </Button>
             <Button
-                variant={theme === 'dark' ? 'default' : 'ghost'}
+                variant={theme === "dark" ? "default" : "ghost"}
                 size="icon"
-                onClick={() => setTheme('dark')}
+                onClick={() => setTheme("dark")}
                 className="rounded-full h-6 w-6"
-                aria-pressed={theme === 'dark'}
-                data-active={theme === 'dark'}
+                aria-pressed={theme === "dark"}
+                data-active={theme === "dark"}
             >
                 <Moon className="h-4 w-4" />
                 <span className="sr-only">Dark mode</span>

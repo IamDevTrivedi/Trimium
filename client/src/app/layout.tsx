@@ -3,7 +3,7 @@ import { JetBrains_Mono, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const notoSans = Noto_Sans({ variable: '--font-sans' });
+const notoSans = Noto_Sans({ variable: "--font-sans" });
 
 const jetbrainsMono = JetBrains_Mono({
     variable: "--font-jetbrains-mono",
