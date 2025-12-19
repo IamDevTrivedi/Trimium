@@ -12,7 +12,9 @@
             "@utils/*": ["utils/*"],
             "@/*": ["*"],
             "@modules/*": ["modules/*"],
-            "@middlewares/*": ["middlewares/*"]
+            "@middlewares/*": ["middlewares/*"],
+            "@constants/*": ["constants/*"],
+            "@models/*": ["models/*"]
         },
         "strict": true,
         "esModuleInterop": true,

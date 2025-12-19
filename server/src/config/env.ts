@@ -52,5 +52,11 @@ export const config = {
     REDIS_PORT: Number(process.env.REDIS_PORT),
     LOCAL_REDIS: Number(process.env.LOCAL_REDIS),
 
-    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY as string,
+    EMAIL_HOST: process.env.EMAIL_HOST as string,
+    EMAIL_PORT: Number(process.env.EMAIL_PORT),
+    SMTP_USER: process.env.SMTP_USER as string,
+    SMTP_PASSWORD: process.env.SMTP_PASSWORD as string,
+    SENDER_EMAIL: process.env.SENDER_EMAIL as string,
+
+    JWT_KEY: process.env.JWT_KEY as string,
 } as const;

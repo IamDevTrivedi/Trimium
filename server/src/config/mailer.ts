@@ -1,27 +1,27 @@
-import sgMail from "@sendgrid/mail";
-
+import nodemailer from "nodemailer";
 import { config } from "@/config/env";
 import { logger } from "@/utils/logger";
 
-export const transporter = {
-    sendMail: async (mailOptions: sgMail.MailDataRequired) => {
-        sgMail.setApiKey(config.SENDGRID_API_KEY);
-        try {
-            await sgMail.send(mailOptions);
-        } catch (error) {
-            logger.error("Error sending email:");
-            logger.error(error);
-        }
+export const transporter = nodemailer.createTransport({
+    host: config.EMAIL_HOST,
+    port: config.EMAIL_PORT,
+    secure: config.EMAIL_PORT === 465,
+    auth: {
+        user: config.SMTP_USER,
+        pass: config.SMTP_PASSWORD,
     },
-};
+    tls: {
+        rejectUnauthorized: false,
+    },
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 20000,
+});
 
 export const verifyEmailTransporter = async (): Promise<void> => {
-    try {
-        sgMail.setApiKey(config.SENDGRID_API_KEY);
-        logger.info("Email transporter verified successfully.");
-    } catch (error) {
-        logger.error("Error verifying email transporter:");
-        logger.error(error);
-        process.exit(1);
+    if (await transporter.verify()) {
+        logger.info("Email transporter is configured correctly.");
+    } else {
+        logger.error("Email transporter configuration error.");
     }
 };

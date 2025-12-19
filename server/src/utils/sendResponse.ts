@@ -1,31 +1,31 @@
 import { Response } from "express";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 
-export interface ApiResponse<T = unknown> {
+export interface ApiResponse {
     success: boolean;
     statusCode: number;
     reasonPhrase: string;
     message: string;
-    data?: T;
+    [key: string]: unknown;
 }
 
-export interface SendResponseOptions<T> {
+export interface SendResponseOptions {
     message: string;
     statusCode?: StatusCodes;
     success?: boolean;
-    data?: T;
+    [key: string]: unknown;
 }
 
-export const sendResponse = <T>(
+export const sendResponse = (
     res: Response,
-    { message, data, statusCode = StatusCodes.OK, success = true }: SendResponseOptions<T>
+    { message, statusCode = StatusCodes.OK, success = true, ...other }: SendResponseOptions
 ): Response => {
-    const response: ApiResponse<T> = {
+    const response: ApiResponse = {
         success,
         message,
         statusCode,
         reasonPhrase: getReasonPhrase(statusCode),
-        ...(data !== undefined && { data }),
+        ...other,
     };
 
     return res.status(statusCode).json(response);
