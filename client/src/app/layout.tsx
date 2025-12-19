@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { JetBrains_Mono, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/next"
 
 const notoSans = Noto_Sans({ variable: "--font-sans" });
 
@@ -30,6 +32,8 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     {children}
+                    <Toaster />
+                    <Analytics />
                 </ThemeProvider>
             </body>
         </html>
