@@ -1,5 +1,8 @@
 const config = {
     PUBLIC_NODE_ENV: process.env.NODE_ENV,
+    PUBLIC_isProduction: process.env.NODE_ENV === "production",
+    PUBLIC_isDevelopment: process.env.NODE_ENV === "development",
+    PUBLIC_isTest: process.env.NODE_ENV === "test",
 
     PUBLIC_BACKEND_URL_DEV: process.env.NEXT_PUBLIC_BACKEND_URL_DEV,
     PUBLIC_BACKEND_URL_PROD: process.env.NEXT_PUBLIC_BACKEND_URL_PROD,

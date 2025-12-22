@@ -3,7 +3,9 @@ import { JetBrains_Mono, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import config from "@/config/env";
+import ProtectPage from "@/components/protect-page";
 
 const notoSans = Noto_Sans({ variable: "--font-sans" });
 
@@ -33,7 +35,7 @@ export default function RootLayout({
                 >
                     {children}
                     <Toaster />
-                    <Analytics />
+                    {config.PUBLIC_isProduction && <Analytics />}
                 </ThemeProvider>
             </body>
         </html>

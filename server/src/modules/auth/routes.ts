@@ -22,4 +22,6 @@ router.post("/me", protectRoute, controllers.me);
 
 router.post("/login-history", protectRoute, controllers.loginHistory);
 
+router.post("/check-username", controllers.checkUsernameAvailability);
+
 export default router;

@@ -643,8 +643,16 @@ export const controllers = {
 
             await newLogin.save();
 
+            const data = {
+                ...existingUser.toObject(),
+                passwordHash: undefined,
+                tokenVersion: undefined,
+                __v: undefined,
+            };
+
             return sendResponse(res, {
                 message: "Login successful",
+                data: data,
             });
         } catch (error) {
             logger.error("Error in setting new password for Reset Password");
@@ -837,9 +845,11 @@ export const controllers = {
 
     loginHistory: async (req: Request, res: Response) => {
         try {
-            const schema = z.object({
-                targetLoginHistoryID: z.string().length(24).optional(),
-            });
+            const schema = z
+                .object({
+                    targetLoginHistoryID: z.string().length(24).optional(),
+                })
+                .optional();
 
             const result = schema.safeParse(req.body);
 
@@ -851,11 +861,12 @@ export const controllers = {
                 });
             }
 
-            const { targetLoginHistoryID } = result.data;
+            const { targetLoginHistoryID } = result.data || {};
             const { tokenVersion, userID, loginHistoryID } = res.locals;
 
             if (targetLoginHistoryID) {
-                const loginHistory = await LoginHistory.findById(targetLoginHistoryID);
+                const loginHistory =
+                    await LoginHistory.findById(targetLoginHistoryID).select("-__v");
 
                 if (!loginHistory) {
                     return sendResponse(res, {
@@ -879,7 +890,9 @@ export const controllers = {
             } else {
                 const allLoginHistories = await LoginHistory.find({
                     accountID: userID,
-                });
+                })
+                    .select("-__v")
+                    .sort({ createdAt: -1 });
 
                 const data = allLoginHistories.map((entry) => {
                     const parsedUA = new UAParser(entry.UA).getResult();
@@ -904,6 +917,53 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 message: "Error in fetching login history",
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            });
+        }
+    },
+
+    checkUsernameAvailability: async (req: Request, res: Response) => {
+        try {
+            const schema = z.object({
+                usernameToCheck: z.string().regex(USERNAME),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    message: "Invalid request",
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    error: z.treeifyError(result.error),
+                });
+            }
+
+            const { usernameToCheck } = result.data;
+
+            const existingUser = await User.findOne({
+                username: usernameToCheck,
+            }).select("_id");
+
+            if (existingUser) {
+                return sendResponse(res, {
+                    success: true,
+                    message: "Username is already taken",
+                    available: false,
+                });
+            }
+
+            return sendResponse(res, {
+                success: true,
+                message: "Username is available",
+                available: true,
+            });
+        } catch (error) {
+            logger.error("Error in checking username availability");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                message: "Error in checking username availability",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
