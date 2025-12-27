@@ -12,6 +12,8 @@ import { logger } from "@utils/logger";
 
 import { httpLoggerMiddleware } from "@/middlewares/httpLogger";
 import { UAParserMiddleware } from "@middlewares/UAParser";
+import { IPMiddleware } from "@middlewares/IP";
+import { locationMiddleware } from "./middlewares/location";
 
 const init = async () => {
     checkEnv();
@@ -34,16 +36,22 @@ const init = async () => {
 
     app.use(httpLoggerMiddleware);
     app.use(UAParserMiddleware);
+    app.use(IPMiddleware);
+    app.use(locationMiddleware);
 
     const { default: rootRoutes } = await import("@modules/root/routes");
     const { default: healthRoutes } = await import("@modules/health/routes");
     const { default: authRoutes } = await import("@modules/auth/routes");
     const { default: userRoutes } = await import("@modules/user/routes");
+    const { default: urlRoutes } = await import("@modules/url/routes");
+    const { default: workspaceRoutes } = await import("@/modules/workspace/routes");
 
     app.use("/", rootRoutes);
     app.use("/api/v1/health", healthRoutes);
     app.use("/api/v1/auth", authRoutes);
     app.use("/api/v1/user", userRoutes);
+    app.use("/api/v1/url", urlRoutes);
+    app.use("/api/v1/workspace", workspaceRoutes);
 
     app.listen(config.PORT, () => {
         logger.info(`Envrionment: ${config.NODE_ENV}`);

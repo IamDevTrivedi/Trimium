@@ -5,8 +5,9 @@ type ResponseData = null | {
     message: string;
 };
 
-export function handleResponse(resData: ResponseData): boolean {
+export function handleResponse(resData: ResponseData, silent = false): boolean {
     if (!resData) {
+        if (silent) return false;
         Toast.error("No response from server.", {
             description: "Please try again.",
         });
@@ -16,13 +17,17 @@ export function handleResponse(resData: ResponseData): boolean {
     const { success, message } = resData;
 
     if (success) {
-        Toast.success(message || "Operation successful.");
+        if (!silent) {
+            Toast.success(message || "Operation successful.");
+        }
         return true;
     }
 
-    Toast.error(message || "Operation failed.", {
-        description: "Please try again.",
-    });
+    if (!silent) {
+        Toast.error(message || "Operation failed.", {
+            description: "Please try again.",
+        });
+    }
 
     return false;
 }

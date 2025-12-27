@@ -13,21 +13,30 @@ export interface User {
     createdAt: string;
     updatedAt: string;
 }
-
 export interface UserStore {
     user: User | null;
-    setUser: (user: User) => void;
-    isLoginedIn: () => boolean;
+    isLoggedIn: boolean;
+    setUser: (user: User | null) => void;
     reset: () => void;
 }
 
 export const useUserStore = create<UserStore>()(
     persist(
-        (set, get) => ({
+        (set) => ({
             user: null,
-            setUser: (user: User) => set({ user }),
-            isLoginedIn: () => !!get().user,
-            reset: () => set({ user: null }),
+            isLoggedIn: false,
+
+            setUser: (user: User | null) =>
+                set({
+                    user,
+                    isLoggedIn: !!user,
+                }),
+
+            reset: () =>
+                set({
+                    user: null,
+                    isLoggedIn: false,
+                }),
         }),
         {
             name: `user-storage-${config.PUBLIC_NODE_ENV}`,

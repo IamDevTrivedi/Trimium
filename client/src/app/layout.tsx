@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/next";
 import config from "@/config/env";
 import ProtectPage from "@/components/protect-page";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 
 const notoSans = Noto_Sans({ variable: "--font-sans" });
 
@@ -33,7 +35,9 @@ export default function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                 >
+                    <Navbar />
                     {children}
+                    <Footer />
                     <Toaster />
                     {config.PUBLIC_isProduction && <Analytics />}
                 </ThemeProvider>

@@ -13,7 +13,7 @@ export default function Page() {
     const matterResult = matter(markdown);
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="container mx-auto px-4 py-8 my-12 max-w-5xl">
             <div className="text-center">
                 <h1 className="text-4xl font-bold mb-4">{matterResult.data.title}</h1>
                 <p className="text-sm text-muted-foreground mb-8">

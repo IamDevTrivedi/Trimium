@@ -59,4 +59,5 @@ export const config = {
     SENDER_EMAIL: process.env.SENDER_EMAIL as string,
 
     JWT_KEY: process.env.JWT_KEY as string,
+    MONO_RENDER_ACCESS_KEY: process.env.MONO_RENDER_ACCESS_KEY as string,
 } as const;

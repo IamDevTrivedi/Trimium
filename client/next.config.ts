@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
         root: "./",
     },
     devIndicators: false,
+    reactStrictMode: false,
 };
 
 export default nextConfig;

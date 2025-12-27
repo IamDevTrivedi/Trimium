@@ -6,6 +6,8 @@ export interface LoginStore {
 
     password: string;
     setPassword: (password: string) => void;
+
+    reset: () => void;
 }
 
 export const useLoginStore = create<LoginStore>((set) => ({
@@ -14,4 +16,6 @@ export const useLoginStore = create<LoginStore>((set) => ({
 
     password: "",
     setPassword: (password: string) => set({ password }),
+
+    reset: () => set({ email: "", password: "" }),
 }));

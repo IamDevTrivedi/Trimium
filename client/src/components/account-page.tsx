@@ -277,295 +277,321 @@ export function AccountPage() {
     };
 
     return (
-        <div className="min-h-screen bg-muted/30 p-4 py-8">
-            <div className="max-w-3xl mx-auto space-y-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Personal Information</CardTitle>
-                        <CardDescription>Update your name and personal details</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <>
+            <div>
+                <Button variant="link" className="mb-6" onClick={() => router.back()}>
+                    &larr; Back
+                </Button>
+            </div>
+            <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tight">My Account</h1>
+                <p className="text-muted-foreground">
+                    Manage your account information and settings.
+                </p>
+            </div>
+            <div className="min-h-screen bg-background p-4 py-8">
+                <div className="max-w-5xl mx-auto space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Personal Information</CardTitle>
+                            <CardDescription>Update your name and personal details</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="firstName">First Name</Label>
+                                    <Input
+                                        id="firstName"
+                                        value={nameState.firstName}
+                                        onChange={(e) => {
+                                            setNameState((prev) => ({
+                                                ...prev,
+                                                firstName: e.target.value,
+                                            }));
+                                            clearError("firstName");
+                                        }}
+                                    />
+                                    {formError.firstName && (
+                                        <p className="text-sm text-destructive">
+                                            {formError.firstName}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="lastName">Last Name</Label>
+                                    <Input
+                                        id="lastName"
+                                        value={nameState.lastName}
+                                        onChange={(e) => {
+                                            setNameState((prev) => ({
+                                                ...prev,
+                                                lastName: e.target.value,
+                                            }));
+                                            clearError("lastName");
+                                        }}
+                                    />
+                                    {formError.lastName && (
+                                        <p className="text-sm text-destructive">
+                                            {formError.lastName}
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
                             <div className="space-y-2">
-                                <Label htmlFor="firstName">First Name</Label>
+                                <Label htmlFor="email" className="flex items-center gap-2">
+                                    <Mail className="h-4 w-4" />
+                                    Email
+                                </Label>
+                                <div className="relative">
+                                    <Input
+                                        id="email"
+                                        value={user.email}
+                                        disabled
+                                        className="pr-10"
+                                    />
+                                    <BadgeCheck className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-600" />
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    Email cannot be changed
+                                </p>
+                            </div>
+
+                            {nameChanged && (
+                                <div className="flex gap-2 pt-2">
+                                    <Button onClick={handleSaveName} loading={loading.name}>
+                                        Save Changes
+                                    </Button>
+                                    <Button variant="outline" onClick={handleCancelName}>
+                                        Cancel
+                                    </Button>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Username</CardTitle>
+                            <CardDescription>Change your username</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="username" className="flex items-center gap-2">
+                                    <Hash className="h-4 w-4" />
+                                    Username
+                                </Label>
                                 <Input
-                                    id="firstName"
-                                    value={nameState.firstName}
-                                    onChange={(e) => {
-                                        setNameState((prev) => ({
-                                            ...prev,
-                                            firstName: e.target.value,
-                                        }));
-                                        clearError("firstName");
-                                    }}
+                                    id="username"
+                                    value={usernameState.value}
+                                    onChange={(e) => handleUsernameChange(e.target.value)}
                                 />
-                                {formError.firstName && (
+                                {formError.username && (
+                                    <p className="text-sm text-destructive">{formError.username}</p>
+                                )}
+                                {<StatusMessage availability={usernameState.availability} />}
+                            </div>
+
+                            {usernameChanged && (
+                                <div className="flex gap-2">
+                                    <Button
+                                        onClick={handleSaveUsername}
+                                        loading={loading.username}
+                                        disabled={usernameState.availability !== "available"}
+                                    >
+                                        Save Changes
+                                    </Button>
+                                    <Button variant="outline" onClick={handleCancelUsername}>
+                                        Cancel
+                                    </Button>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Password</CardTitle>
+                            <CardDescription>Change your account password</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="currentPassword">Current Password</Label>
+                                <div className="relative">
+                                    <Input
+                                        id="currentPassword"
+                                        type={passwordState.showCurrent ? "text" : "password"}
+                                        value={passwordState.current}
+                                        onChange={(e) => {
+                                            setPasswordState((prev) => ({
+                                                ...prev,
+                                                current: e.target.value,
+                                            }));
+                                            clearError("currentPassword");
+                                        }}
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setPasswordState((prev) => ({
+                                                ...prev,
+                                                showCurrent: !prev.showCurrent,
+                                            }))
+                                        }
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                    >
+                                        {passwordState.showCurrent ? (
+                                            <EyeOff className="h-4 w-4" />
+                                        ) : (
+                                            <Eye className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </div>
+                                {formError.currentPassword && (
                                     <p className="text-sm text-destructive">
-                                        {formError.firstName}
+                                        {formError.currentPassword}
                                     </p>
                                 )}
                             </div>
+
                             <div className="space-y-2">
-                                <Label htmlFor="lastName">Last Name</Label>
-                                <Input
-                                    id="lastName"
-                                    value={nameState.lastName}
-                                    onChange={(e) => {
-                                        setNameState((prev) => ({
-                                            ...prev,
-                                            lastName: e.target.value,
-                                        }));
-                                        clearError("lastName");
-                                    }}
-                                />
-                                {formError.lastName && (
-                                    <p className="text-sm text-destructive">{formError.lastName}</p>
+                                <Label htmlFor="newPassword">New Password</Label>
+                                <div className="relative">
+                                    <Input
+                                        id="newPassword"
+                                        type={passwordState.showNew ? "text" : "password"}
+                                        value={passwordState.new}
+                                        onChange={(e) => {
+                                            setPasswordState((prev) => ({
+                                                ...prev,
+                                                new: e.target.value,
+                                            }));
+                                            clearError("newPassword");
+                                        }}
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setPasswordState((prev) => ({
+                                                ...prev,
+                                                showNew: !prev.showNew,
+                                            }))
+                                        }
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                    >
+                                        {passwordState.showNew ? (
+                                            <EyeOff className="h-4 w-4" />
+                                        ) : (
+                                            <Eye className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </div>
+                                {formError.newPassword && (
+                                    <p className="text-sm text-destructive">
+                                        {formError.newPassword}
+                                    </p>
                                 )}
                             </div>
-                        </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="email" className="flex items-center gap-2">
-                                <Mail className="h-4 w-4" />
-                                Email
-                            </Label>
-                            <div className="relative">
-                                <Input id="email" value={user.email} disabled className="pr-10" />
-                                <BadgeCheck className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-green-600" />
+                            <div className="space-y-2">
+                                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                                <div className="relative">
+                                    <Input
+                                        id="confirmPassword"
+                                        type={passwordState.showConfirm ? "text" : "password"}
+                                        value={passwordState.confirm}
+                                        onChange={(e) => {
+                                            setPasswordState((prev) => ({
+                                                ...prev,
+                                                confirm: e.target.value,
+                                            }));
+                                            clearError("confirmPassword");
+                                        }}
+                                        className="pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setPasswordState((prev) => ({
+                                                ...prev,
+                                                showConfirm: !prev.showConfirm,
+                                            }))
+                                        }
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                    >
+                                        {passwordState.showConfirm ? (
+                                            <EyeOff className="h-4 w-4" />
+                                        ) : (
+                                            <Eye className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </div>
+                                {formError.confirmPassword && (
+                                    <p className="text-sm text-destructive">
+                                        {formError.confirmPassword}
+                                    </p>
+                                )}
                             </div>
-                            <p className="text-xs text-muted-foreground">Email cannot be changed</p>
-                        </div>
 
-                        {nameChanged && (
-                            <div className="flex gap-2 pt-2">
-                                <Button onClick={handleSaveName} loading={loading.name}>
-                                    Save Changes
-                                </Button>
-                                <Button variant="outline" onClick={handleCancelName}>
-                                    Cancel
-                                </Button>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
+                            <Button
+                                onClick={handlePasswordChange}
+                                disabled={!passwordsValid}
+                                loading={loading.password}
+                            >
+                                Update Password
+                            </Button>
+                        </CardContent>
+                    </Card>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Username</CardTitle>
-                        <CardDescription>Change your username</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="username" className="flex items-center gap-2">
-                                <Hash className="h-4 w-4" />
-                                Username
-                            </Label>
-                            <Input
-                                id="username"
-                                value={usernameState.value}
-                                onChange={(e) => handleUsernameChange(e.target.value)}
-                            />
-                            {formError.username && (
-                                <p className="text-sm text-destructive">{formError.username}</p>
-                            )}
-                            {<StatusMessage availability={usernameState.availability} />}
-                        </div>
-
-                        {usernameChanged && (
-                            <div className="flex gap-2">
-                                <Button
-                                    onClick={handleSaveUsername}
-                                    loading={loading.username}
-                                    disabled={usernameState.availability !== "available"}
-                                >
-                                    Save Changes
-                                </Button>
-                                <Button variant="outline" onClick={handleCancelUsername}>
-                                    Cancel
-                                </Button>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Password</CardTitle>
-                        <CardDescription>Change your account password</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="currentPassword">Current Password</Label>
-                            <div className="relative">
-                                <Input
-                                    id="currentPassword"
-                                    type={passwordState.showCurrent ? "text" : "password"}
-                                    value={passwordState.current}
-                                    onChange={(e) => {
-                                        setPasswordState((prev) => ({
-                                            ...prev,
-                                            current: e.target.value,
-                                        }));
-                                        clearError("currentPassword");
-                                    }}
-                                    className="pr-10"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setPasswordState((prev) => ({
-                                            ...prev,
-                                            showCurrent: !prev.showCurrent,
-                                        }))
-                                    }
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                >
-                                    {passwordState.showCurrent ? (
-                                        <EyeOff className="h-4 w-4" />
-                                    ) : (
-                                        <Eye className="h-4 w-4" />
-                                    )}
-                                </button>
-                            </div>
-                            {formError.currentPassword && (
-                                <p className="text-sm text-destructive">
-                                    {formError.currentPassword}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Account Information</CardTitle>
+                            <CardDescription>View your account details</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label className="text-muted-foreground flex items-center gap-2">
+                                    <Hash className="h-4 w-4" />
+                                    User ID
+                                </Label>
+                                <p className="text-sm font-mono text-muted-foreground">
+                                    {user._id}
                                 </p>
-                            )}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="newPassword">New Password</Label>
-                            <div className="relative">
-                                <Input
-                                    id="newPassword"
-                                    type={passwordState.showNew ? "text" : "password"}
-                                    value={passwordState.new}
-                                    onChange={(e) => {
-                                        setPasswordState((prev) => ({
-                                            ...prev,
-                                            new: e.target.value,
-                                        }));
-                                        clearError("newPassword");
-                                    }}
-                                    className="pr-10"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setPasswordState((prev) => ({
-                                            ...prev,
-                                            showNew: !prev.showNew,
-                                        }))
-                                    }
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                >
-                                    {passwordState.showNew ? (
-                                        <EyeOff className="h-4 w-4" />
-                                    ) : (
-                                        <Eye className="h-4 w-4" />
-                                    )}
-                                </button>
                             </div>
-                            {formError.newPassword && (
-                                <p className="text-sm text-destructive">{formError.newPassword}</p>
-                            )}
-                        </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                            <div className="relative">
-                                <Input
-                                    id="confirmPassword"
-                                    type={passwordState.showConfirm ? "text" : "password"}
-                                    value={passwordState.confirm}
-                                    onChange={(e) => {
-                                        setPasswordState((prev) => ({
-                                            ...prev,
-                                            confirm: e.target.value,
-                                        }));
-                                        clearError("confirmPassword");
-                                    }}
-                                    className="pr-10"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setPasswordState((prev) => ({
-                                            ...prev,
-                                            showConfirm: !prev.showConfirm,
-                                        }))
-                                    }
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                                >
-                                    {passwordState.showConfirm ? (
-                                        <EyeOff className="h-4 w-4" />
-                                    ) : (
-                                        <Eye className="h-4 w-4" />
-                                    )}
-                                </button>
+                            <div className="space-y-2">
+                                <Label className="text-muted-foreground flex items-center gap-2">
+                                    <Calendar className="h-4 w-4" />
+                                    Account Created
+                                </Label>
+                                <p className="text-sm">{formatDate(user.createdAt)}</p>
                             </div>
-                            {formError.confirmPassword && (
-                                <p className="text-sm text-destructive">
-                                    {formError.confirmPassword}
-                                </p>
-                            )}
-                        </div>
-
-                        <Button
-                            onClick={handlePasswordChange}
-                            disabled={!passwordsValid}
-                            loading={loading.password}
-                        >
-                            Update Password
-                        </Button>
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Account Information</CardTitle>
-                        <CardDescription>View your account details</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="space-y-2">
-                            <Label className="text-muted-foreground flex items-center gap-2">
-                                <Hash className="h-4 w-4" />
-                                User ID
-                            </Label>
-                            <p className="text-sm font-mono text-muted-foreground">{user._id}</p>
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label className="text-muted-foreground flex items-center gap-2">
-                                <Calendar className="h-4 w-4" />
-                                Account Created
-                            </Label>
-                            <p className="text-sm">{formatDate(user.createdAt)}</p>
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Security Information</CardTitle>
-                        <CardDescription>
-                            Keep track of your account security details
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-x-4 flex">
-                        <Button onClick={() => router.push("/account/login-activity")}>
-                            Check Login Activity
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            onClick={handleLogoutAllDevices}
-                            loading={loading.logoutAll}
-                        >
-                            Logout all Devices
-                        </Button>
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Security Information</CardTitle>
+                            <CardDescription>
+                                Keep track of your account security details
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-x-4 flex">
+                            <Button onClick={() => router.push("/account/login-activity")}>
+                                Check Login Activity
+                            </Button>
+                            <Button
+                                variant="destructive"
+                                onClick={handleLogoutAllDevices}
+                                loading={loading.logoutAll}
+                            >
+                                Logout all Devices
+                            </Button>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </>
     );
 }

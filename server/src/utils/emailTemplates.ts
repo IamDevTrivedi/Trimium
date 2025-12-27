@@ -226,4 +226,26 @@ export const emailTemplates = {
         </html>
         `;
     },
+
+    workspaceInvitationTemplate: ({
+        workspaceTitle,
+        description,
+        permission,
+        senderName,
+    }: {
+        workspaceTitle: string;
+        description: string;
+        permission: "admin" | "member" | "viewer";
+        senderName: string;
+    }) => {
+        return `
+        <div>
+            <h2>You have been invited to join the workspace: ${workspaceTitle}</h2>
+            <p><strong>Description:</strong> ${description}</p>
+            <p><strong>Permission Level:</strong> ${permission.charAt(0).toUpperCase() + permission.slice(1)}</p>
+            <p><strong>Invited by:</strong> ${senderName}</p>
+            <p>Please log in to your account to accept the invitation and access the workspace.</p>
+        </div>
+        `;
+    },
 };

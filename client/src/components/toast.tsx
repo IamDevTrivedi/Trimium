@@ -6,8 +6,11 @@ interface ToastOptions {
     duration?: number;
 }
 
+export const dismissAll = () => toast.dismiss();
+
 export const Toast = {
     message: (title: string, options?: ToastOptions) => {
+        dismissAll();
         toast(title, {
             description: options?.description,
             richColors: true,
@@ -18,6 +21,7 @@ export const Toast = {
     },
 
     info: (title: string, options?: ToastOptions) => {
+        dismissAll();
         toast.info(title, {
             description: options?.description,
             richColors: true,
@@ -28,6 +32,7 @@ export const Toast = {
     },
 
     success: (title: string, options?: ToastOptions) => {
+        dismissAll();
         toast.success(title, {
             description: options?.description,
             richColors: true,
@@ -38,6 +43,7 @@ export const Toast = {
     },
 
     warning: (title: string, options?: ToastOptions) => {
+        dismissAll();
         toast.warning(title, {
             description: options?.description,
             richColors: true,
@@ -48,6 +54,7 @@ export const Toast = {
     },
 
     error: (title: string, options?: ToastOptions) => {
+        dismissAll();
         toast.error(title, {
             description: options?.description,
             richColors: true,
@@ -57,6 +64,7 @@ export const Toast = {
     },
 
     loading: (title: string, options?: Pick<ToastOptions, "description">) => {
+        dismissAll();
         return toast.loading(title, {
             description: options?.description ?? "Processing your request...",
             richColors: false,
@@ -65,6 +73,7 @@ export const Toast = {
     },
 
     dismiss: (id?: number | string) => {
+        dismissAll();
         return toast.dismiss(id);
     },
 } as const;
