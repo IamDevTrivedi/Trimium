@@ -39,12 +39,12 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
         res.locals.tokenVersion = tokenVersion;
         res.locals.loginHistoryID = loginHistoryID;
 
-        const exisitingUser = await User.findOne({
+        const existingUser = await User.findOne({
             _id: userID,
             tokenVersion,
         });
 
-        if (!exisitingUser) {
+        if (!existingUser) {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.UNAUTHORIZED,
@@ -52,13 +52,13 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
             });
         }
 
-        const exisitingLogin = await LoginHistory.findOne({
+        const existingLogin = await LoginHistory.findOne({
             _id: loginHistoryID,
             accountID: userID,
             tokenVersion,
         });
 
-        if (!exisitingLogin) {
+        if (!existingLogin) {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.UNAUTHORIZED,

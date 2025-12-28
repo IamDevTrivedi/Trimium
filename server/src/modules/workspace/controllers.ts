@@ -30,7 +30,7 @@ export const controllers = {
                             return new Set(normalized).size === normalized.length;
                         },
                         {
-                            message: "All member emails must be unique (ignoring + suffix)",
+                            message: "All member emails must be unique",
                             path: ["members"],
                         }
                     ),
@@ -50,9 +50,9 @@ export const controllers = {
             const { title, description, members } = result.data;
             const { userID } = res.locals;
 
-            const exisitingUser = await User.findOne({ _id: userID });
+            const existingUser = await User.findById(userID).lean();
 
-            if (!exisitingUser) {
+            if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.UNAUTHORIZED,
@@ -70,10 +70,11 @@ export const controllers = {
                     },
                 ],
             });
+
             await newWorkspace.save();
 
             for (const member of members) {
-                if (member.email === exisitingUser.email) {
+                if (member.email === existingUser.email) {
                     continue;
                 }
 
@@ -100,7 +101,7 @@ export const controllers = {
                             workspaceTitle: newWorkspace.title,
                             description: newWorkspace.description,
                             permission: member.permission,
-                            senderName: `${exisitingUser.firstName} ${exisitingUser.lastName}`,
+                            senderName: `${existingUser.firstName} ${existingUser.lastName}`,
                         }),
                     });
                 } catch (error) {
@@ -133,9 +134,9 @@ export const controllers = {
         try {
             const { userID } = res.locals;
 
-            const exisitingUser = await User.findById(userID).lean();
+            const existingUser = await User.findById(userID).lean();
 
-            if (!exisitingUser) {
+            if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.UNAUTHORIZED,
@@ -143,7 +144,7 @@ export const controllers = {
                 });
             }
 
-            const invitations = await Invitation.find({ email: exisitingUser.email }).lean();
+            const invitations = await Invitation.find({ email: existingUser.email }).lean();
 
             return sendResponse(res, {
                 success: true,
@@ -191,9 +192,9 @@ export const controllers = {
             const { invitationID, accept } = result.data;
             const { userID } = res.locals;
 
-            const exisitingUser = await User.findById(userID).lean();
+            const existingUser = await User.findById(userID).lean();
 
-            if (!exisitingUser) {
+            if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.UNAUTHORIZED,
@@ -201,12 +202,12 @@ export const controllers = {
                 });
             }
 
-            const exisitingInvitation = await Invitation.findOne({
+            const existingInvitation = await Invitation.findOne({
                 _id: invitationID,
-                email: exisitingUser.email,
+                email: existingUser.email,
             });
 
-            if (!exisitingInvitation) {
+            if (!existingInvitation) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
@@ -215,11 +216,9 @@ export const controllers = {
             }
 
             if (accept) {
-                const exisitingWorkspace = await Workspace.findById(
-                    exisitingInvitation.workspaceID
-                );
+                const existingWorkspace = await Workspace.findById(existingInvitation.workspaceID);
 
-                if (!exisitingWorkspace) {
+                if (!existingWorkspace) {
                     return sendResponse(res, {
                         success: false,
                         statusCode: StatusCodes.NOT_FOUND,
@@ -227,12 +226,12 @@ export const controllers = {
                     });
                 }
 
-                const isAlreadyMember = exisitingWorkspace.members.some((member) =>
+                const isAlreadyMember = existingWorkspace.members.some((member) =>
                     member.userID.equals(userID)
                 );
 
                 if (isAlreadyMember) {
-                    await exisitingInvitation.deleteOne();
+                    await existingInvitation.deleteOne();
 
                     return sendResponse(res, {
                         success: true,
@@ -241,13 +240,13 @@ export const controllers = {
                     });
                 }
 
-                exisitingWorkspace.members.push({
+                existingWorkspace.members.push({
                     userID,
-                    permission: exisitingInvitation.permission,
+                    permission: existingInvitation.permission,
                 });
 
-                await exisitingWorkspace.save();
-                await exisitingInvitation.deleteOne();
+                await existingWorkspace.save();
+                await existingInvitation.deleteOne();
 
                 return sendResponse(res, {
                     success: true,
@@ -255,7 +254,7 @@ export const controllers = {
                     message: "Invitation accepted and added to workspace",
                 });
             } else {
-                await exisitingInvitation.deleteOne();
+                await existingInvitation.deleteOne();
 
                 return sendResponse(res, {
                     success: true,
@@ -327,12 +326,11 @@ export const controllers = {
             const { workspaceID } = result.data;
             const { userID } = res.locals;
 
-            const exisitingWorkspace = await Workspace.findOne({
+            const existingWorkspace = await Workspace.findOne({
                 _id: workspaceID,
-                "members.userID": userID,
             });
 
-            if (!exisitingWorkspace) {
+            if (!existingWorkspace) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
@@ -340,11 +338,19 @@ export const controllers = {
                 });
             }
 
-            const memberIndex = exisitingWorkspace.members.findIndex((member) =>
+            const memberIndex = existingWorkspace.members.findIndex((member) =>
                 member.userID.equals(userID)
             );
 
-            const adminCount = exisitingWorkspace.members.reduce((count, member) => {
+            if (memberIndex === -1) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found or you are not a member",
+                });
+            }
+
+            const adminCount = existingWorkspace.members.reduce((count, member) => {
                 return member.permission === "admin" && !member.userID.equals(userID)
                     ? count + 1
                     : count;
@@ -355,12 +361,12 @@ export const controllers = {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
                     message:
-                        "You are the only admin in this workspace. Please assign another admin before leaving.",
+                        "You are the only admin in this workspace. Please assign another admin before leaving or delete the workspace.",
                 });
             }
 
-            exisitingWorkspace.members.splice(memberIndex, 1);
-            await exisitingWorkspace.save();
+            existingWorkspace.members.splice(memberIndex, 1);
+            await existingWorkspace.save();
 
             return sendResponse(res, {
                 success: true,
@@ -432,24 +438,34 @@ export const controllers = {
             } = result.data;
             const { userID } = res.locals;
 
-            const exisitingWorkspace = await Workspace.findOne({
+            const existingWorkspace = await Workspace.findOne({
                 _id: workspaceID,
-                "members.permission": "admin",
-                "members.userID": res.locals.userID,
             });
 
-            const exisitingUser = await User.findById(userID).lean();
+            const existingUser = await User.findById(userID).lean();
 
-            if (!exisitingWorkspace) {
+            if (!existingWorkspace) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
-                    message: "Workspace not found or you do not have admin rights",
+                    message: "Workspace not found",
+                });
+            }
+
+            const isAdmin = existingWorkspace.members.some(
+                (m) => m.userID.equals(userID) && m.permission === "admin"
+            );
+
+            if (!isAdmin) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You do not have admin rights to perform this action",
                 });
             }
 
             if (deleteWorkspace) {
-                await exisitingWorkspace.deleteOne();
+                await existingWorkspace.deleteOne();
 
                 return sendResponse(res, {
                     success: true,
@@ -459,16 +475,16 @@ export const controllers = {
             }
 
             if (title) {
-                exisitingWorkspace.title = title;
+                existingWorkspace.title = title;
             }
 
             if (description) {
-                exisitingWorkspace.description = description;
+                existingWorkspace.description = description;
             }
 
             if (membersToUpdate) {
                 for (const memberUpdate of membersToUpdate) {
-                    const member = exisitingWorkspace.members.find((m) => {
+                    const member = existingWorkspace.members.find((m) => {
                         return m.userID.equals(memberUpdate.memberID) && !m.userID.equals(userID);
                     });
 
@@ -480,27 +496,27 @@ export const controllers = {
 
             if (membersToRemove) {
                 for (const memberID of membersToRemove) {
-                    const memberIndex = exisitingWorkspace.members.findIndex((m) => {
+                    const memberIndex = existingWorkspace.members.findIndex((m) => {
                         return m.userID.equals(memberID) && !m.userID.equals(userID);
                     });
 
                     if (memberIndex !== -1) {
-                        exisitingWorkspace.members.splice(memberIndex, 1);
+                        existingWorkspace.members.splice(memberIndex, 1);
                     }
                 }
             }
 
             if (membersToAdd) {
                 for (const member of membersToAdd) {
-                    if (member.email === exisitingUser!.email) {
+                    if (member.email === existingUser!.email) {
                         continue;
                     }
 
-                    const exisitingMember = await User.findOne({ email: member.email });
+                    const existingMember = await User.findOne({ email: member.email });
 
-                    if (exisitingMember) {
-                        const isAlreadyMember = exisitingWorkspace.members.some((m) =>
-                            m.userID.equals(exisitingMember._id)
+                    if (existingMember) {
+                        const isAlreadyMember = existingWorkspace.members.some((m) =>
+                            m.userID.equals(existingMember._id)
                         );
 
                         if (isAlreadyMember) {
@@ -511,13 +527,13 @@ export const controllers = {
                     const newInvitation = await Invitation.findOneAndUpdate(
                         {
                             email: member.email,
-                            workspaceID: exisitingWorkspace._id,
+                            workspaceID: existingWorkspace._id,
                         },
                         {
                             $set: {
                                 permission: member.permission,
-                                title: exisitingWorkspace.title,
-                                description: exisitingWorkspace.description,
+                                title: existingWorkspace.title,
+                                description: existingWorkspace.description,
                             },
                         },
                         { upsert: true, new: true }
@@ -528,25 +544,25 @@ export const controllers = {
                     await transporter.sendMail({
                         to: member.email,
                         from: config.SENDER_EMAIL,
-                        subject: `Invitation to join workspace: ${exisitingWorkspace.title}`,
+                        subject: `Invitation to join workspace: ${existingWorkspace.title}`,
                         html: emailTemplates.workspaceInvitationTemplate({
-                            workspaceTitle: exisitingWorkspace.title,
-                            description: exisitingWorkspace.description,
+                            workspaceTitle: existingWorkspace.title,
+                            description: existingWorkspace.description,
                             permission: member.permission,
-                            senderName: `${exisitingUser!.firstName} ${exisitingUser!.lastName}`,
+                            senderName: `${existingUser!.firstName} ${existingUser!.lastName}`,
                         }),
                     });
                 }
             }
 
-            await exisitingWorkspace.save();
+            await existingWorkspace.save();
 
             return sendResponse(res, {
                 success: true,
                 statusCode: StatusCodes.OK,
                 message: "Workspace updated successfully",
                 data: {
-                    workspace: exisitingWorkspace,
+                    workspace: existingWorkspace,
                 },
             });
         } catch (error) {
@@ -581,21 +597,30 @@ export const controllers = {
             const { workspaceID } = result.data;
             const { userID } = res.locals;
 
-            const exisitingWorkspace = await Workspace.findOne({
+            const existingWorkspace = await Workspace.findOne({
                 _id: workspaceID,
-                "members.userID": userID,
             });
 
-            if (!exisitingWorkspace) {
+            if (!existingWorkspace) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
-                    message: "Workspace not found or you are not a member",
+                    message: "Workspace not found",
+                });
+            }
+
+            const isMember = existingWorkspace.members.some((m) => m.userID.equals(userID));
+
+            if (!isMember) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You are not a member of this workspace",
                 });
             }
 
             const members = await Promise.all(
-                exisitingWorkspace.members.map(async (member) => {
+                existingWorkspace.members.map(async (member) => {
                     const detail = await User.findById(member.userID).lean();
 
                     return {
@@ -613,10 +638,10 @@ export const controllers = {
                 statusCode: StatusCodes.OK,
                 message: "Workspace details fetched successfully",
                 data: {
-                    _id: exisitingWorkspace._id,
-                    title: exisitingWorkspace.title,
-                    description: exisitingWorkspace.description,
-                    createdAt: exisitingWorkspace.createdAt,
+                    _id: existingWorkspace._id,
+                    title: existingWorkspace.title,
+                    description: existingWorkspace.description,
+                    createdAt: existingWorkspace.createdAt,
                     members,
                 },
             });

@@ -342,6 +342,8 @@ export const controllers = {
                 html: emailTemplates.sendOTPForResetPassword({
                     OTP: save.OTP,
                     UAinfo: res.locals.ua || "unknown",
+                    locationData: res.locals.location,
+                    IPAddress: res.locals.clientIP,
                 }),
             });
 
@@ -614,6 +616,10 @@ export const controllers = {
                 accountID: existingUser._id,
                 tokenVersion: existingUser.tokenVersion,
                 UA: req.headers["user-agent"] || "unknown",
+                IPAddress: res.locals.clientIP,
+                lat: res.locals.location.lat,
+                lon: res.locals.location.lon,
+                displayName: res.locals.location.displayName,
             });
 
             const authToken = jwt.sign(
@@ -638,6 +644,8 @@ export const controllers = {
                 subject: "New Login Alert",
                 html: emailTemplates.loginAlert({
                     UAinfo: res.locals.ua,
+                    IPAddress: res.locals.clientIP,
+                    locationData: res.locals.location,
                 }),
             });
 
@@ -708,10 +716,10 @@ export const controllers = {
             const { userID, loginHistoryID } = res.locals;
 
             const existingUser = await User.findById(userID);
-            const exisitingLogin = await LoginHistory.findById(loginHistoryID);
+            const existingLogin = await LoginHistory.findById(loginHistoryID);
 
             // NOTE: This case should not occur as protectRoute middleware already checks for existing user
-            if (!existingUser || !exisitingLogin) {
+            if (!existingUser || !existingLogin) {
                 return sendResponse(res, {
                     success: false,
                     message: "User not found",
@@ -720,10 +728,10 @@ export const controllers = {
             }
 
             existingUser.tokenVersion += 1;
-            exisitingLogin.tokenVersion += 1;
+            existingLogin.tokenVersion += 1;
 
             await existingUser.save();
-            await exisitingLogin.save();
+            await existingLogin.save();
 
             const authToken = jwt.sign(
                 {
@@ -902,6 +910,10 @@ export const controllers = {
                         loginHistory: entry,
                         isActive: entry.tokenVersion === tokenVersion,
                         currentDevice: entry._id.toString() === loginHistoryID,
+                        IPAddress: entry.IPAddress,
+                        lat: entry.lat,
+                        lon: entry.lon,
+                        displayName: entry.displayName,
                     };
                 });
 

@@ -53,17 +53,22 @@ const scheduleSchema = new mongoose.Schema(
 
         startAt: {
             type: Date,
-            default: null,
+            default: () => new Date("1900-01-01T00:00:00.000Z"),
         },
 
         endAt: {
             type: Date,
-            default: null,
+            default: () => new Date("2999-12-31T23:59:59.999Z"),
         },
 
         countdownEnabled: {
             type: Boolean,
             default: false,
+        },
+        messageToDisplay: {
+            type: String,
+            default: "This link is not yet active.",
+            maxLength: 512,
         },
     },
     {
@@ -75,9 +80,9 @@ const scheduleSchema = new mongoose.Schema(
 
 const urlSchema = new mongoose.Schema(
     {
-        ownerID: {
+        workspaceID: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: "Workspace",
             required: true,
         },
 

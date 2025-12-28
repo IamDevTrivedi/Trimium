@@ -76,6 +76,12 @@ export function Footer() {
                                 Login
                             </Link>
                             <Link
+                                href="/reset-password"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                Reset Password
+                            </Link>
+                            <Link
                                 href="/account"
                                 className="text-muted-foreground transition-colors hover:text-foreground"
                             >

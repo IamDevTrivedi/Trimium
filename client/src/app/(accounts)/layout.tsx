@@ -1,6 +1,4 @@
-import { Footer } from "@/components/footer";
-import { Navbar } from "@/components/navbar";
-import ProtectPage from "@/components/protect-page";
+import { ProtectPage } from "@/components/protect-page";
 
 export default function RootLayout({
     children,

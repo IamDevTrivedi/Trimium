@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/next";
 import config from "@/config/env";
-import ProtectPage from "@/components/protect-page";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 

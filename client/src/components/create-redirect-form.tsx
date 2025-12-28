@@ -88,6 +88,9 @@ export function CreateRedirectForm() {
         showCountdown,
         setShowCountdown,
 
+        messageToDisplay,
+        setMessageToDisplay,
+
         reset,
     } = useCreateURLStore();
 
@@ -134,22 +137,6 @@ export function CreateRedirectForm() {
     };
 
     const handleSubmit = async () => {
-        // print all
-        console.log({
-            title,
-            description,
-            originalURL,
-            shortcode,
-            isLimited,
-            maxTransfers,
-            isPasswordProtected,
-            password,
-            isScheduled,
-            startAt,
-            endAt,
-            showCountdown,
-        });
-
         if (!validators()) {
             return;
         }
@@ -162,7 +149,8 @@ export function CreateRedirectForm() {
         }
 
         const payload = {
-            shortcode: shortcode.trim().length > 0 ? shortcode.trim() : undefined,
+            workspaceID: workspaceID,
+            shortCode: shortcode.trim().length > 0 ? shortcode.trim() : undefined,
             originalURL: originalURL.trim(),
             title: title.trim(),
             description: description.trim().length > 0 ? description.trim() : undefined,
@@ -173,6 +161,10 @@ export function CreateRedirectForm() {
                       startAt: startAt!,
                       endAt: endAt!,
                       countdownEnabled: showCountdown,
+                      messageToDisplay:
+                          messageToDisplay.trim().length > 0
+                              ? messageToDisplay.trim()
+                              : "This link is not yet active.",
                   }
                 : undefined,
         };
@@ -183,7 +175,7 @@ export function CreateRedirectForm() {
 
             if (handleResponse(resData)) {
                 reset();
-                router.push("/dashboard/");
+                router.push(`/w/${workspaceID}/`);
             }
         } catch (error) {
             toastError(error);
@@ -551,6 +543,22 @@ export function CreateRedirectForm() {
                                     </Label>
                                 </div>
                             </RadioGroup>
+                        </div>
+
+                        <div className="space-y-3 pl-6">
+                            <Label className="text-sm font-medium">
+                                Message to display when link is not yet active
+                            </Label>
+                            <Textarea
+                                placeholder="This link is not yet active."
+                                value={messageToDisplay}
+                                onChange={(e) => setMessageToDisplay(e.target.value)}
+                                disabled={isScheduled === false || showCountdown === false}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Customize the message shown to users who visit the link before it
+                                becomes active.
+                            </p>
                         </div>
                     </div>
                 </CardContent>

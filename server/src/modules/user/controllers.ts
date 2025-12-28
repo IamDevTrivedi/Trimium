@@ -42,11 +42,11 @@ export const controllers = {
             const { firstName, lastName } = result.data;
             const { userID } = res.locals;
 
-            const exisitingUser = await User.findById(userID).select(
+            const existingUser = await User.findById(userID).select(
                 "-passwordHash -tokenVersion -__v"
             );
 
-            if (!exisitingUser) {
+            if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
@@ -54,16 +54,16 @@ export const controllers = {
                 });
             }
 
-            exisitingUser.firstName = firstName;
-            exisitingUser.lastName = lastName;
+            existingUser.firstName = firstName;
+            existingUser.lastName = lastName;
 
-            await exisitingUser.save();
+            await existingUser.save();
 
             return sendResponse(res, {
                 success: true,
                 message: "Name changed successfully",
                 statusCode: StatusCodes.OK,
-                data: exisitingUser,
+                data: existingUser,
             });
         } catch (error) {
             logger.error("Error in changeName controller: ");
@@ -102,9 +102,9 @@ export const controllers = {
             const { currentPassword, newPassword } = result.data;
             const { userID } = res.locals;
 
-            const exisitingUser = await User.findById(userID);
+            const existingUser = await User.findById(userID);
 
-            if (!exisitingUser) {
+            if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
@@ -112,7 +112,7 @@ export const controllers = {
                 });
             }
 
-            const match = await bcrypt.compare(currentPassword, exisitingUser.passwordHash);
+            const match = await bcrypt.compare(currentPassword, existingUser.passwordHash);
 
             if (!match) {
                 return sendResponse(res, {
@@ -123,8 +123,8 @@ export const controllers = {
             }
 
             const passwordHash = await bcrypt.hash(newPassword, 14);
-            exisitingUser.passwordHash = passwordHash;
-            await exisitingUser.save();
+            existingUser.passwordHash = passwordHash;
+            await existingUser.save();
 
             return sendResponse(res, {
                 success: true,
@@ -165,9 +165,9 @@ export const controllers = {
             const { newUsername } = result.data;
             const { userID } = res.locals;
 
-            const exisitingUser = await User.findById(userID).select("username");
+            const existingUser = await User.findById(userID).select("username");
 
-            if (!exisitingUser) {
+            if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
@@ -185,8 +185,8 @@ export const controllers = {
                 });
             }
 
-            exisitingUser.username = newUsername;
-            await exisitingUser.save();
+            existingUser.username = newUsername;
+            await existingUser.save();
 
             return sendResponse(res, {
                 success: true,

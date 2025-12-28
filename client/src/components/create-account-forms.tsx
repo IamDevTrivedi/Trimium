@@ -16,9 +16,11 @@ import { backend } from "@/config/backend";
 import { useRouter } from "next/navigation";
 import { toastError } from "@/lib/toast-error";
 import { handleResponse } from "@/lib/handle-response";
+import { useUserStore } from "@/store/user-store";
 
 export function CreateAccountEmail() {
     const { setEmail, reset } = useCreateAccountStore();
+    const { user } = useUserStore();
 
     const router = useRouter();
 
@@ -57,8 +59,19 @@ export function CreateAccountEmail() {
     };
 
     React.useEffect(() => {
+        if (user) {
+            Toast.info("You are already logged in.");
+            router.replace("/");
+        }
+    }, [user, router]);
+
+    React.useEffect(() => {
         reset();
     }, [reset]);
+
+    if (user) {
+        return null;
+    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

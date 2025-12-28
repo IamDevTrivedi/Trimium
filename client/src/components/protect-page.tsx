@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { LoadingPage } from "./loading";
 
-export default function ProtectPage({ children }: { children: React.ReactNode }) {
+export function ProtectPage({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const { setUser, reset } = useUserStore();
     const router = useRouter();

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { z } from "zod";
 
 const loginHistorySchema = new mongoose.Schema(
     {
@@ -14,6 +15,30 @@ const loginHistorySchema = new mongoose.Schema(
 
         tokenVersion: {
             type: Number,
+            required: true,
+        },
+
+        IPAddress: {
+            type: String,
+            required: true,
+            validate: {
+                validator: (v: string) => {
+                    return z.ipv4().safeParse(v).success;
+                },
+            },
+        },
+
+        lat: {
+            type: Number,
+            required: true,
+        },
+        lon: {
+            type: Number,
+            required: true,
+        },
+
+        displayName: {
+            type: String,
             required: true,
         },
     },

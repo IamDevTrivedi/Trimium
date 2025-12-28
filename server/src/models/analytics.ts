@@ -5,7 +5,7 @@ const deviceStatsSchema = new mongoose.Schema(
         desktop: { type: Number, default: 0 },
         mobile: { type: Number, default: 0 },
         tablet: { type: Number, default: 0 },
-        unknown: { type: Number, default: 0 },
+        others: { type: Number, default: 0 },
     },
     {
         _id: false,
@@ -21,7 +21,7 @@ const browserStatsSchema = new mongoose.Schema(
         safari: { type: Number, default: 0 },
         edge: { type: Number, default: 0 },
         opera: { type: Number, default: 0 },
-        unknown: { type: Number, default: 0 },
+        others: { type: Number, default: 0 },
     },
     {
         _id: false,
@@ -64,9 +64,9 @@ const analyticsSchema = new mongoose.Schema(
             ref: "URL",
         },
 
-        ownerID: {
+        workspaceID: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: "Workspace",
             required: true,
         },
 

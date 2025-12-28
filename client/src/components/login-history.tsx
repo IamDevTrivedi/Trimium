@@ -20,6 +20,8 @@ import {
     XCircle,
     RefreshCw,
     AlertTriangle,
+    Wifi,
+    LocateIcon,
 } from "lucide-react";
 import {
     Card,
@@ -66,6 +68,10 @@ export interface LoginSession {
         UA: string;
         createdAt: string;
         updatedAt: string;
+        IPAddress: string;
+        lat: number;
+        lon: number;
+        displayName: string;
     };
     isActive: boolean;
     currentDevice: boolean;
@@ -376,6 +382,14 @@ export function LoginHistory() {
                                                         {session.parsedUA.os.name} •{" "}
                                                         {session.parsedUA.browser.name}
                                                     </div>
+                                                    <div className="text-sm text-muted-foreground">
+                                                        {session.loginHistory.displayName} (
+                                                        {session.loginHistory.lon} {"lon"},{" "}
+                                                        {session.loginHistory.lat} {"lan"})
+                                                    </div>
+                                                    <div className="text-sm text-muted-foreground">
+                                                        IP Address: {session.loginHistory.IPAddress}
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="text-right text-sm text-muted-foreground">
@@ -474,7 +488,7 @@ function SessionCard({ session, onLogout, loggingOut }: SessionCardProps) {
                 <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
                         <Chromium className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">Chromium:</span>
+                        <span className="font-medium">Browser:</span>
                         <span>
                             {session.parsedUA.browser.name} {session.parsedUA.browser.version}
                         </span>
@@ -492,6 +506,21 @@ function SessionCard({ session, onLogout, loggingOut }: SessionCardProps) {
                         <Cpu className="w-4 h-4 text-muted-foreground" />
                         <span className="font-medium">CPU:</span>
                         <span>{session.parsedUA.cpu.architecture}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                        <LocateIcon className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">Location:</span>
+                        <span>
+                            {session.loginHistory.displayName} ({session.loginHistory.lon} {"lon"},{" "}
+                            {session.loginHistory.lat} {"lan"})
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm">
+                        <Wifi className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-medium">IP Address:</span>
+                        <span>{session.loginHistory.IPAddress}</span>
                     </div>
 
                     <div className="flex items-center gap-2 text-sm">

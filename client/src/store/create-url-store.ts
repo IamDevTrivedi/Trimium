@@ -31,6 +31,8 @@ export interface CreateURLStore {
     setEndAt: (endAt: Date | null) => void;
     showCountdown: boolean;
     setShowCountdown: (showCountdown: boolean) => void;
+    messageToDisplay: string;
+    setMessageToDisplay: (messageToDisplay: string) => void;
 
     reset: () => void;
 }
@@ -66,6 +68,8 @@ export const useCreateURLStore = create<CreateURLStore>((set) => ({
     setEndAt: (endAt) => set({ endAt }),
     showCountdown: false,
     setShowCountdown: (showCountdown) => set({ showCountdown }),
+    messageToDisplay: "",
+    setMessageToDisplay: (messageToDisplay) => set({ messageToDisplay }),
 
     reset: () =>
         set({

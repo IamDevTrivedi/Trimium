@@ -6,4 +6,6 @@ const router = Router();
 router.post("/is-shortcode-available", controllers.isShortcodeAvailable);
 router.post("/create-shortcode", protectRoute, controllers.createShortCode);
 
+router.post("/redirect", controllers.redirectToOriginalUrl);
+
 export default router;

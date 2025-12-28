@@ -15,9 +15,12 @@ import { backend } from "@/config/backend";
 import { handleResponse } from "@/lib/handle-response";
 import { useRouter } from "next/navigation";
 import { toastError } from "@/lib/toast-error";
+import { useUserStore } from "@/store/user-store";
+import { Toast } from "./toast";
 
 export function ResetPasswordEmail() {
     const { setIdentity, reset } = useResetPasswordStore();
+    const { user } = useUserStore();
 
     const router = useRouter();
 
@@ -42,6 +45,13 @@ export function ResetPasswordEmail() {
         reset();
     }, [reset]);
 
+    React.useEffect(() => {
+        if (user) {
+            Toast.info("You are already logged in.");
+            router.replace("/");
+        }
+    }, [user, router]);
+
     const onSubmit = async (data: z.infer<typeof schema>) => {
         try {
             setIdentity(data.identity);
@@ -57,6 +67,10 @@ export function ResetPasswordEmail() {
             toastError(error);
         }
     };
+
+    if (user) {
+        return null;
+    }
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
