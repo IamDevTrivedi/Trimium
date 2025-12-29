@@ -4,6 +4,7 @@ export const USERNAME = /^(?!.*\s)[A-Za-z0-9._]+$/;
 export const PASSWORD = /^(?!.*\s)(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^()_+=-]).{8,}$/;
 export const OTP = /^(?!.*\s)\d{6}$/;
 export const SHORTCODE = /^[A-Za-z0-9_-]{5,20}$/;
+export const UTC_DATE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/;
 
 export const EMAIL_NOTICE = "Email must be a valid email address and must not contain spaces.";
 export const NAME_NOTICE = "Name must contain only letters and must not contain spaces.";
@@ -14,3 +15,5 @@ export const PASSWORD_NOTICE =
 export const OTP_NOTICE = "OTP must be exactly 6 digits and must not contain spaces.";
 export const SHORTCODE_NOTICE =
     "Shortcode must be 5-20 characters long, can include letters, numbers, underscores, hyphens, and must not contain spaces.";
+export const UTC_DATE_NOTICE =
+    "Date must be in valid UTC format (e.g., 2023-01-01T12:00:00Z) and must not contain spaces.";

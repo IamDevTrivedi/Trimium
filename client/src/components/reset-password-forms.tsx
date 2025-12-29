@@ -47,7 +47,6 @@ export function ResetPasswordEmail() {
 
     React.useEffect(() => {
         if (user) {
-            Toast.info("You are already logged in.");
             router.replace("/");
         }
     }, [user, router]);

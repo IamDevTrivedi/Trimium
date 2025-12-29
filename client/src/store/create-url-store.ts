@@ -25,10 +25,10 @@ export interface CreateURLStore {
 
     isScheduled: boolean;
     setIsScheduled: (isScheduled: boolean) => void;
-    startAt: Date | null;
-    setStartAt: (startAt: Date | null) => void;
-    endAt: Date | null;
-    setEndAt: (endAt: Date | null) => void;
+    startAt: string | null;
+    setStartAt: (startAt: string | null) => void;
+    endAt: string | null;
+    setEndAt: (endAt: string | null) => void;
     showCountdown: boolean;
     setShowCountdown: (showCountdown: boolean) => void;
     messageToDisplay: string;

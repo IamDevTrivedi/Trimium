@@ -1,4 +1,11 @@
-import { PASSWORD, PASSWORD_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
+import {
+    PASSWORD,
+    PASSWORD_NOTICE,
+    SHORTCODE,
+    SHORTCODE_NOTICE,
+    UTC_DATE,
+    UTC_DATE_NOTICE,
+} from "@/constants/regex";
 import { URL } from "@/models/url";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
@@ -89,8 +96,8 @@ export const controllers = {
 
                 schedule: z
                     .object({
-                        startAt: z.coerce.date(),
-                        endAt: z.coerce.date(),
+                        startAt: z.string().regex(UTC_DATE, UTC_DATE_NOTICE),
+                        endAt: z.string().regex(UTC_DATE, UTC_DATE_NOTICE),
                         countdownEnabled: z.boolean(),
                         messageToDisplay: z
                             .string()
@@ -100,10 +107,10 @@ export const controllers = {
                     })
                     .refine((data) => {
                         const now = new Date();
-                        if (data.startAt < now || data.endAt < now) {
+                        if (new Date(data.startAt) < now || new Date(data.endAt) < now) {
                             return false;
                         }
-                        return data.startAt < data.endAt;
+                        return new Date(data.startAt) < new Date(data.endAt);
                     })
                     .optional(),
             });
@@ -200,8 +207,8 @@ export const controllers = {
             if (typeof schedule === "object") {
                 scheduleObj = {
                     isEnabled: true,
-                    startAt: schedule.startAt,
-                    endAt: schedule.endAt,
+                    startAt: new Date(schedule.startAt),
+                    endAt: new Date(schedule.endAt),
                     countdownEnabled: schedule.countdownEnabled,
                     messageToDisplay: schedule.messageToDisplay,
                 };
@@ -239,6 +246,224 @@ export const controllers = {
             });
         } catch (error) {
             logger.error("Error creating shortcode:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                success: false,
+                message: "Internal Server Error",
+            });
+        }
+    },
+
+    getShortCodeInfo: async (req: Request, res: Response) => {
+        try {
+            const schema = z.object({
+                shortCode: z.string().regex(SHORTCODE, {
+                    error: SHORTCODE_NOTICE,
+                }),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    success: false,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { shortCode } = result.data;
+            const { userID } = res.locals;
+
+            const existingURL = await URL.findOne({ shortCode }).lean();
+
+            if (!existingURL) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.NOT_FOUND,
+                    success: false,
+                    message: "Shortcode not found",
+                });
+            }
+
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).lean();
+
+            const member = existingWorkspace?.members.find((m) => m.userID.toString() === userID);
+
+            if (!member) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.FORBIDDEN,
+                    success: false,
+                    message: "You are not a member of the workspace associated with this shortcode",
+                });
+            }
+
+            return sendResponse(res, {
+                message: "Shortcode info retrieved successfully",
+                success: true,
+                statusCode: StatusCodes.OK,
+                data: existingURL,
+            });
+        } catch (error) {
+            logger.error("Error getting shortcode info:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                success: false,
+                message: "Internal Server Error",
+            });
+        }
+    },
+
+    editShortCode: async (req: Request, res: Response) => {
+        try {
+            const schema = z.object({
+                shortCode: z.string().regex(SHORTCODE, {
+                    error: SHORTCODE_NOTICE,
+                }),
+
+                title: z.string().min(1).max(255).optional(),
+                description: z.string().min(1).max(1024).optional(),
+
+                originalURL: z.url().optional(),
+                isActive: z.boolean().optional(),
+
+                maxTransfers: z.int().nonnegative().optional(),
+
+                password: z.string().regex(PASSWORD, PASSWORD_NOTICE).optional(),
+
+                schedule: z
+                    .object({
+                        startAt: z.string().regex(UTC_DATE, UTC_DATE_NOTICE),
+                        endAt: z.string().regex(UTC_DATE, UTC_DATE_NOTICE),
+                        countdownEnabled: z.boolean(),
+                        messageToDisplay: z.string().max(512).optional(),
+                    })
+                    .refine((data) => {
+                        const now = new Date();
+                        if (new Date(data.startAt) < now || new Date(data.endAt) < now) {
+                            return false;
+                        }
+                        return new Date(data.startAt) < new Date(data.endAt);
+                    })
+                    .optional(),
+
+                rmSchedule: z.boolean().optional(),
+                rmPassword: z.boolean().optional(),
+                rmTransferLimit: z.boolean().optional(),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    success: false,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const {
+                shortCode,
+                title,
+                description,
+                originalURL,
+                isActive,
+                maxTransfers,
+                password,
+                schedule,
+                rmSchedule,
+                rmPassword,
+                rmTransferLimit,
+            } = result.data;
+            const { userID } = res.locals;
+
+            const existingURL = await URL.findOne({ shortCode });
+
+            if (!existingURL) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.NOT_FOUND,
+                    success: false,
+                    message: "Shortcode not found",
+                });
+            }
+
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).lean();
+            const member = existingWorkspace?.members.find((m) => m.userID.toString() === userID);
+
+            if (!member || member.permission === "viewer") {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.FORBIDDEN,
+                    success: false,
+                    message:
+                        "You are not a member or do not have permission to edit URLs in this workspace",
+                });
+            }
+
+            if (title) {
+                existingURL.title = title;
+            }
+
+            if (description) {
+                existingURL.description = description;
+            }
+
+            if (originalURL) {
+                existingURL.originalURL = originalURL;
+            }
+
+            if (typeof isActive === "boolean") {
+                existingURL.isActive = isActive;
+            }
+
+            if (typeof maxTransfers === "number") {
+                existingURL.transfer.isEnabled = true;
+                const drift = maxTransfers - existingURL.transfer.maxTransfers;
+                existingURL.transfer.maxTransfers = maxTransfers;
+                existingURL.transfer.remainingTransfers += drift;
+            }
+
+            if (typeof password === "string") {
+                const passwordHash = await bcrypt.hash(password, 12);
+                existingURL.passwordProtect.isEnabled = true;
+                existingURL.passwordProtect.passwordHash = passwordHash;
+            }
+
+            if (typeof schedule === "object") {
+                existingURL.schedule.isEnabled = true;
+                existingURL.schedule.startAt = new Date(schedule.startAt);
+                existingURL.schedule.endAt = new Date(schedule.endAt);
+                existingURL.schedule.countdownEnabled = schedule.countdownEnabled;
+                if (schedule.messageToDisplay) {
+                    existingURL.schedule.messageToDisplay = schedule.messageToDisplay;
+                }
+            }
+
+            if (rmSchedule) {
+                existingURL.schedule.isEnabled = false;
+            }
+
+            if (rmPassword) {
+                existingURL.passwordProtect.isEnabled = false;
+            }
+
+            if (rmTransferLimit) {
+                existingURL.transfer.isEnabled = false;
+            }
+
+            await existingURL.save();
+
+            return sendResponse(res, {
+                statusCode: StatusCodes.OK,
+                success: true,
+                message: "Shortcode info updated successfully",
+            });
+        } catch (error) {
+            logger.error("Error editing shortcode info:");
             logger.error(error);
 
             return sendResponse(res, {

@@ -132,7 +132,6 @@ export function CreateRedirectForm() {
         }
 
         setErrors(errors);
-
         return Object.keys(errors).length === 0;
     };
 
@@ -158,8 +157,8 @@ export function CreateRedirectForm() {
             maxTransfers: isLimited ? maxTransfers : undefined,
             schedule: isScheduled
                 ? {
-                      startAt: startAt!,
-                      endAt: endAt!,
+                      startAt: new Date(startAt! + ":00.000Z").toISOString(),
+                      endAt: new Date(endAt! + ":00.000Z").toISOString(),
                       countdownEnabled: showCountdown,
                       messageToDisplay:
                           messageToDisplay.trim().length > 0
@@ -168,6 +167,8 @@ export function CreateRedirectForm() {
                   }
                 : undefined,
         };
+
+        console.log("Payload:", payload);
 
         try {
             setLoading(true);
@@ -475,12 +476,11 @@ export function CreateRedirectForm() {
                                         id="start-at"
                                         type="datetime-local"
                                         className="pl-9"
-                                        value={startAt ? startAt.toISOString().slice(0, 16) : ""}
-                                        onChange={(e) =>
-                                            setStartAt(
-                                                e.target.value ? new Date(e.target.value) : null
-                                            )
-                                        }
+                                        value={startAt ?? ""}
+                                        onChange={(e) => {
+                                            setStartAt(e.target.value);
+                                            console.log(e.target.value);
+                                        }}
                                         disabled={!isScheduled}
                                     />
                                     {errors.startAt && (
@@ -496,12 +496,11 @@ export function CreateRedirectForm() {
                                         id="end-at"
                                         type="datetime-local"
                                         className="pl-9"
-                                        value={endAt ? endAt.toISOString().slice(0, 16) : ""}
-                                        onChange={(e) =>
-                                            setEndAt(
-                                                e.target.value ? new Date(e.target.value) : null
-                                            )
-                                        }
+                                        value={endAt ?? ""}
+                                        onChange={(e) => {
+                                            setEndAt(e.target.value);
+                                            console.log(e.target.value);
+                                        }}
                                         disabled={!isScheduled}
                                     />
                                     {errors.endAt && (
@@ -529,6 +528,7 @@ export function CreateRedirectForm() {
                                 className="flex gap-4"
                                 value={showCountdown ? "yes" : "no"}
                                 onValueChange={(value) => setShowCountdown(value === "yes")}
+                                disabled={isScheduled === false}
                             >
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="yes" id="timer-yes" />
