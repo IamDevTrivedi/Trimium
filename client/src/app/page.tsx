@@ -89,23 +89,28 @@ export default function HomePage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="border-2 transition-all hover:shadow-lg">
+                        <Card className="border-2 transition-all hover:shadow-lg group">
                             <CardContent className="p-6">
                                 <div className="flex items-start gap-4">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg">
-                                        <QrCode className="h-6 w-6 text-accent" />
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                                        <QrCode className="h-6 w-6 text-primary" />
                                     </div>
                                     <div className="flex-1">
-                                        <h3 className="mb-2 text-lg font-semibold">
-                                            Generate QR Code
-                                        </h3>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <h3 className="text-lg font-semibold">
+                                                Custom QR Generator
+                                            </h3>
+                                            <span className="px-2 py-0.5 text-[10px] font-medium bg-primary/10 text-primary rounded-full">
+                                                NEW
+                                            </span>
+                                        </div>
                                         <p className="mb-4 text-sm text-muted-foreground leading-relaxed">
-                                            Create custom branded QR codes with multiple download
-                                            formats
+                                            Create stunning branded QR codes with custom colors,
+                                            sizes, and your logo
                                         </p>
-                                        <Link href="/create-qr">
+                                        <Link href="/qr-generator">
                                             <Button variant="ghost" className="h-auto p-0">
-                                                <div className="flex items-center gap-2 mx-3">
+                                                <div className="flex items-center gap-2">
                                                     Create QR Code
                                                     <ArrowRight className="h-4 w-4" />
                                                 </div>

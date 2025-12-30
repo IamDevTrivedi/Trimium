@@ -45,16 +45,22 @@ export function Footer() {
                                 Features
                             </Link>
                             <Link
-                                href="/about"
-                                className="text-muted-foreground transition-colors hover:text-foreground"
-                            >
-                                About
-                            </Link>
-                            <Link
                                 href="/w"
                                 className="text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 Workspaces
+                            </Link>
+                            <Link
+                                href="/qr-generator"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                Generate QR Code
+                            </Link>
+                            <Link
+                                href="/about"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                About
                             </Link>
                         </div>
                     </div>

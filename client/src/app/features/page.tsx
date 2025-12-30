@@ -253,45 +253,70 @@ export default function FeaturesPage() {
             </section>
 
             {/* QR Code Features */}
-            <section className="w-full max-w-6xl mx-auto border-y border-border bg-muted/10 py-16">
+            <section className="w-full max-w-6xl mx-auto border-y border-border bg-gradient-to-br from-primary/5 via-background to-primary/5 py-16">
                 <div className="container px-4">
                     <div className="mx-auto max-w-6xl">
-                        <div className="mb-12">
-                            <h2 className="mb-4 text-3xl font-bold">QR Code Generation</h2>
-                            <p className="text-lg text-muted-foreground leading-relaxed">
-                                Create beautiful, branded QR codes with customization options
-                            </p>
+                        <div className="mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <h2 className="text-3xl font-bold">Custom QR Code Generator</h2>
+                                    <span className="px-2 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
+                                        NEW
+                                    </span>
+                                </div>
+                                <p className="text-lg text-muted-foreground leading-relaxed">
+                                    Create stunning, branded QR codes with advanced customization
+                                </p>
+                            </div>
+                            <a
+                                href="/qr-generator"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                            >
+                                Try QR Generator
+                                <QrCode className="h-4 w-4" />
+                            </a>
                         </div>
 
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            <Card>
-                                <CardHeader>
-                                    <QrCode className="mb-2 h-8 w-8 text-primary" />
-                                    <CardTitle>Instant QR Generation</CardTitle>
-                                    <CardDescription>
-                                        Generate QR codes instantly for any short URL or custom link
-                                    </CardDescription>
-                                </CardHeader>
-                            </Card>
-
-                            <Card>
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                                 <CardHeader>
                                     <Palette className="mb-2 h-8 w-8 text-primary" />
-                                    <CardTitle>Custom Branding</CardTitle>
+                                    <CardTitle>Custom Colors</CardTitle>
                                     <CardDescription>
-                                        Customize QR code colors and styling to match your brand
-                                        identity
+                                        Choose from 12+ color presets or create your own custom
+                                        color combinations
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
 
-                            <Card>
+                            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                                <CardHeader>
+                                    <QrCode className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Brand Logo</CardTitle>
+                                    <CardDescription>
+                                        Upload your brand logo to display in the center of your QR
+                                        code
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                                <CardHeader>
+                                    <Zap className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Multiple Sizes</CardTitle>
+                                    <CardDescription>
+                                        Generate QR codes from 64px to 2048px - perfect for any use
+                                        case
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
                                 <CardHeader>
                                     <Download className="mb-2 h-8 w-8 text-primary" />
-                                    <CardTitle>Multiple Formats</CardTitle>
+                                    <CardTitle>Export Options</CardTitle>
                                     <CardDescription>
-                                        Download QR codes in SVG, PNG, or PDF formats for any use
-                                        case
+                                        Download in PNG, SVG, JPEG, or WebP formats for any platform
                                     </CardDescription>
                                 </CardHeader>
                             </Card>

@@ -11,6 +11,7 @@ import {
     UserPlusIcon,
     LogOutIcon,
     LayoutDashboardIcon,
+    QrCodeIcon,
 } from "lucide-react";
 
 export function Navbar() {
@@ -26,6 +27,11 @@ export function Navbar() {
             name: "Features",
             link: "/features",
             icon: <StarIcon className="size-4" />,
+        },
+        {
+            name: "QR Generator",
+            link: "/qr-generator",
+            icon: <QrCodeIcon className="size-4" />,
         },
         {
             name: "Contact",

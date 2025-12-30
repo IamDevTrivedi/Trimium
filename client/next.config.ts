@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
     /* config options here */
     reactCompiler: true,
     turbopack: {
-        root: "./",
+        root: __dirname,
     },
     devIndicators: false,
     reactStrictMode: false,
