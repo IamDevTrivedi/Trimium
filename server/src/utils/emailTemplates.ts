@@ -32,7 +32,7 @@ export const emailTemplates = {
             <ul>
                 <li><strong>Browser:</strong> ${UAinfo.browser?.name || "unknown"} ${UAinfo.browser?.version || ""}</li>
                 <li><strong>Operating System:</strong> ${UAinfo.os?.name || "unknown"} ${UAinfo.os?.version || ""}</li>
-                <li><strong>Device:</strong> ${UAinfo.device?.type || "Desktop"}</li>
+                <li><strong>Device:</strong> ${UAinfo.device?.type || "unknown"}</li>
                 <li><strong>Location:</strong> ${locationData.displayName} </li>
                 <li><strong>Coordinates:</strong> ${locationData.lat}, ${locationData.lon}</li>
                 <li><strong>IP Address:</strong> ${IPAddress} </li>
@@ -59,7 +59,7 @@ export const emailTemplates = {
             <ul>
                 <li><strong>Browser:</strong> ${UAinfo.browser?.name || "unknown"} ${UAinfo.browser?.version || ""}</li>
                 <li><strong>Operating System:</strong> ${UAinfo.os?.name || "unknown"} ${UAinfo.os?.version || ""}</li>
-                <li><strong>Device:</strong> ${UAinfo.device?.type || "Desktop"}</li>
+                <li><strong>Device:</strong> ${UAinfo.device?.type || "unknown"}</li>
                 <li><strong>Location:</strong> ${locationData.displayName} </li>
                 <li><strong>Coordinates:</strong> ${locationData.lat}, ${locationData.lon}</li>
                 <li><strong>IP Address:</strong> ${IPAddress} </li>

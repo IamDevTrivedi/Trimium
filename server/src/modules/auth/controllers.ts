@@ -341,7 +341,7 @@ export const controllers = {
                 subject: "Your Password Reset OTP",
                 html: emailTemplates.sendOTPForResetPassword({
                     OTP: save.OTP,
-                    UAinfo: res.locals.ua || "unknown",
+                    UAinfo: res.locals.ua,
                     locationData: res.locals.location,
                     IPAddress: res.locals.clientIP,
                 }),

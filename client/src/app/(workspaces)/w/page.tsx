@@ -11,7 +11,7 @@ export default function WorkspacesPage() {
         <div className="flex min-h-screen flex-col max-w-5xl mx-auto my-12 px-4 py-8 bg-background text-foreground">
             <main className="flex-1 overflow-auto p-6">
                 <Tabs defaultValue="all" className="w-full">
-                    <div className="mb-6 flex items-center justify-between">
+                    <div className="mb-6 flex flex-col md:flex-row gap-2 items-center justify-between">
                         <TabsList className="h-9 bg-muted/50 p-1">
                             <TabsTrigger value="all" className="px-4 text-xs font-medium">
                                 My Workspaces

@@ -27,7 +27,7 @@ export const IPMiddleware = async (req: Request, res: Response, next: NextFuncti
     try {
         let clientIP = req.ip || "";
         if (isPrivateIP(clientIP)) {
-            clientIP = "8.8.8.8";
+            clientIP = "27.60.20.44";
         }
 
         res.locals.clientIP = clientIP;

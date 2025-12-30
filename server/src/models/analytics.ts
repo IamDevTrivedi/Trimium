@@ -75,6 +75,11 @@ const analyticsSchema = new mongoose.Schema(
             default: 0,
         },
 
+        lands: {
+            type: Number,
+            default: 0,
+        },
+
         uniqueVisitors: {
             type: [String],
             default: () => [],

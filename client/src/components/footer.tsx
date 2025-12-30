@@ -51,7 +51,7 @@ export function Footer() {
                                 About
                             </Link>
                             <Link
-                                href="/workspaces"
+                                href="/w"
                                 className="text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 Workspaces
@@ -119,7 +119,7 @@ export function Footer() {
                                 Terms of Service
                             </Link>
                             <Link
-                                href="/contact"
+                                href="/contact-us"
                                 className="text-muted-foreground transition-colors hover:text-foreground"
                             >
                                 Contact Us

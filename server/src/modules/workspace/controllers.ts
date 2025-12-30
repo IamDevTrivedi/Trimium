@@ -9,6 +9,7 @@ import { sendResponse } from "@utils/sendResponse";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
+import { displayContentInWorkspace } from "./displayContentInWorkspace";
 
 export const controllers = {
     createWorkspace: async (req: Request, res: Response) => {
@@ -633,17 +634,20 @@ export const controllers = {
                 })
             );
 
+            const displayContent = await displayContentInWorkspace(workspaceID);
+
             return sendResponse(res, {
                 success: true,
                 statusCode: StatusCodes.OK,
                 message: "Workspace details fetched successfully",
-                data: {
+                workspaceDetails: {
                     _id: existingWorkspace._id,
                     title: existingWorkspace.title,
                     description: existingWorkspace.description,
                     createdAt: existingWorkspace.createdAt,
                     members,
                 },
+                workspacePerformance: displayContent,
             });
         } catch (error) {
             logger.error("Error in getWorkspaceDetails controller:");
@@ -653,6 +657,73 @@ export const controllers = {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 message: "Internal Server Error",
+            });
+        }
+    },
+
+    workspacePermission: async (req: Request, res: Response) => {
+        try {
+            const schema = z.object({
+                workspaceID: z.string().length(24, "Invalid workspace ID"),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { workspaceID } = result.data;
+            const { userID } = res.locals;
+
+            const existingWorkspace = await Workspace.findById(workspaceID).lean();
+
+            if (!existingWorkspace) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found",
+                    data: {
+                        permission: null,
+                        partOf: false,
+                    },
+                });
+            }
+
+            const member = existingWorkspace.members.find((m) => m.userID.toString() === userID);
+
+            if (!member) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You are not a member of this workspace",
+                    data: { permission: null, partOf: false },
+                });
+            }
+
+            return sendResponse(res, {
+                success: true,
+                statusCode: StatusCodes.OK,
+                message: "Workspace permission fetched successfully",
+                data: {
+                    permission: member.permission,
+                    partOf: true,
+                },
+            });
+        } catch (error) {
+            logger.error("Error in workspacePermission controller:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Internal Server Error",
+                data: { permission: null, partOf: false },
             });
         }
     },

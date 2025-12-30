@@ -577,8 +577,11 @@ export function AccountPage() {
                                 Keep track of your account security details
                             </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-x-4 flex">
-                            <Button onClick={() => router.push("/account/login-activity")}>
+                        <CardContent className="space-x-4 gap-2 flex flex-col md:flex-row md:items-center">
+                            <Button
+                                className={"w-full md:w-auto"}
+                                onClick={() => router.push("/account/login-activity")}
+                            >
                                 Check Login Activity
                             </Button>
                             <Button

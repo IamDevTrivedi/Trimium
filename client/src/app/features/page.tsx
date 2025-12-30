@@ -1,5 +1,3 @@
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Accordion,
@@ -34,7 +32,7 @@ import {
 
 export default function FeaturesPage() {
     return (
-        <div className="flex min-h-screen flex-col">
+        <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8 my-12">
             {/* Hero Section */}
             <section className="w-full max-w-6xl mx-auto border-b border-border bg-muted/10 py-16 md:py-24">
                 <div className="container px-4">

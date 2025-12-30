@@ -13,5 +13,6 @@ router.post("/sudo-update-workspace", protectRoute, controllers.sudoUpdateWorksp
 router.post("/my-workspaces", protectRoute, controllers.getMyWorkspaces);
 router.post("/leave-workspace", protectRoute, controllers.leaveWorkspace);
 router.post("/get-workspace-details", protectRoute, controllers.getWorkspaceDetails);
+router.post("/workspace-permission", protectRoute, controllers.workspacePermission);
 
 export default router;

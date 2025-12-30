@@ -524,6 +524,19 @@ export const controllers = {
                 });
             }
 
+            const existingAnalytics = await Analytics.findOne({ shortCode: shortCode });
+            if (!existingAnalytics) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                    success: false,
+                    message: "Analytics data not found",
+                    verdict: "INVALID" as VERDICT,
+                });
+            }
+
+            existingAnalytics.lands += 1;
+            await existingAnalytics.save();
+
             const now = new Date();
 
             if (!existingURL.isActive) {
@@ -600,16 +613,6 @@ export const controllers = {
                         verdict: "PASSWORD_INCORRECT" as VERDICT,
                     });
                 }
-            }
-
-            const existingAnalytics = await Analytics.findOne({ shortCode: shortCode });
-            if (!existingAnalytics) {
-                return sendResponse(res, {
-                    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                    success: false,
-                    message: "Analytics data not found",
-                    verdict: "INVALID" as VERDICT,
-                });
             }
 
             const IPHash = sha256(res.locals.clientIP);
