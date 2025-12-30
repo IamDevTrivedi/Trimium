@@ -3,7 +3,7 @@ import { URL } from "@/models/url";
 import mongoose from "mongoose";
 
 // TODO: Cache the results for better performance ? for example cache for 3 minutes
-export const displayContentInWorkspace = async (workspaceID: string) => {
+export const getWorkspacePerformance = async (workspaceID: string) => {
     // ? Get total URLs
     const totalURLS = await Analytics.countDocuments({ workspaceID: workspaceID });
 
@@ -154,8 +154,6 @@ export const displayContentInWorkspace = async (workspaceID: string) => {
             },
         },
     ]);
-
-
 
     // ? Click-Through Rate (CTR): (total lands / total clicks) * 100
     const CTR = await Analytics.aggregate([

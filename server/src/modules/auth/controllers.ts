@@ -12,7 +12,7 @@ import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
 import { z } from "zod";
 import { NAME, OTP as OTP_REGEX, PASSWORD, USERNAME } from "@constants/regex";
-import { LoginHistory } from "@/models/loginHistory";
+import { LoginHistory } from "@models/loginHistory";
 import { emailTemplates } from "@utils/emailTemplates";
 
 const getCookieOptions = (clear = false) => {

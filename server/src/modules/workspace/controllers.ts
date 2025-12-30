@@ -1,3 +1,4 @@
+import { getWorkspacePerformance } from "@utils/getWorkspacePerformance";
 import { Invitation } from "@/models/invitation";
 import { User } from "@/models/user";
 import { Workspace } from "@/models/workspace";
@@ -9,7 +10,6 @@ import { sendResponse } from "@utils/sendResponse";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
-import { displayContentInWorkspace } from "./displayContentInWorkspace";
 
 export const controllers = {
     createWorkspace: async (req: Request, res: Response) => {
@@ -634,7 +634,7 @@ export const controllers = {
                 })
             );
 
-            const displayContent = await displayContentInWorkspace(workspaceID);
+            const workspacePerformance = await getWorkspacePerformance(workspaceID);
 
             return sendResponse(res, {
                 success: true,
@@ -647,7 +647,7 @@ export const controllers = {
                     createdAt: existingWorkspace.createdAt,
                     members,
                 },
-                workspacePerformance: displayContent,
+                workspacePerformance: workspacePerformance,
             });
         } catch (error) {
             logger.error("Error in getWorkspaceDetails controller:");
