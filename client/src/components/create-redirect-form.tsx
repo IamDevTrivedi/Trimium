@@ -43,6 +43,7 @@ type shortCodeAvailability = "available" | "unavailable" | "checking" | null;
 export function CreateRedirectForm() {
     const [errors, setErrors] = React.useState<formErrors>({});
     const [loading, setLoading] = React.useState<boolean>(false);
+    const [success, setSuccess] = React.useState<string | false>(false);
     const [shortcodeStatus, setShortcodeStatus] = React.useState<shortCodeAvailability>(null);
     const debounceTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -168,15 +169,13 @@ export function CreateRedirectForm() {
                 : undefined,
         };
 
-        console.log("Payload:", payload);
-
         try {
             setLoading(true);
             const { data: resData } = await backend.post("/api/v1/url/create-shortcode", payload);
 
             if (handleResponse(resData)) {
                 reset();
-                router.push(`/w/${workspaceID}/`);
+                setSuccess(resData.data.shortCode);
             }
         } catch (error) {
             toastError(error);
@@ -563,7 +562,14 @@ export function CreateRedirectForm() {
                     </div>
                 </CardContent>
                 <CardFooter className="flex justify-end gap-3 bg-muted/50 p-6">
-                    <Button variant="outline" onClick={reset}>
+                    <Button
+                        variant="outline"
+                        onClick={() => {
+                            reset();
+                            router.push(`/w/${workspaceID}/`);
+                            setSuccess(false);
+                        }}
+                    >
                         Cancel
                     </Button>
                     <Button onClick={handleSubmit} loading={loading}>
@@ -571,6 +577,60 @@ export function CreateRedirectForm() {
                     </Button>
                 </CardFooter>
             </Card>
+
+            {success !== false && (
+                <Card className="max-w-5xl mx-auto mt-6 border-green-500/30 bg-green-500/5 overflow-hidden">
+                    <div className="absolute top-0 right-0 h-32 w-32 -translate-y-1/2 translate-x-1/2 rounded-full bg-green-500/20 blur-3xl" />
+                    <CardHeader className="pb-3">
+                        <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500/10">
+                                <Zap className="h-5 w-5 text-green-600 dark:text-green-400" />
+                            </div>
+                            <div>
+                                <CardTitle className="text-lg text-green-700 dark:text-green-300">
+                                    Redirect Created Successfully!
+                                </CardTitle>
+                                <CardDescription>
+                                    Your new short link is ready to use
+                                </CardDescription>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center gap-3 p-3 rounded-lg bg-background/80 border border-green-500/20">
+                            <Link2 className="h-5 w-5 text-muted-foreground shrink-0" />
+                            <a
+                                href={`${config.PUBLIC_FRONTEND_URL!}/r/${success}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary font-medium hover:underline underline-offset-2 truncate"
+                            >
+                                {config.PUBLIC_FRONTEND_URL!}/r/{success}
+                            </a>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                            <Button
+                                variant="outline"
+                                className="border-green-500/30 hover:bg-green-500/10"
+                                onClick={() => {
+                                    navigator.clipboard.writeText(
+                                        `${config.PUBLIC_FRONTEND_URL!}/r/${success}`
+                                    );
+                                    Toast.success("Link copied to clipboard!");
+                                }}
+                            >
+                                Copy Link
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                onClick={() => router.push(`/w/${workspaceID}/${success}`)}
+                            >
+                                View Analytics
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
         </div>
     );
 }

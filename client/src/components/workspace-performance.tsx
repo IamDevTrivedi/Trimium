@@ -31,14 +31,7 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-import {
-    PolarAngleAxis,
-    PolarGrid,
-    Radar,
-    RadarChart,
-    ResponsiveContainer,
-    PolarRadiusAxis,
-} from "recharts";
+import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts";
 import { useParams, useRouter } from "next/navigation";
 
 interface WorkspacePerformanceProps {
@@ -280,7 +273,13 @@ export function WorkspacePerformance({
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
-                            {workspacePerformance.mostActiveHour.hour}:00
+                            {String(workspacePerformance.mostActiveHour.hour).padStart(2, "0")}:00
+                            to{" "}
+                            {String((workspacePerformance.mostActiveHour.hour + 1) % 24).padStart(
+                                2,
+                                "0"
+                            )}
+                            :00
                         </div>
                         <p className="text-xs text-muted-foreground">
                             {workspacePerformance.mostActiveHour.totalClicks.toLocaleString()} total
@@ -322,42 +321,17 @@ export function WorkspacePerformance({
                             config={deviceConfig}
                             className="mx-auto aspect-square h-[300px] w-full"
                         >
-                            <ResponsiveContainer width="100%" height="100%">
-                                <RadarChart data={deviceData} cx="50%" cy="50%" outerRadius="80%">
-                                    <PolarGrid
-                                        gridType="polygon"
-                                        stroke="#64748b"
-                                        strokeOpacity={0.3}
-                                    />
-                                    <PolarAngleAxis
-                                        dataKey="device"
-                                        tick={{ fill: "#cbd5e1", fontSize: 12, fontWeight: 500 }}
-                                    />
-                                    <PolarRadiusAxis
-                                        axisLine={false}
-                                        tick={{ fill: "#94a3b8", fontSize: 10 }}
-                                    />
-                                    <ChartTooltip
-                                        cursor={false}
-                                        content={<ChartTooltipContent />}
-                                    />
-                                    <Radar
-                                        name="Devices"
-                                        dataKey="value"
-                                        stroke="#fb923c"
-                                        fill="#fb923c"
-                                        fillOpacity={0.6}
-                                        strokeWidth={3}
-                                        dot={{
-                                            r: 5,
-                                            fill: "#fb923c",
-                                            fillOpacity: 1,
-                                            stroke: "#fff",
-                                            strokeWidth: 2,
-                                        }}
-                                    />
-                                </RadarChart>
-                            </ResponsiveContainer>
+                            <RadarChart data={deviceData}>
+                                <PolarGrid />
+                                <PolarAngleAxis dataKey="device" tick={{ fontSize: 12 }} />
+                                <Radar
+                                    dataKey="value"
+                                    stroke="hsl(30, 80%, 55%)"
+                                    fill="hsl(30, 80%, 55%)"
+                                    fillOpacity={0.5}
+                                />
+                                <ChartTooltip content={<ChartTooltipContent />} />
+                            </RadarChart>
                         </ChartContainer>
                     </CardContent>
                 </Card>
@@ -372,42 +346,17 @@ export function WorkspacePerformance({
                             config={browserConfig}
                             className="mx-auto aspect-square h-[300px] w-full"
                         >
-                            <ResponsiveContainer width="100%" height="100%">
-                                <RadarChart data={browserData} cx="50%" cy="50%" outerRadius="80%">
-                                    <PolarGrid
-                                        gridType="polygon"
-                                        stroke="#64748b"
-                                        strokeOpacity={0.3}
-                                    />
-                                    <PolarAngleAxis
-                                        dataKey="browser"
-                                        tick={{ fill: "#cbd5e1", fontSize: 12, fontWeight: 500 }}
-                                    />
-                                    <PolarRadiusAxis
-                                        axisLine={false}
-                                        tick={{ fill: "#94a3b8", fontSize: 10 }}
-                                    />
-                                    <ChartTooltip
-                                        cursor={false}
-                                        content={<ChartTooltipContent />}
-                                    />
-                                    <Radar
-                                        name="Browsers"
-                                        dataKey="value"
-                                        stroke="#60a5fa"
-                                        fill="#60a5fa"
-                                        fillOpacity={0.6}
-                                        strokeWidth={3}
-                                        dot={{
-                                            r: 5,
-                                            fill: "#60a5fa",
-                                            fillOpacity: 1,
-                                            stroke: "#fff",
-                                            strokeWidth: 2,
-                                        }}
-                                    />
-                                </RadarChart>
-                            </ResponsiveContainer>
+                            <RadarChart data={browserData}>
+                                <PolarGrid />
+                                <PolarAngleAxis dataKey="browser" tick={{ fontSize: 12 }} />
+                                <Radar
+                                    dataKey="value"
+                                    stroke="hsl(220, 70%, 50%)"
+                                    fill="hsl(220, 70%, 50%)"
+                                    fillOpacity={0.5}
+                                />
+                                <ChartTooltip content={<ChartTooltipContent />} />
+                            </RadarChart>
                         </ChartContainer>
                     </CardContent>
                 </Card>

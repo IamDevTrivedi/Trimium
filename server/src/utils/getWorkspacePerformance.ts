@@ -46,10 +46,34 @@ export const getWorkspacePerformance = async (workspaceID: string) => {
         },
         {
             $project: {
-                desktop: { $multiply: [{ $divide: ["$desktop", "$total"] }, 100] },
-                mobile: { $multiply: [{ $divide: ["$mobile", "$total"] }, 100] },
-                tablet: { $multiply: [{ $divide: ["$tablet", "$total"] }, 100] },
-                others: { $multiply: [{ $divide: ["$others", "$total"] }, 100] },
+                desktop: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$desktop", "$total"] }, 100] },
+                    ],
+                },
+                mobile: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$mobile", "$total"] }, 100] },
+                    ],
+                },
+                tablet: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$tablet", "$total"] }, 100] },
+                    ],
+                },
+                others: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$others", "$total"] }, 100] },
+                    ],
+                },
             },
         },
     ]);
@@ -82,12 +106,48 @@ export const getWorkspacePerformance = async (workspaceID: string) => {
         },
         {
             $project: {
-                chrome: { $multiply: [{ $divide: ["$chrome", "$total"] }, 100] },
-                firefox: { $multiply: [{ $divide: ["$firefox", "$total"] }, 100] },
-                safari: { $multiply: [{ $divide: ["$safari", "$total"] }, 100] },
-                edge: { $multiply: [{ $divide: ["$edge", "$total"] }, 100] },
-                opera: { $multiply: [{ $divide: ["$opera", "$total"] }, 100] },
-                others: { $multiply: [{ $divide: ["$others", "$total"] }, 100] },
+                chrome: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$chrome", "$total"] }, 100] },
+                    ],
+                },
+                firefox: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$firefox", "$total"] }, 100] },
+                    ],
+                },
+                safari: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$safari", "$total"] }, 100] },
+                    ],
+                },
+                edge: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$edge", "$total"] }, 100] },
+                    ],
+                },
+                opera: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$opera", "$total"] }, 100] },
+                    ],
+                },
+                others: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$others", "$total"] }, 100] },
+                    ],
+                },
             },
         },
     ]);
@@ -150,7 +210,13 @@ export const getWorkspacePerformance = async (workspaceID: string) => {
                 _id: 0,
                 location: "$locations.location",
                 count: "$locations.count",
-                percentage: { $multiply: [{ $divide: ["$locations.count", "$total"] }, 100] },
+                percentage: {
+                    $cond: [
+                        { $eq: ["$total", 0] },
+                        0,
+                        { $multiply: [{ $divide: ["$locations.count", "$total"] }, 100] },
+                    ],
+                },
             },
         },
     ]);

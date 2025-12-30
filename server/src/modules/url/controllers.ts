@@ -172,7 +172,6 @@ export const controllers = {
 
             type Transfer = {
                 isEnabled: boolean;
-                remainingTransfers: number;
                 maxTransfers: number;
             };
 
@@ -199,7 +198,6 @@ export const controllers = {
             if (typeof maxTransfers === "number") {
                 transfer = {
                     isEnabled: true,
-                    remainingTransfers: maxTransfers,
                     maxTransfers,
                 };
             }
@@ -422,9 +420,7 @@ export const controllers = {
 
             if (typeof maxTransfers === "number") {
                 existingURL.transfer.isEnabled = true;
-                const drift = maxTransfers - existingURL.transfer.maxTransfers;
                 existingURL.transfer.maxTransfers = maxTransfers;
-                existingURL.transfer.remainingTransfers += drift;
             }
 
             if (typeof password === "string") {
@@ -580,7 +576,7 @@ export const controllers = {
             }
 
             if (existingURL.transfer.isEnabled) {
-                if (existingURL.transfer.remainingTransfers <= 0) {
+                if (existingAnalytics.totalClicks >= existingURL.transfer.maxTransfers) {
                     return sendResponse(res, {
                         statusCode: StatusCodes.OK,
                         success: true,
@@ -620,8 +616,6 @@ export const controllers = {
             if (!existingAnalytics.uniqueVisitors.includes(IPHash)) {
                 existingAnalytics.uniqueVisitors.push(IPHash);
             }
-
-            existingURL.transfer.remainingTransfers -= 1;
 
             const currentDevice = res.locals.ua.device.type;
             let deviceType: "desktop" | "mobile" | "tablet" | "others" = "others";
@@ -708,6 +702,96 @@ export const controllers = {
                 success: false,
                 message: "Internal Server Error",
                 verdict: "INVALID" as VERDICT,
+            });
+        }
+    },
+
+    shortCodePerformance: async (req: Request, res: Response) => {
+        try {
+            const schema = z.object({
+                shortCode: z.string().regex(SHORTCODE, {
+                    error: SHORTCODE_NOTICE,
+                }),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    success: false,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { shortCode } = result.data;
+            const { userID } = res.locals;
+
+            const existingURL = await URL.findOne({ shortCode })
+                .select("-__v -_id -updatedAt")
+                .lean();
+            const existingAnalytics = await Analytics.findOne({ shortCode: shortCode })
+                .select("-__v -_id -updatedAt")
+                .lean();
+
+            if (!existingURL || !existingAnalytics) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.NOT_FOUND,
+                    success: false,
+                    message: "Shortcode not found",
+                });
+            }
+
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).lean();
+            const member = existingWorkspace?.members.find((m) => m.userID.toString() === userID);
+
+            if (!member) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.FORBIDDEN,
+                    success: false,
+                    message: "You are not a member of the workspace associated with this shortcode",
+                });
+            }
+
+            return sendResponse(res, {
+                message: "Short link performance retrieved successfully",
+                success: true,
+                statusCode: StatusCodes.OK,
+                data: {
+                    title: existingURL.title,
+                    description: existingURL.description,
+
+                    originalURL: existingURL.originalURL,
+
+                    isActive: existingURL.isActive,
+
+                    isPasswordProtected: existingURL.passwordProtect.isEnabled,
+                    transfer: existingURL.transfer,
+                    schedule: existingURL.schedule,
+
+                    ...existingAnalytics,
+                    uniqueVisitors: existingAnalytics.uniqueVisitors.length,
+                    dailyStats: existingAnalytics.dailyStats.map((ds) => {
+                        return {
+                            date: ds.date,
+                            totalClicks: ds.totalClicks,
+                            uniqueVisitors: ds.uniqueVisitors.length,
+                        };
+                    }),
+
+                    createdAt: existingURL.createdAt,
+                },
+                permission: member.permission,
+            });
+        } catch (error) {
+            logger.error("Error getting short link performance:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                success: false,
+                message: "Internal Server Error",
             });
         }
     },

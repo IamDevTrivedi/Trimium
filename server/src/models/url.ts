@@ -27,11 +27,6 @@ const transferSchema = new mongoose.Schema(
             default: false,
         },
 
-        remainingTransfers: {
-            type: Number,
-            default: -1,
-        },
-
         maxTransfers: {
             type: Number,
             default: -1,

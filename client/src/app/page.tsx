@@ -18,7 +18,7 @@ import {
 
 export default function HomePage() {
     return (
-        <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8 my-12">
+        <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8 my-12 md:my-4">
             {/* Hero Section */}
             <section className="w-full min-h-screen items-center justify-center max-w-5xl mx-auto container px-4 py-16 md:py-24 lg:py-32">
                 <div className="mx-auto flex max-w-5xl flex-col items-center text-center">

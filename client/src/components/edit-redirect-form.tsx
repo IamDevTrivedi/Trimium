@@ -45,7 +45,6 @@ interface ShortCodeInfo {
 
     transfer: {
         isEnabled: boolean;
-        remainingTransfers: number;
         maxTransfers: number;
     };
 
@@ -97,7 +96,7 @@ export function EditRedirectForm() {
                     shortCode,
                 });
 
-                if (!handleResponse(resData)) {
+                if (!handleResponse(resData, true)) {
                     router.push(`/w/${workspaceID}/`);
                 } else {
                     setShortCodeInfo(resData.data);
@@ -217,14 +216,17 @@ export function EditRedirectForm() {
                           messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
                       }
                     : undefined,
+
+            rmSchedule: !updateShortCodeInfo?.schedule.isEnabled,
+            rmPassword: !updateShortCodeInfo?.passwordProtect.isEnabled,
+            rmTransferLimit: !updateShortCodeInfo?.transfer.isEnabled,
         };
-        console.log("Update Payload:", payload);
 
         try {
             setIsSubmitting(true);
             const { data: resData } = await backend.post("/api/v1/url/edit-shortcode", payload);
             if (handleResponse(resData)) {
-                router.push(`/w/${workspaceID}/`);
+                router.push(`/w/${workspaceID}/${shortCode}`);
             }
         } catch (error) {
             toastError(error);
