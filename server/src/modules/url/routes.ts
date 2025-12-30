@@ -8,6 +8,7 @@ router.post("/create-shortcode", protectRoute, controllers.createShortCode);
 router.post("/get-shortcode-info", protectRoute, controllers.getShortCodeInfo);
 router.post("/edit-shortcode", protectRoute, controllers.editShortCode);
 router.post("/shortcode-performance", protectRoute, controllers.shortCodePerformance);
+router.post("/export-analytics", protectRoute, controllers.exportShortCodeAnalytics);
 
 router.post("/redirect", controllers.redirectToOriginalUrl);
 

@@ -40,6 +40,7 @@ import {
     Tablet,
     HelpCircle,
     Settings,
+    Download,
 } from "lucide-react";
 
 export interface ShortCodePerformanceData {
@@ -131,6 +132,32 @@ export function ShortCodePerformance() {
     const [shortCodeData, setShortCodeData] = React.useState<ShortCodePerformanceData | null>(null);
     const [permission, setPermission] = React.useState<"admin" | "member" | "viewer">("viewer");
     const [loadingData, setLoadingData] = React.useState<boolean>(true);
+    const [exporting, setExporting] = React.useState<boolean>(false);
+
+    const handleExportCSV = async () => {
+        try {
+            setExporting(true);
+            const response = await backend.post(
+                "/api/v1/url/export-analytics",
+                { shortCode: shortCode },
+                { responseType: "blob" }
+            );
+
+            const blob = new Blob([response.data], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `analytics-${shortCode}-${new Date().toISOString()}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            toastError(error);
+        } finally {
+            setExporting(false);
+        }
+    };
 
     React.useEffect(() => {
         const fetcher = async () => {
@@ -239,11 +266,25 @@ export function ShortCodePerformance() {
                 {/* Section 1: Overview */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-2xl font-bold flex items-center gap-2">
-                            <Link2 className="h-6 w-6" />
-                            {shortCodeData.title}
-                        </CardTitle>
-                        <CardDescription>{shortCodeData.description}</CardDescription>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                                    <Link2 className="h-6 w-6" />
+                                    {shortCodeData.title}
+                                </CardTitle>
+                                <CardDescription className="mt-1">{shortCodeData.description}</CardDescription>
+                            </div>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleExportCSV}
+                                disabled={exporting}
+                                loading={exporting}
+                            >
+                                <Download className="h-4 w-4 mr-2" />
+                                Export CSV
+                            </Button>
+                        </div>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         <div className="flex flex-col gap-2">
@@ -315,31 +356,27 @@ export function ShortCodePerformance() {
                         <div className="grid grid-cols-1 gap-4">
                             {/* Active Status */}
                             <div
-                                className={`relative overflow-hidden rounded-xl border p-4 transition-all hover:shadow-md ${
-                                    shortCodeData.isActive
-                                        ? "border-green-500/30 bg-green-500/5"
-                                        : "border-red-500/30 bg-red-500/5"
-                                }`}
+                                className={`relative overflow-hidden rounded-xl border p-4 transition-all hover:shadow-md ${shortCodeData.isActive
+                                    ? "border-green-500/30 bg-green-500/5"
+                                    : "border-red-500/30 bg-red-500/5"
+                                    }`}
                             >
                                 <div
-                                    className={`absolute top-0 right-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl ${
-                                        shortCodeData.isActive ? "bg-green-500/20" : "bg-red-500/20"
-                                    }`}
+                                    className={`absolute top-0 right-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl ${shortCodeData.isActive ? "bg-green-500/20" : "bg-red-500/20"
+                                        }`}
                                 />
                                 <div className="flex items-center gap-4">
                                     <div
-                                        className={`flex h-12 w-12 items-center justify-center rounded-full ${
-                                            shortCodeData.isActive
-                                                ? "bg-green-500/10"
-                                                : "bg-red-500/10"
-                                        }`}
+                                        className={`flex h-12 w-12 items-center justify-center rounded-full ${shortCodeData.isActive
+                                            ? "bg-green-500/10"
+                                            : "bg-red-500/10"
+                                            }`}
                                     >
                                         <div
-                                            className={`h-4 w-4 rounded-full ${
-                                                shortCodeData.isActive
-                                                    ? "bg-green-500 animate-pulse"
-                                                    : "bg-red-500"
-                                            }`}
+                                            className={`h-4 w-4 rounded-full ${shortCodeData.isActive
+                                                ? "bg-green-500 animate-pulse"
+                                                : "bg-red-500"
+                                                }`}
                                         />
                                     </div>
                                     <div>
@@ -347,11 +384,10 @@ export function ShortCodePerformance() {
                                             Status
                                         </p>
                                         <p
-                                            className={`text-lg font-semibold ${
-                                                shortCodeData.isActive
-                                                    ? "text-green-600 dark:text-green-400"
-                                                    : "text-red-600 dark:text-red-400"
-                                            }`}
+                                            className={`text-lg font-semibold ${shortCodeData.isActive
+                                                ? "text-green-600 dark:text-green-400"
+                                                : "text-red-600 dark:text-red-400"
+                                                }`}
                                         >
                                             {shortCodeData.isActive ? "Active" : "Inactive"}
                                         </p>
@@ -361,33 +397,29 @@ export function ShortCodePerformance() {
 
                             {/* Password Protection */}
                             <div
-                                className={`relative overflow-hidden rounded-xl border p-4 transition-all hover:shadow-md ${
-                                    shortCodeData.isPasswordProtected
-                                        ? "border-amber-500/30 bg-amber-500/5"
-                                        : "border-border bg-muted/30"
-                                }`}
+                                className={`relative overflow-hidden rounded-xl border p-4 transition-all hover:shadow-md ${shortCodeData.isPasswordProtected
+                                    ? "border-amber-500/30 bg-amber-500/5"
+                                    : "border-border bg-muted/30"
+                                    }`}
                             >
                                 <div
-                                    className={`absolute top-0 right-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl ${
-                                        shortCodeData.isPasswordProtected
-                                            ? "bg-amber-500/20"
-                                            : "bg-muted/20"
-                                    }`}
+                                    className={`absolute top-0 right-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl ${shortCodeData.isPasswordProtected
+                                        ? "bg-amber-500/20"
+                                        : "bg-muted/20"
+                                        }`}
                                 />
                                 <div className="flex items-center gap-4">
                                     <div
-                                        className={`flex h-12 w-12 items-center justify-center rounded-full ${
-                                            shortCodeData.isPasswordProtected
-                                                ? "bg-amber-500/10"
-                                                : "bg-muted/50"
-                                        }`}
+                                        className={`flex h-12 w-12 items-center justify-center rounded-full ${shortCodeData.isPasswordProtected
+                                            ? "bg-amber-500/10"
+                                            : "bg-muted/50"
+                                            }`}
                                     >
                                         <Shield
-                                            className={`h-5 w-5 ${
-                                                shortCodeData.isPasswordProtected
-                                                    ? "text-amber-600 dark:text-amber-400"
-                                                    : "text-muted-foreground"
-                                            }`}
+                                            className={`h-5 w-5 ${shortCodeData.isPasswordProtected
+                                                ? "text-amber-600 dark:text-amber-400"
+                                                : "text-muted-foreground"
+                                                }`}
                                         />
                                     </div>
                                     <div>
@@ -395,11 +427,10 @@ export function ShortCodePerformance() {
                                             Password Protection
                                         </p>
                                         <p
-                                            className={`text-lg font-semibold ${
-                                                shortCodeData.isPasswordProtected
-                                                    ? "text-amber-600 dark:text-amber-400"
-                                                    : "text-muted-foreground"
-                                            }`}
+                                            className={`text-lg font-semibold ${shortCodeData.isPasswordProtected
+                                                ? "text-amber-600 dark:text-amber-400"
+                                                : "text-muted-foreground"
+                                                }`}
                                         >
                                             {shortCodeData.isPasswordProtected
                                                 ? "Protected"
@@ -411,33 +442,29 @@ export function ShortCodePerformance() {
 
                             {/* Transfer Settings */}
                             <div
-                                className={`relative overflow-hidden rounded-xl border p-4 transition-all hover:shadow-md ${
-                                    shortCodeData.transfer.isEnabled
-                                        ? "border-blue-500/30 bg-blue-500/5"
-                                        : "border-border bg-muted/30"
-                                }`}
+                                className={`relative overflow-hidden rounded-xl border p-4 transition-all hover:shadow-md ${shortCodeData.transfer.isEnabled
+                                    ? "border-blue-500/30 bg-blue-500/5"
+                                    : "border-border bg-muted/30"
+                                    }`}
                             >
                                 <div
-                                    className={`absolute top-0 right-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl ${
-                                        shortCodeData.transfer.isEnabled
-                                            ? "bg-blue-500/20"
-                                            : "bg-muted/20"
-                                    }`}
+                                    className={`absolute top-0 right-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl ${shortCodeData.transfer.isEnabled
+                                        ? "bg-blue-500/20"
+                                        : "bg-muted/20"
+                                        }`}
                                 />
                                 <div className="flex items-center gap-4">
                                     <div
-                                        className={`flex h-12 w-12 items-center justify-center rounded-full ${
-                                            shortCodeData.transfer.isEnabled
-                                                ? "bg-blue-500/10"
-                                                : "bg-muted/50"
-                                        }`}
+                                        className={`flex h-12 w-12 items-center justify-center rounded-full ${shortCodeData.transfer.isEnabled
+                                            ? "bg-blue-500/10"
+                                            : "bg-muted/50"
+                                            }`}
                                     >
                                         <Users
-                                            className={`h-5 w-5 ${
-                                                shortCodeData.transfer.isEnabled
-                                                    ? "text-blue-600 dark:text-blue-400"
-                                                    : "text-muted-foreground"
-                                            }`}
+                                            className={`h-5 w-5 ${shortCodeData.transfer.isEnabled
+                                                ? "text-blue-600 dark:text-blue-400"
+                                                : "text-muted-foreground"
+                                                }`}
                                         />
                                     </div>
                                     <div className="flex-1">
@@ -445,11 +472,10 @@ export function ShortCodePerformance() {
                                             Transfer Limit
                                         </p>
                                         <p
-                                            className={`text-lg font-semibold ${
-                                                shortCodeData.transfer.isEnabled
-                                                    ? "text-blue-600 dark:text-blue-400"
-                                                    : "text-muted-foreground"
-                                            }`}
+                                            className={`text-lg font-semibold ${shortCodeData.transfer.isEnabled
+                                                ? "text-blue-600 dark:text-blue-400"
+                                                : "text-muted-foreground"
+                                                }`}
                                         >
                                             {shortCodeData.transfer.isEnabled
                                                 ? `${shortCodeData.transfer.maxTransfers} Max`
@@ -461,33 +487,29 @@ export function ShortCodePerformance() {
 
                             {/* Schedule Settings */}
                             <div
-                                className={`relative overflow-hidden rounded-xl border p-4 transition-all hover:shadow-md ${
-                                    shortCodeData.schedule.isEnabled
-                                        ? "border-purple-500/30 bg-purple-500/5"
-                                        : "border-border bg-muted/30"
-                                }`}
+                                className={`relative overflow-hidden rounded-xl border p-4 transition-all hover:shadow-md ${shortCodeData.schedule.isEnabled
+                                    ? "border-purple-500/30 bg-purple-500/5"
+                                    : "border-border bg-muted/30"
+                                    }`}
                             >
                                 <div
-                                    className={`absolute top-0 right-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl ${
-                                        shortCodeData.schedule.isEnabled
-                                            ? "bg-purple-500/20"
-                                            : "bg-muted/20"
-                                    }`}
+                                    className={`absolute top-0 right-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl ${shortCodeData.schedule.isEnabled
+                                        ? "bg-purple-500/20"
+                                        : "bg-muted/20"
+                                        }`}
                                 />
                                 <div className="flex items-start gap-4">
                                     <div
-                                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${
-                                            shortCodeData.schedule.isEnabled
-                                                ? "bg-purple-500/10"
-                                                : "bg-muted/50"
-                                        }`}
+                                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${shortCodeData.schedule.isEnabled
+                                            ? "bg-purple-500/10"
+                                            : "bg-muted/50"
+                                            }`}
                                     >
                                         <Clock
-                                            className={`h-5 w-5 ${
-                                                shortCodeData.schedule.isEnabled
-                                                    ? "text-purple-600 dark:text-purple-400"
-                                                    : "text-muted-foreground"
-                                            }`}
+                                            className={`h-5 w-5 ${shortCodeData.schedule.isEnabled
+                                                ? "text-purple-600 dark:text-purple-400"
+                                                : "text-muted-foreground"
+                                                }`}
                                         />
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -495,11 +517,10 @@ export function ShortCodePerformance() {
                                             Schedule
                                         </p>
                                         <p
-                                            className={`text-lg font-semibold ${
-                                                shortCodeData.schedule.isEnabled
-                                                    ? "text-purple-600 dark:text-purple-400"
-                                                    : "text-muted-foreground"
-                                            }`}
+                                            className={`text-lg font-semibold ${shortCodeData.schedule.isEnabled
+                                                ? "text-purple-600 dark:text-purple-400"
+                                                : "text-muted-foreground"
+                                                }`}
                                         >
                                             {shortCodeData.schedule.isEnabled
                                                 ? "Scheduled"

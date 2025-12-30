@@ -795,4 +795,161 @@ export const controllers = {
             });
         }
     },
+
+    exportShortCodeAnalytics: async (req: Request, res: Response) => {
+        try {
+            const schema = z.object({
+                shortCode: z.string().regex(SHORTCODE, {
+                    error: SHORTCODE_NOTICE,
+                }),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    success: false,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { shortCode } = result.data;
+            const { userID } = res.locals;
+
+            const existingURL = await URL.findOne({ shortCode })
+                .select("workspaceID title originalURL createdAt")
+                .lean();
+            const existingAnalytics = await Analytics.findOne({ shortCode: shortCode }).lean();
+
+            if (!existingURL || !existingAnalytics) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.NOT_FOUND,
+                    success: false,
+                    message: "Shortcode not found",
+                });
+            }
+
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).lean();
+            const member = existingWorkspace?.members.find((m) => m.userID.toString() === userID);
+
+            if (!member) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.FORBIDDEN,
+                    success: false,
+                    message: "You are not a member of the workspace associated with this shortcode",
+                });
+            }
+
+            // Build CSV content
+            const csvRows: string[] = [];
+
+            // Header section
+            csvRows.push("# Short Link Analytics Export");
+            csvRows.push(`# Generated: ${new Date().toISOString()}`);
+            csvRows.push(`# Short Code: ${shortCode}`);
+            csvRows.push(`# Title: ${existingURL.title}`);
+            csvRows.push(`# Original URL: ${existingURL.originalURL}`);
+            csvRows.push(`# Created At: ${existingURL.createdAt}`);
+            csvRows.push("");
+
+            // Summary section
+            csvRows.push("## Summary");
+            csvRows.push("Metric,Value");
+            csvRows.push(`Total Clicks,${existingAnalytics.totalClicks}`);
+            csvRows.push(`Total Lands,${existingAnalytics.lands}`);
+            csvRows.push(`Unique Visitors,${existingAnalytics.uniqueVisitors.length}`);
+            csvRows.push("");
+
+            // Device stats
+            csvRows.push("## Device Statistics");
+            csvRows.push("Device,Count");
+            csvRows.push(`Desktop,${existingAnalytics.deviceStats.desktop}`);
+            csvRows.push(`Mobile,${existingAnalytics.deviceStats.mobile}`);
+            csvRows.push(`Tablet,${existingAnalytics.deviceStats.tablet}`);
+            csvRows.push(`Others,${existingAnalytics.deviceStats.others}`);
+            csvRows.push("");
+
+            // Browser stats
+            csvRows.push("## Browser Statistics");
+            csvRows.push("Browser,Count");
+            csvRows.push(`Chrome,${existingAnalytics.browserStats.chrome}`);
+            csvRows.push(`Firefox,${existingAnalytics.browserStats.firefox}`);
+            csvRows.push(`Safari,${existingAnalytics.browserStats.safari}`);
+            csvRows.push(`Edge,${existingAnalytics.browserStats.edge}`);
+            csvRows.push(`Opera,${existingAnalytics.browserStats.opera}`);
+            csvRows.push(`Others,${existingAnalytics.browserStats.others}`);
+            csvRows.push("");
+
+            // Location stats
+            csvRows.push("## Location Statistics");
+            csvRows.push("Location,Count");
+            const locationStats = existingAnalytics.locationStats;
+            if (locationStats) {
+                if (locationStats instanceof Map) {
+                    locationStats.forEach((count, location) => {
+                        csvRows.push(`"${location}",${count}`);
+                    });
+                } else if (typeof locationStats === "object") {
+                    Object.entries(locationStats).forEach(([location, count]) => {
+                        csvRows.push(`"${location}",${count}`);
+                    });
+                }
+            }
+            csvRows.push("");
+
+            // Hourly stats
+            csvRows.push("## Hourly Statistics");
+            csvRows.push("Hour,Clicks");
+            existingAnalytics.hourlyStats.forEach((clicks, hour) => {
+                csvRows.push(`${String(hour).padStart(2, "0")}:00,${clicks}`);
+            });
+            csvRows.push("");
+
+            // Weekly stats
+            csvRows.push("## Weekly Statistics");
+            csvRows.push("Day,Clicks");
+            const weekDays = [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+            ];
+            existingAnalytics.weeklyStats.forEach((clicks, index) => {
+                csvRows.push(`${weekDays[index]},${clicks}`);
+            });
+            csvRows.push("");
+
+            // Daily stats
+            csvRows.push("## Daily Statistics");
+            csvRows.push("Date,Total Clicks,Unique Visitors");
+            existingAnalytics.dailyStats.forEach((ds) => {
+                const dateStr = new Date(ds.date).toISOString().split("T")[0];
+                csvRows.push(`${dateStr},${ds.totalClicks},${ds.uniqueVisitors.length}`);
+            });
+
+            const csvContent = csvRows.join("\n");
+
+            res.setHeader("Content-Type", "text/csv");
+            res.setHeader(
+                "Content-Disposition",
+                `attachment; filename="analytics-${shortCode}-${new Date().toISOString()}.csv"`
+            );
+
+            return res.status(StatusCodes.OK).send(csvContent);
+        } catch (error) {
+            logger.error("Error exporting short link analytics:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                success: false,
+                message: "Internal Server Error",
+            });
+        }
+    },
 };
