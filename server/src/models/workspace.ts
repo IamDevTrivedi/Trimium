@@ -39,6 +39,12 @@ const workspaceSchema = new mongoose.Schema(
             type: [membersSchema],
             default: [],
         },
+
+        tags: {
+            type: Map,
+            of: Number,
+            default: {},
+        },
     },
     {
         timestamps: true,

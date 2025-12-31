@@ -195,7 +195,7 @@ export function EditRedirectForm() {
 
             password:
                 updateShortCodeInfo?.passwordProtect.isEnabled &&
-                    shortCodeInfo?.passwordProtect.isEnabled === false
+                shortCodeInfo?.passwordProtect.isEnabled === false
                     ? password
                     : undefined,
             maxTransfers: updateShortCodeInfo?.transfer.isEnabled
@@ -204,18 +204,18 @@ export function EditRedirectForm() {
 
             schedule:
                 updateShortCodeInfo?.schedule.isEnabled &&
-                    (shortCodeInfo?.schedule.startAt !== updateShortCodeInfo?.schedule.startAt ||
-                        shortCodeInfo?.schedule.endAt !== updateShortCodeInfo?.schedule.endAt ||
-                        shortCodeInfo?.schedule.countdownEnabled !==
+                (shortCodeInfo?.schedule.startAt !== updateShortCodeInfo?.schedule.startAt ||
+                    shortCodeInfo?.schedule.endAt !== updateShortCodeInfo?.schedule.endAt ||
+                    shortCodeInfo?.schedule.countdownEnabled !==
                         updateShortCodeInfo?.schedule.countdownEnabled ||
-                        shortCodeInfo?.schedule.messageToDisplay !==
+                    shortCodeInfo?.schedule.messageToDisplay !==
                         updateShortCodeInfo?.schedule.messageToDisplay)
                     ? {
-                        startAt: updateShortCodeInfo?.schedule.startAt,
-                        endAt: updateShortCodeInfo?.schedule.endAt,
-                        countdownEnabled: updateShortCodeInfo?.schedule.countdownEnabled,
-                        messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
-                    }
+                          startAt: updateShortCodeInfo?.schedule.startAt,
+                          endAt: updateShortCodeInfo?.schedule.endAt,
+                          countdownEnabled: updateShortCodeInfo?.schedule.countdownEnabled,
+                          messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
+                      }
                     : undefined,
 
             rmSchedule: !updateShortCodeInfo?.schedule.isEnabled,

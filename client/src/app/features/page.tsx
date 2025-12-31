@@ -105,42 +105,10 @@ export default function FeaturesPage() {
 
                         <Card>
                             <CardHeader>
-                                <Grid3x3 className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Click Heatmap</CardTitle>
-                                <CardDescription>
-                                    Visual grid showing click patterns by hour and day of the week
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
                                 <Eye className="mb-2 h-8 w-8 text-primary" />
                                 <CardTitle>Unique vs Returning</CardTitle>
                                 <CardDescription>
                                     Distinguish between unique visitors and returning users
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <Target className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Referrer Breakdown</CardTitle>
-                                <CardDescription>
-                                    Analyze traffic sources including social media, direct, email,
-                                    and search
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <Link2 className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>UTM Tracking</CardTitle>
-                                <CardDescription>
-                                    Track utm_source and utm_medium parameters for campaign
-                                    attribution
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -253,16 +221,13 @@ export default function FeaturesPage() {
             </section>
 
             {/* QR Code Features */}
-            <section className="w-full max-w-6xl mx-auto border-y border-border bg-gradient-to-br from-primary/5 via-background to-primary/5 py-16">
+            <section className="w-full max-w-6xl mx-auto border-y border-border bg-linear-to-br from-primary/5 via-background to-primary/5 py-16">
                 <div className="container px-4">
                     <div className="mx-auto max-w-6xl">
                         <div className="mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                             <div>
                                 <div className="flex items-center gap-2 mb-2">
                                     <h2 className="text-3xl font-bold">Custom QR Code Generator</h2>
-                                    <span className="px-2 py-1 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
-                                        NEW
-                                    </span>
                                 </div>
                                 <p className="text-lg text-muted-foreground leading-relaxed">
                                     Create stunning, branded QR codes with advanced customization
@@ -278,7 +243,7 @@ export default function FeaturesPage() {
                         </div>
 
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                            <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-transparent">
                                 <CardHeader>
                                     <Palette className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Custom Colors</CardTitle>
@@ -289,7 +254,7 @@ export default function FeaturesPage() {
                                 </CardHeader>
                             </Card>
 
-                            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                            <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-transparent">
                                 <CardHeader>
                                     <QrCode className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Brand Logo</CardTitle>
@@ -300,7 +265,7 @@ export default function FeaturesPage() {
                                 </CardHeader>
                             </Card>
 
-                            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                            <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-transparent">
                                 <CardHeader>
                                     <Zap className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Multiple Sizes</CardTitle>
@@ -311,7 +276,7 @@ export default function FeaturesPage() {
                                 </CardHeader>
                             </Card>
 
-                            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent">
+                            <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-transparent">
                                 <CardHeader>
                                     <Download className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Export Options</CardTitle>
@@ -473,9 +438,6 @@ export default function FeaturesPage() {
                             <AccordionContent className="text-muted-foreground leading-relaxed">
                                 Yes! ShortlyPro offers a free forever plan with essential features
                                 including URL shortening, basic analytics, and QR code generation.
-                                We also offer premium plans with advanced features like team
-                                workspaces, custom domains, and enhanced analytics for businesses
-                                and power users.
                             </AccordionContent>
                         </AccordionItem>
 
@@ -486,8 +448,7 @@ export default function FeaturesPage() {
                             <AccordionContent className="text-muted-foreground leading-relaxed">
                                 You can create custom branded short links with your own aliases. QR
                                 codes can be customized with your brand colors and downloaded in
-                                multiple formats (SVG, PNG, PDF). Premium users can also use custom
-                                domains for their short links.
+                                multiple formats (SVG, PNG, PDF).
                             </AccordionContent>
                         </AccordionItem>
 
@@ -497,10 +458,9 @@ export default function FeaturesPage() {
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
                                 ShortlyPro provides comprehensive analytics including click
-                                tracking, geographic distribution (country and state), device and
-                                browser breakdowns, referrer sources, UTM parameter tracking, click
-                                heatmaps by hour/day, unique vs returning visitors, and exportable
-                                reports in CSV or PDF format.
+                                tracking, geographic distribution (country), device and browser
+                                breakdowns, click patterns by hour/day, unique vs returning
+                                visitors, and exportable reports in CSV format.
                             </AccordionContent>
                         </AccordionItem>
 
@@ -537,10 +497,7 @@ export default function FeaturesPage() {
                             <AccordionContent className="text-muted-foreground leading-relaxed">
                                 The link-in-bio builder lets you create beautiful landing pages
                                 perfect for social media profiles. Use our drag-and-drop editor to
-                                add links, text, images, videos, and embeds. Choose from pre-made
-                                themes, customize colors and fonts, schedule blocks to
-                                appear/disappear, and track analytics for each individual link or
-                                button on your page.
+                                add links, text, images, videos, and embeds.
                             </AccordionContent>
                         </AccordionItem>
 
@@ -551,9 +508,9 @@ export default function FeaturesPage() {
                             <AccordionContent className="text-muted-foreground leading-relaxed">
                                 Yes! ShortlyPro supports bulk URL generation through CSV template
                                 upload. Simply download our template, fill in your URLs and custom
-                                parameters, upload the file, and create hundreds of short links at
-                                once. Our system includes error handling with line numbers to help
-                                you quickly fix any issues in your bulk uploads.
+                                parameters, upload the file, and create tens of short links at once.
+                                Our system includes error handling with line numbers to help you
+                                quickly fix any issues in your bulk uploads.
                             </AccordionContent>
                         </AccordionItem>
 
@@ -580,8 +537,7 @@ export default function FeaturesPage() {
                                 credit card required. Once registered, you can immediately start
                                 creating short URLs, generating QR codes, and tracking analytics.
                                 Our intuitive interface makes it simple to get up and running in
-                                minutes. Premium features and team workspaces can be added anytime
-                                as your needs grow.
+                                minutes.
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>

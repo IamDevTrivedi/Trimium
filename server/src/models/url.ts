@@ -91,6 +91,11 @@ const urlSchema = new mongoose.Schema(
             default: "",
         },
 
+        tags: {
+            type: [String],
+            default: [],
+        },
+
         shortCode: {
             type: String,
             required: true,

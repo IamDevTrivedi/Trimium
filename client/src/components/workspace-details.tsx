@@ -552,7 +552,9 @@ export function WorkspaceDetails() {
                         <CardHeader className="flex items-center justify-between bg-muted/5">
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">
-                                    <CardTitle className="text-xl">Bulk Upload Short URLs</CardTitle>
+                                    <CardTitle className="text-xl">
+                                        Bulk Upload Short URLs
+                                    </CardTitle>
                                 </div>
                                 <CardDescription>
                                     Upload a CSV file to create multiple short URLs at once.

@@ -15,4 +15,12 @@ router.post("/leave-workspace", protectRoute, controllers.leaveWorkspace);
 router.post("/get-workspace-details", protectRoute, controllers.getWorkspaceDetails);
 router.post("/workspace-permission", protectRoute, controllers.workspacePermission);
 
+router.post("/create-tag", protectRoute, controllers.createTag);
+router.post("/update-tag", protectRoute, controllers.updateTag);
+router.post("/delete-tag", protectRoute, controllers.deleteTag);
+
+router.post("/set-tags-to-shortcode", protectRoute, controllers.setTagsToShortcode);
+
+router.post("/get-tags", protectRoute, controllers.getTags);
+
 export default router;

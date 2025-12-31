@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,12 +17,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
     Upload,
     Download,
@@ -46,7 +35,6 @@ import {
 import { backend } from "@/config/backend";
 import { Toast } from "./toast";
 import { PASSWORD, PASSWORD_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
-
 
 interface CSVRow {
     rowNumber: number;
@@ -75,7 +63,6 @@ interface UploadResult {
     shortCode?: string;
     message: string;
 }
-
 
 const CSV_COLUMNS = [
     {
@@ -139,13 +126,11 @@ const CSV_COLUMNS = [
     },
 ];
 
-
 const generateCSVTemplate = (): string => {
     const headers = CSV_COLUMNS.map((col) => col.name).join(",");
     const exampleRow = CSV_COLUMNS.map((col) => `"${col.example}"`).join(",");
     return `${headers}\n${exampleRow}`;
 };
-
 
 const downloadTemplate = () => {
     const csvContent = generateCSVTemplate();
@@ -157,7 +142,6 @@ const downloadTemplate = () => {
     link.click();
     window.URL.revokeObjectURL(url);
 };
-
 
 const parseCSV = (content: string): CSVRow[] => {
     const lines = content.split("\n").filter((line) => line.trim());
@@ -186,7 +170,6 @@ const parseCSV = (content: string): CSVRow[] => {
     return rows;
 };
 
-
 const parseCSVLine = (line: string): string[] => {
     const values: string[] = [];
     let current = "";
@@ -214,11 +197,9 @@ const parseCSVLine = (line: string): string[] => {
     return values;
 };
 
-
 const validateRow = (row: CSVRow): ValidationResult => {
     const errors: string[] = [];
     const warnings: string[] = [];
-
 
     if (!row.title) {
         errors.push("Title is required");
@@ -226,11 +207,9 @@ const validateRow = (row: CSVRow): ValidationResult => {
         errors.push("Title must be 255 characters or less");
     }
 
-
     if (row.description && row.description.length > 1024) {
         errors.push("Description must be 1024 characters or less");
     }
-
 
     if (row.shortCode) {
         if (!SHORTCODE.test(row.shortCode)) {
@@ -239,7 +218,6 @@ const validateRow = (row: CSVRow): ValidationResult => {
     } else {
         warnings.push("No short code provided - will be auto-generated");
     }
-
 
     if (!row.originalURL) {
         errors.push("Original URL is required");
@@ -254,13 +232,11 @@ const validateRow = (row: CSVRow): ValidationResult => {
         }
     }
 
-
     if (row.password) {
         if (!PASSWORD.test(row.password)) {
             errors.push(PASSWORD_NOTICE);
         }
     }
-
 
     if (row.maxTransfers) {
         const transfers = parseInt(row.maxTransfers, 10);
@@ -306,7 +282,6 @@ const validateRow = (row: CSVRow): ValidationResult => {
         }
     }
 
-
     if (row.scheduleMessage && row.scheduleMessage.length > 512) {
         errors.push("Schedule message must be 512 characters or less");
     }
@@ -338,7 +313,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
     const validCount = validationResults.filter((r) => r.isValid).length;
     const invalidCount = validationResults.filter((r) => !r.isValid).length;
 
-
     const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
         if (!selectedFile) return;
@@ -364,7 +338,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
 
             setParsedRows(rows);
 
-
             const results = rows.map(validateRow);
             setValidationResults(results);
             setShowPreview(true);
@@ -375,7 +348,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
             setIsValidating(false);
         }
     }, []);
-
 
     const checkShortCodeAvailability = async (shortCode: string): Promise<boolean> => {
         if (!shortCode) return true;
@@ -390,9 +362,7 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
         }
     };
 
-
     const uploadRow = async (row: CSVRow): Promise<UploadResult> => {
-
         if (row.shortCode) {
             const isAvailable = await checkShortCodeAvailability(row.shortCode);
             if (!isAvailable) {
@@ -403,7 +373,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
                 };
             }
         }
-
 
         const payload: any = {
             workspaceID,
@@ -462,7 +431,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
         }
     };
 
-
     const handleBulkUpload = async () => {
         const validRows = validationResults.filter((r) => r.isValid).map((r) => r.data);
 
@@ -482,7 +450,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
             results.push(result);
             setUploadResults([...results]);
             setUploadProgress(Math.round(((i + 1) / validRows.length) * 100));
-
 
             await new Promise((resolve) => setTimeout(resolve, 200));
         }
@@ -504,7 +471,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
         setIsUploading(false);
     };
 
-
     const handleReset = () => {
         setFile(null);
         setParsedRows([]);
@@ -516,7 +482,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
             fileInputRef.current.value = "";
         }
     };
-
 
     const exportResults = () => {
         if (uploadResults.length === 0) return;
@@ -653,9 +618,7 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
                     <CardContent className="py-8">
                         <div className="flex flex-col items-center justify-center gap-4">
                             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                            <p className="text-sm text-muted-foreground">
-                                Validating CSV file...
-                            </p>
+                            <p className="text-sm text-muted-foreground">Validating CSV file...</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -756,7 +719,10 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
                                                             <TooltipContent className="max-w-sm">
                                                                 <ul className="list-disc pl-4 space-y-1">
                                                                     {result.errors.map((e, i) => (
-                                                                        <li key={i} className="text-xs">
+                                                                        <li
+                                                                            key={i}
+                                                                            className="text-xs"
+                                                                        >
                                                                             {e}
                                                                         </li>
                                                                     ))}

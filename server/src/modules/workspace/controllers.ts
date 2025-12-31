@@ -10,6 +10,9 @@ import { sendResponse } from "@utils/sendResponse";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
+import { DEFAULT_TAG, TAGS_ID_RANGE } from "@/constants/tags";
+import { TAGS, TAGS_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
+import { URL } from "@/models/url";
 
 export const controllers = {
     createWorkspace: async (req: Request, res: Response) => {
@@ -724,6 +727,514 @@ export const controllers = {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 message: "Internal Server Error",
                 data: { permission: null, partOf: false },
+            });
+        }
+    },
+
+    createTag: async (req: Request, res: Response) => {
+        try {
+            const schema = z.object({
+                workspaceID: z.string().length(24, "Invalid workspace ID"),
+                tag: z.string().regex(TAGS, TAGS_NOTICE),
+                tagID: z.int().positive().max(TAGS_ID_RANGE).optional().default(DEFAULT_TAG.id),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { workspaceID, tag, tagID } = result.data;
+            const { userID } = res.locals;
+
+            const existingWorkspace = await Workspace.findById(workspaceID);
+
+            if (!existingWorkspace) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found",
+                });
+            }
+
+            const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
+
+            if (!member || member.permission === "viewer") {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You do not have permission to create tags in this workspace",
+                });
+            }
+
+            if (existingWorkspace.tags.has(tag)) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.CONFLICT,
+                    message: "Tag already exists in this workspace",
+                });
+            }
+
+            existingWorkspace.tags.set(tag, tagID);
+            await existingWorkspace.save();
+
+            return sendResponse(res, {
+                success: true,
+                statusCode: StatusCodes.CREATED,
+                message: "Tag created successfully",
+            });
+        } catch (error) {
+            logger.error("Error in createNewTag controller:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Internal Server Error",
+            });
+        }
+    },
+
+    updateTag: async (req: Request, res: Response) => {
+        try {
+            const schema = z
+                .object({
+                    workspaceID: z.string().length(24, "Invalid workspace ID"),
+                    oldTag: z.string().regex(TAGS, TAGS_NOTICE),
+                    newTag: z.string().regex(TAGS, TAGS_NOTICE).optional(),
+                    newTagID: z.number().int().positive().max(TAGS_ID_RANGE).optional(),
+                })
+                .refine(
+                    (data) => {
+                        return data.newTag || data.newTagID;
+                    },
+                    {
+                        message: "At least one of newTag or newTagID must be provided",
+                    }
+                );
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { workspaceID, oldTag, newTag, newTagID } = result.data;
+            const { userID } = res.locals;
+
+            const existingWorkspace = await Workspace.findById(workspaceID);
+
+            if (!existingWorkspace) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found",
+                });
+            }
+
+            const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
+
+            if (!member || member.permission === "viewer") {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You do not have permission to update tags in this workspace",
+                });
+            }
+
+            if (!existingWorkspace.tags.has(oldTag)) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Tag not found in this workspace",
+                });
+            }
+
+            if (!newTag && newTagID) {
+                existingWorkspace.tags.set(oldTag, newTagID);
+                await existingWorkspace.save();
+            } else if (newTag) {
+                if (existingWorkspace.tags.has(newTag)) {
+                    return sendResponse(res, {
+                        success: false,
+                        statusCode: StatusCodes.CONFLICT,
+                        message: "New tag already exists in this workspace",
+                    });
+                }
+
+                const tagValue = existingWorkspace.tags.get(oldTag)!;
+                existingWorkspace.tags.delete(oldTag);
+                existingWorkspace.tags.set(newTag, tagValue);
+
+                if (newTagID) {
+                    existingWorkspace.tags.set(newTag, newTagID);
+                }
+
+                await existingWorkspace.save();
+
+                await URL.updateMany(
+                    {
+                        workspaceID,
+                        tags: oldTag,
+                    },
+                    [
+                        {
+                            $set: {
+                                tags: {
+                                    $concatArrays: [
+                                        {
+                                            $filter: {
+                                                input: "$tags",
+                                                cond: { $ne: ["$$this", oldTag] },
+                                            },
+                                        },
+                                        [newTag],
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    {
+                        updatePipeline: true,
+                    }
+                );
+            }
+
+            return sendResponse(res, {
+                success: true,
+                statusCode: StatusCodes.OK,
+                message: "Tag updated successfully",
+            });
+        } catch (error) {
+            logger.error("Error in updateTag controller:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Internal Server Error",
+            });
+        }
+    },
+
+    deleteTag: async (req: Request, res: Response) => {
+        try {
+            const schema = z.object({
+                workspaceID: z.string().length(24, "Invalid workspace ID"),
+                tag: z.string().regex(TAGS, TAGS_NOTICE),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { workspaceID, tag } = result.data;
+            const { userID } = res.locals;
+
+            const existingWorkspace = await Workspace.findById(workspaceID);
+
+            if (!existingWorkspace) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found",
+                });
+            }
+
+            const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
+
+            if (!member || member.permission === "viewer") {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You do not have permission to delete tags in this workspace",
+                });
+            }
+
+            if (!existingWorkspace.tags.has(tag)) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Tag not found in this workspace",
+                });
+            }
+
+            existingWorkspace.tags.delete(tag);
+            await existingWorkspace.save();
+
+            await URL.updateMany({ workspaceID }, { $pull: { tags: tag } });
+
+            return sendResponse(res, {
+                success: true,
+                statusCode: StatusCodes.OK,
+                message: "Tag deleted successfully",
+            });
+        } catch (error) {
+            logger.error("Error in deleteTag controller:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Internal Server Error",
+            });
+        }
+    },
+
+    getTags: async (req: Request, res: Response) => {
+        try {
+            const schema = z
+                .object({
+                    workspaceID: z.string().length(24, "Invalid workspace ID").optional(),
+                    shortCode: z.string().regex(SHORTCODE, SHORTCODE_NOTICE).optional(),
+                })
+                .refine(
+                    (data) => {
+                        return data.workspaceID || data.shortCode;
+                    },
+                    {
+                        message: "Either workspaceID or shortCode must be provided",
+                    }
+                );
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { workspaceID, shortCode } = result.data;
+            const { userID } = res.locals;
+
+            if (workspaceID) {
+                const existingWorkspace = await Workspace.findById(workspaceID);
+
+                if (!existingWorkspace) {
+                    return sendResponse(res, {
+                        success: false,
+                        statusCode: StatusCodes.NOT_FOUND,
+                        message: "Workspace not found",
+                    });
+                }
+
+                const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
+
+                if (!member) {
+                    return sendResponse(res, {
+                        success: false,
+                        statusCode: StatusCodes.FORBIDDEN,
+                        message: "You do not have access to this workspace",
+                    });
+                }
+
+                return sendResponse(res, {
+                    success: true,
+                    statusCode: StatusCodes.OK,
+                    message: "Tags fetched successfully",
+                    data: Array.from(existingWorkspace.tags.entries()).map(([tag, tagID]) => ({
+                        tag,
+                        tagID,
+                    })),
+                });
+            } else {
+                const existingURL = await URL.findOne({
+                    shortCode: shortCode,
+                });
+
+                if (!existingURL) {
+                    return sendResponse(res, {
+                        success: false,
+                        statusCode: StatusCodes.NOT_FOUND,
+                        message: "URL not found",
+                    });
+                }
+
+                const existingWorkspace = await Workspace.findById(existingURL.workspaceID);
+
+                if (!existingWorkspace) {
+                    return sendResponse(res, {
+                        success: false,
+                        statusCode: StatusCodes.NOT_FOUND,
+                        message: "Workspace not found",
+                    });
+                }
+
+                const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
+
+                if (!member) {
+                    return sendResponse(res, {
+                        success: false,
+                        statusCode: StatusCodes.FORBIDDEN,
+                        message: "You do not have access to this workspace",
+                    });
+                }
+
+                return sendResponse(res, {
+                    success: true,
+                    statusCode: StatusCodes.OK,
+                    message: "Tags fetched successfully",
+                    data: existingURL.tags.map((tag) => {
+                        return {
+                            tag,
+                            tagID: existingWorkspace.tags.get(tag)!,
+                        };
+                    }),
+                });
+            }
+        } catch (error) {
+            logger.error("Error in getTags controller:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Internal Server Error",
+            });
+        }
+    },
+
+    setTagsToShortcode: async (req: Request, res: Response) => {
+        try {
+            const schema = z
+                .object({
+                    shortCode: z.string().regex(SHORTCODE, SHORTCODE_NOTICE),
+                    tagsToAdd: z.string().regex(TAGS, TAGS_NOTICE).array().optional(),
+                    tagsToRemove: z.string().regex(TAGS, TAGS_NOTICE).array().optional(),
+                })
+                .refine(
+                    (data) => {
+                        return data.tagsToAdd?.length || data.tagsToRemove?.length;
+                    },
+                    {
+                        message: "At least one of tagsToAdd or tagsToRemove must be provided",
+                    }
+                );
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { shortCode, tagsToAdd, tagsToRemove } = result.data;
+            const { userID } = res.locals;
+
+            const existingURL = await URL.findOne({ shortCode });
+
+            if (!existingURL) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "URL not found",
+                });
+            }
+
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID);
+
+            if (!existingWorkspace) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found",
+                });
+            }
+
+            const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
+
+            if (!member || member.permission === "viewer") {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You do not have permission to modify tags in this workspace",
+                });
+            }
+
+            const alreadyPresentTags = new Set(existingURL.tags);
+            if (typeof tagsToAdd !== "undefined") {
+                for (const tag of tagsToAdd) {
+                    if (alreadyPresentTags.has(tag)) {
+                        return sendResponse(res, {
+                            success: false,
+                            statusCode: StatusCodes.CONFLICT,
+                            message: `Tag "${tag}" already exists on this shortcode`,
+                        });
+                    } else if (existingWorkspace.tags.has(tag) === false) {
+                        return sendResponse(res, {
+                            success: false,
+                            statusCode: StatusCodes.BAD_REQUEST,
+                            message: `Tag "${tag}" does not exist in the workspace`,
+                        });
+                    } else {
+                        alreadyPresentTags.add(tag);
+                        existingURL.tags.push(tag);
+                    }
+                }
+            }
+
+            if (typeof tagsToRemove !== "undefined") {
+                for (const tag of tagsToRemove) {
+                    if (!alreadyPresentTags.has(tag)) {
+                        return sendResponse(res, {
+                            success: false,
+                            statusCode: StatusCodes.NOT_FOUND,
+                            message: `Tag "${tag}" does not exist on this shortcode`,
+                        });
+                    } else if (existingWorkspace.tags.has(tag) === false) {
+                        return sendResponse(res, {
+                            success: false,
+                            statusCode: StatusCodes.BAD_REQUEST,
+                            message: `Tag "${tag}" does not exist in the workspace`,
+                        });
+                    } else {
+                        alreadyPresentTags.delete(tag);
+                        existingURL.tags = existingURL.tags.filter((t) => t !== tag);
+                    }
+                }
+            }
+
+            await existingURL.save();
+
+            return sendResponse(res, {
+                success: true,
+                statusCode: StatusCodes.OK,
+                message: "Tags updated successfully",
+            });
+        } catch (error) {
+            logger.error("Error in setTagsToShortcode controller:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Internal Server Error",
             });
         }
     },
