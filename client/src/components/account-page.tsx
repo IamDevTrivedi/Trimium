@@ -13,6 +13,7 @@ import { backend } from "@/config/backend";
 import { handleResponse } from "@/lib/handle-response";
 import { useRouter } from "next/navigation";
 import { LoadingPage } from "./loading";
+import TopBackButton from "./top-back-button";
 
 interface FormErrors {
     firstName?: string;
@@ -279,9 +280,7 @@ export function AccountPage() {
     return (
         <>
             <div>
-                <Button variant="link" className="mb-6" onClick={() => router.back()}>
-                    &larr; Back
-                </Button>
+                <TopBackButton />
             </div>
             <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tight">My Account</h1>

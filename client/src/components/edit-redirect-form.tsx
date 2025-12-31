@@ -18,6 +18,7 @@ import { Separator } from "./ui/separator";
 import config from "@/config/env";
 import { z } from "zod";
 import { PASSWORD, PASSWORD_NOTICE } from "@/constants/regex";
+import TopBackButton from "./top-back-button";
 
 interface FormErrors {
     title?: string;
@@ -194,7 +195,7 @@ export function EditRedirectForm() {
 
             password:
                 updateShortCodeInfo?.passwordProtect.isEnabled &&
-                shortCodeInfo?.passwordProtect.isEnabled === false
+                    shortCodeInfo?.passwordProtect.isEnabled === false
                     ? password
                     : undefined,
             maxTransfers: updateShortCodeInfo?.transfer.isEnabled
@@ -203,18 +204,18 @@ export function EditRedirectForm() {
 
             schedule:
                 updateShortCodeInfo?.schedule.isEnabled &&
-                (shortCodeInfo?.schedule.startAt !== updateShortCodeInfo?.schedule.startAt ||
-                    shortCodeInfo?.schedule.endAt !== updateShortCodeInfo?.schedule.endAt ||
-                    shortCodeInfo?.schedule.countdownEnabled !==
+                    (shortCodeInfo?.schedule.startAt !== updateShortCodeInfo?.schedule.startAt ||
+                        shortCodeInfo?.schedule.endAt !== updateShortCodeInfo?.schedule.endAt ||
+                        shortCodeInfo?.schedule.countdownEnabled !==
                         updateShortCodeInfo?.schedule.countdownEnabled ||
-                    shortCodeInfo?.schedule.messageToDisplay !==
+                        shortCodeInfo?.schedule.messageToDisplay !==
                         updateShortCodeInfo?.schedule.messageToDisplay)
                     ? {
-                          startAt: updateShortCodeInfo?.schedule.startAt,
-                          endAt: updateShortCodeInfo?.schedule.endAt,
-                          countdownEnabled: updateShortCodeInfo?.schedule.countdownEnabled,
-                          messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
-                      }
+                        startAt: updateShortCodeInfo?.schedule.startAt,
+                        endAt: updateShortCodeInfo?.schedule.endAt,
+                        countdownEnabled: updateShortCodeInfo?.schedule.countdownEnabled,
+                        messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
+                    }
                     : undefined,
 
             rmSchedule: !updateShortCodeInfo?.schedule.isEnabled,
@@ -242,9 +243,7 @@ export function EditRedirectForm() {
     return (
         <div>
             <div>
-                <Button variant="link" className="mb-6" onClick={() => router.back()}>
-                    &larr; Back
-                </Button>
+                <TopBackButton />
             </div>
             <Card className="max-w-5xl mx-auto border-none shadow-none md:shadow-sm md:border">
                 <CardHeader className="space-y-1">

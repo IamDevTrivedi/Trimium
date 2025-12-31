@@ -26,6 +26,7 @@ import { backend } from "@/config/backend";
 import { Toast } from "./toast";
 import { handleResponse } from "@/lib/handle-response";
 import { useParams, useRouter } from "next/navigation";
+import TopBackButton from "./top-back-button";
 
 interface formErrors {
     title?: string;
@@ -158,14 +159,14 @@ export function CreateRedirectForm() {
             maxTransfers: isLimited ? maxTransfers : undefined,
             schedule: isScheduled
                 ? {
-                      startAt: new Date(startAt! + ":00.000Z").toISOString(),
-                      endAt: new Date(endAt! + ":00.000Z").toISOString(),
-                      countdownEnabled: showCountdown,
-                      messageToDisplay:
-                          messageToDisplay.trim().length > 0
-                              ? messageToDisplay.trim()
-                              : "This link is not yet active.",
-                  }
+                    startAt: new Date(startAt! + ":00.000Z").toISOString(),
+                    endAt: new Date(endAt! + ":00.000Z").toISOString(),
+                    countdownEnabled: showCountdown,
+                    messageToDisplay:
+                        messageToDisplay.trim().length > 0
+                            ? messageToDisplay.trim()
+                            : "This link is not yet active.",
+                }
                 : undefined,
         };
 
@@ -278,9 +279,7 @@ export function CreateRedirectForm() {
     return (
         <div>
             <div>
-                <Button variant="link" className="mb-6" onClick={() => router.back()}>
-                    &larr; Back
-                </Button>
+                <TopBackButton />
             </div>
             <Card className="max-w-5xl mx-auto border-none shadow-none md:shadow-sm md:border">
                 <CardHeader className="space-y-1">

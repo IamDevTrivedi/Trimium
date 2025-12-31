@@ -65,12 +65,14 @@ import {
     Calendar,
     CheckCircle2Icon,
     Info,
+    FileSpreadsheet,
 } from "lucide-react";
 import { format } from "date-fns";
 import { LoadingPage } from "@/components/loading";
 import { EMAIL } from "@/constants/regex";
 import { WorkspacePerformance } from "./workspace-performance";
 import { Separator } from "./ui/separator";
+import TopBackButton from "./top-back-button";
 
 interface workspaceData {
     _id: string;
@@ -288,9 +290,7 @@ export function WorkspaceDetails() {
     return (
         <div className="space-y-4 w-full max-w-5xl mx-auto">
             <div>
-                <Button variant="link" className="mb-6" onClick={() => router.back()}>
-                    &larr; Back
-                </Button>
+                <TopBackButton />
             </div>
 
             {/* Header Section */}
@@ -545,6 +545,30 @@ export function WorkspaceDetails() {
                         </div>
                     </CardHeader>
                 </Card>
+
+                {/* Bulk Upload Section */}
+                {permission !== "viewer" && (
+                    <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
+                        <CardHeader className="flex items-center justify-between bg-muted/5">
+                            <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <CardTitle className="text-xl">Bulk Upload Short URLs</CardTitle>
+                                </div>
+                                <CardDescription>
+                                    Upload a CSV file to create multiple short URLs at once.
+                                </CardDescription>
+                            </div>
+                            <div>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => router.push(`/w/${workspaceID}/bulk-upload`)}
+                                >
+                                    <FileSpreadsheet className="mr-2 h-4 w-4" /> Bulk Upload
+                                </Button>
+                            </div>
+                        </CardHeader>
+                    </Card>
+                )}
 
                 <Separator />
 

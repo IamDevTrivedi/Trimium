@@ -13,13 +13,14 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X, Users, AlertCircle } from "lucide-react";
+import { Plus, X, Users, AlertCircle, Link, ArrowLeft } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toastError } from "@/lib/toast-error";
 import { backend } from "@/config/backend";
 import { handleResponse } from "@/lib/handle-response";
 import { useRouter } from "next/navigation";
 import { EMAIL } from "@/constants/regex";
+import TopBackButton from "./top-back-button";
 
 interface Member {
     id: string;
@@ -125,9 +126,7 @@ export function CreateWorkspaceForm() {
     return (
         <div>
             <div>
-                <Button variant="link" className="mb-6" onClick={() => router.back()}>
-                    &larr; Back
-                </Button>
+                <TopBackButton />
             </div>
             {/* Header */}
             <div className="mb-8">

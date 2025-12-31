@@ -36,6 +36,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { handleResponse } from "@/lib/handle-response";
 import { useRouter } from "next/navigation";
+import TopBackButton from "./top-back-button";
 
 export interface LoginSession {
     parsedUA: {
@@ -218,9 +219,7 @@ export function LoginHistory() {
     return (
         <div className="mx-auto px-4 py-8 max-w-5xl w-full my-12">
             <div>
-                <Button variant="link" className="mb-6" onClick={() => router.back()}>
-                    &larr; Back
-                </Button>
+                <TopBackButton />
             </div>
             <div className="container">
                 <div className="space-y-6">
@@ -374,8 +373,8 @@ export function LoginHistory() {
                                                     <div className="font-medium">
                                                         {session.parsedUA.device.type
                                                             ? getDeviceTypeLabel(
-                                                                  session.parsedUA.device.type
-                                                              )
+                                                                session.parsedUA.device.type
+                                                            )
                                                             : "Unknown Device"}
                                                     </div>
                                                     <div className="text-sm text-muted-foreground">
