@@ -15,6 +15,18 @@ import {
     ArrowRight,
     Mail,
 } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Trimium - Professional URL Shortener & Link Management",
+    description:
+        "Create powerful short URLs, generate custom QR codes, and gain deep insights with advanced analytics. Trimium is perfect for businesses, marketers, and teams looking to optimize their link management.",
+    openGraph: {
+        title: "Trimium - Professional URL Shortener & Link Management",
+        description:
+            "Create powerful short URLs, generate custom QR codes, and gain deep insights with advanced analytics. Perfect for businesses, marketers, and teams.",
+    },
+};
 
 export default function HomePage() {
     return (
@@ -28,7 +40,7 @@ export default function HomePage() {
                     </div>
                     <h1 className="mb-6 text-balance text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
                         Shorten, Track, and Optimize Your Links with{" "}
-                        <span className="text-primary">ShortlyPro</span>
+                        <span className="text-primary">Trimium</span>
                     </h1>
                     <p className="mb-8 max-w-2xl text-pretty text-lg text-muted-foreground leading-relaxed md:text-xl">
                         Create powerful short URLs, generate custom QR codes, and gain deep insights

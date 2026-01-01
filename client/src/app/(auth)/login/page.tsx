@@ -11,7 +11,14 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+    title: "Login",
+    description:
+        "Sign in to your Trimium account to access your short URLs, analytics, and workspaces. Manage your links with ease.",
+};
 
 export default function Page() {
     return (

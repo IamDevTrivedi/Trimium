@@ -10,7 +10,14 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+    title: "Reset Password",
+    description:
+        "Recover access to your Trimium account. Enter your email address to receive a password reset code.",
+};
 
 export default function Page() {
     return (

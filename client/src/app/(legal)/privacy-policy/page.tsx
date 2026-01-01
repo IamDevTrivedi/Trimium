@@ -6,7 +6,8 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Privacy Policy",
-    description: "Read our privacy policy to understand how we handle your data.",
+    description:
+        "Read Trimium's Privacy Policy to understand how we collect, use, and protect your personal data. Your privacy matters to us.",
 };
 
 export default function Page() {

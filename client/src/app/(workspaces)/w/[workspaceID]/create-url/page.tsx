@@ -1,4 +1,11 @@
 import { CreateRedirectForm } from "@/components/create-redirect-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Create Short URL",
+    description:
+        "Create a new short URL in your Trimium workspace. Customize your link, set expiration, add password protection, and more.",
+};
 
 export default function Page() {
     return (

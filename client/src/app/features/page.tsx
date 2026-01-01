@@ -29,6 +29,18 @@ import {
     Eye,
     MousePointerClick,
 } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Features",
+    description:
+        "Explore Trimium's comprehensive features for URL shortening, custom QR codes, advanced analytics, team collaboration, and more. Everything you need to manage and optimize your links.",
+    openGraph: {
+        title: "Features | Trimium",
+        description:
+            "Discover all the powerful features Trimium offers for professional link management, analytics, and team collaboration.",
+    },
+};
 
 export default function FeaturesPage() {
     return (

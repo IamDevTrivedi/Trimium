@@ -1,4 +1,11 @@
 import { ShortCodePerformance } from "@/components/shortcode-performance";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Link Analytics",
+    description:
+        "View detailed analytics for your short URL. Track clicks, geographic data, devices, referrers, and performance metrics.",
+};
 
 export default function page() {
     return (

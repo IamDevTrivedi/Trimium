@@ -1,4 +1,11 @@
 import { CreateWorkspaceForm } from "@/components/create-workspace-form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Create Workspace",
+    description:
+        "Create a new Trimium workspace to organize your URLs, invite team members, and manage link campaigns together.",
+};
 
 export default function CreateWorkspacePage() {
     return (

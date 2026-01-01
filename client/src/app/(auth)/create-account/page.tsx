@@ -10,7 +10,14 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+    title: "Create Account",
+    description:
+        "Create your free Trimium account to start shortening URLs, generating QR codes, and tracking link analytics. Join thousands of users today.",
+};
 
 export default function Page() {
     return (

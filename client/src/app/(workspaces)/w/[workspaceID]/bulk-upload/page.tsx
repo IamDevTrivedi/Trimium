@@ -1,5 +1,12 @@
 import { BulkUploadURLs } from "@/components/bulk-upload-urls";
 import TopBackButton from "@/components/top-back-button";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Bulk Upload URLs",
+    description:
+        "Import multiple URLs at once to your Trimium workspace. Upload a CSV or JSON file to create short links in bulk.",
+};
 
 export default function BulkUploadPage({ params }: { params: Promise<{ workspaceID: string }> }) {
     return (

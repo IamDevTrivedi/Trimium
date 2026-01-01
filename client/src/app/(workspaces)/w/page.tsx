@@ -1,4 +1,11 @@
 import WorkspacePageTabs from "@/components/workspace-page-tabs";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Workspaces",
+    description:
+        "Manage your Trimium workspaces. Organize your short URLs, collaborate with teams, and track analytics across multiple projects.",
+};
 
 export default function WorkspacesPage() {
     return (

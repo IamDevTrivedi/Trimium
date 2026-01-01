@@ -10,7 +10,14 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+    title: "Complete Profile",
+    description:
+        "Complete your Trimium profile setup. Add your personal information to finish creating your account.",
+};
 
 export default function Page() {
     return (

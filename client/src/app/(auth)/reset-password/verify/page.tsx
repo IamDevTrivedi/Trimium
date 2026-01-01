@@ -10,8 +10,15 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+    title: "Verify Identity",
+    description:
+        "Verify your identity to reset your Trimium password. Enter the verification code sent to your email.",
+};
 
 export default function Page() {
     return (

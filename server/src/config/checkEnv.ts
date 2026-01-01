@@ -34,7 +34,8 @@ export const envSchema = z
         SENDER_EMAIL: z.email(),
 
         JWT_KEY: z.string().min(32),
-        MONO_RENDER_ACCESS_KEY: z.string().min(1),
+
+        ADMIN_EMAILS: z.array(z.email()).min(1),
     })
     .strict();
 

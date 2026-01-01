@@ -1,4 +1,11 @@
 import { AccountPage } from "@/components/account-page";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "My Account",
+    description:
+        "Manage your Trimium account settings, profile information, and preferences. View and update your personal details.",
+};
 
 export default function page() {
     return (

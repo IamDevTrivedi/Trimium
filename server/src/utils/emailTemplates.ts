@@ -100,4 +100,27 @@ export const emailTemplates = {
         </div>
         `;
     },
+
+    contactFormSubmissionReceived: ({
+        firstName,
+        lastName,
+        subject,
+        submissionID,
+    }: {
+        firstName: string;
+        lastName: string;
+        subject: string;
+        submissionID: string;
+    }) => {
+        return `
+        <div>
+            <h2>Contact Form Submission Received</h2>
+            <p>Dear ${firstName} ${lastName},</p>
+            <p>Thank you for reaching out to us. We have received your message regarding "<strong>${subject}</strong>".</p>
+            <p>Your submission ID is: <strong>${submissionID}</strong></p>
+            <p>Our team will review your message and get back to you as soon as possible.</p>
+            <p>Best regards,<br/>The Trimium Team</p>
+        </div>
+        `;
+    },
 };

@@ -7,7 +7,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
     title: "Terms of Service",
     description:
-        "Read our Terms of Service to understand the rules and regulations for using our platform.",
+        "Review Trimium's Terms of Service. Understand the rules, regulations, and guidelines for using our URL shortening and link management platform.",
 };
 
 export default function Page() {

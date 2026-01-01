@@ -4,8 +4,9 @@ import matter from "gray-matter";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "About",
-    description: "Learn more about our application, its purpose, and the team behind it.",
+    title: "About Us",
+    description:
+        "Learn about Trimium, our mission to simplify URL management, and the team behind the platform. Discover why thousands of users trust us for their link needs.",
 };
 
 export default function Page() {

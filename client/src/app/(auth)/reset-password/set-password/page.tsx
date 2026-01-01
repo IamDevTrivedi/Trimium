@@ -10,8 +10,15 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+    title: "Set New Password",
+    description:
+        "Create a new strong password for your Trimium account. Complete the password reset process.",
+};
 
 export default function Page() {
     return (

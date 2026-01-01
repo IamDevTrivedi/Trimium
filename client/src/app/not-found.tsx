@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 
 export const metadata = {
     title: "Page Not Found",
-    description: "The page you are looking for does not exist.",
+    description:
+        "The page you are looking for does not exist or may have been moved. Return to Trimium homepage.",
 };
 
 export default function Page() {
