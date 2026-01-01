@@ -123,6 +123,12 @@ const analyticsSchema = new mongoose.Schema(
             of: Number,
             default: new Map<string, number>(),
         },
+
+        referrersStats: {
+            type: Map,
+            of: Number,
+            default: new Map<string, number>(),
+        },
     },
     {
         timestamps: true,

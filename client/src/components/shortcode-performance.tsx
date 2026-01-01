@@ -42,6 +42,7 @@ import {
     HelpCircle,
     Settings,
     Download,
+    ExternalLink,
 } from "lucide-react";
 import TopBackButton from "./top-back-button";
 import { ShortcodeTags } from "./shortcode-tags";
@@ -91,6 +92,7 @@ export interface ShortCodePerformanceData {
     }[];
     hourlyStats: number[];
     weeklyStats: number[];
+    referrersStats: Record<string, number>; // ADDED: Referrers statistics, Create a section for it below
 }
 
 // Chart configurations
@@ -125,6 +127,10 @@ const weeklyChartConfig: ChartConfig = {
 
 const locationChartConfig: ChartConfig = {
     clicks: { label: "Clicks", color: "hsl(220, 70%, 50%)" },
+};
+
+const referrersChartConfig: ChartConfig = {
+    clicks: { label: "Clicks", color: "hsl(280, 65%, 60%)" },
 };
 
 export function ShortCodePerformance() {
@@ -256,6 +262,16 @@ export function ShortCodePerformance() {
     }));
     const totalLocations = Object.keys(shortCodeData.locationStats).length;
 
+    // Get top 10 referrers
+    const referrerEntries = Object.entries(shortCodeData.referrersStats)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+    const referrerData = referrerEntries.map(([referrer, clicks]) => ({
+        referrer: referrer === "direct" ? "Direct" : referrer,
+        clicks,
+    }));
+    const totalReferrers = Object.keys(shortCodeData.referrersStats).length;
+
     return (
         <div className="w-full max-w-5xl px-4 mx-auto pb-10">
             <div>
@@ -265,7 +281,7 @@ export function ShortCodePerformance() {
             <div className="w-full space-y-6">
                 <Card>
                     <CardHeader>
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
                             <div>
                                 <CardTitle className="text-2xl font-bold flex items-center gap-2">
                                     <Link2 className="h-6 w-6" />
@@ -914,6 +930,42 @@ export function ShortCodePerformance() {
                             ) : (
                                 <div className="flex items-center justify-center h-[200px] text-muted-foreground">
                                     No location data available
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <ExternalLink className="h-5 w-5" />
+                                Referrers Statistics
+                            </CardTitle>
+                            <CardDescription>
+                                Traffic from {totalReferrers} different source
+                                {totalReferrers !== 1 ? "s" : ""}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {referrerData.length > 0 ? (
+                                <div className="max-h-[400px] overflow-y-auto space-y-2">
+                                    {referrerData.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                                        >
+                                            <span className="text-sm font-medium truncate mr-4">
+                                                {item.referrer}
+                                            </span>
+                                            <Badge variant="secondary" className="shrink-0">
+                                                {item.clicks.toLocaleString()}
+                                            </Badge>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="flex items-center justify-center h-[200px] text-muted-foreground">
+                                    No referrer data available
                                 </div>
                             )}
                         </CardContent>

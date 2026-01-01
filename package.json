@@ -16,7 +16,7 @@
     "keywords": [],
     "author": "",
     "license": "UNLICENSED",
-    "packageManager": "pnpm@10.18.2",
+    "packageManager": "pnpm@10.27.0",
     "dependencies": {
         "prettier": "^3.7.4"
     },

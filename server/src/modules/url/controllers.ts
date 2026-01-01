@@ -17,6 +17,7 @@ import { generateShortcode } from "@utils/generateShortCode";
 import { Analytics } from "@/models/analytics";
 import { Workspace } from "@/models/workspace";
 import { sha256 } from "@utils/sha256";
+import { parse } from "ts-referer-parser";
 
 export const controllers = {
     isShortcodeAvailable: async (req: Request, res: Response) => {
@@ -528,6 +529,21 @@ export const controllers = {
                     message: "Analytics data not found",
                     verdict: "INVALID" as VERDICT,
                 });
+            }
+
+            const referer = req.get("Referer") ?? null;
+            const parsedReferer = referer ? await parse(referer) : null;
+
+            if (parsedReferer?.referer) {
+                const refDomain = parsedReferer.referer;
+                if (existingAnalytics.referrersStats.has(refDomain)) {
+                    existingAnalytics.referrersStats.set(
+                        refDomain,
+                        existingAnalytics.referrersStats.get(refDomain)! + 1
+                    );
+                } else {
+                    existingAnalytics.referrersStats.set(refDomain, 1);
+                }
             }
 
             existingAnalytics.lands += 1;
