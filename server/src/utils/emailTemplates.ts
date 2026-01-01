@@ -68,7 +68,10 @@ export const emailTemplates = {
                 <li><strong>IP Address:</strong> ${IPAddress}</li>
                 <li><strong>Time:</strong> ${readableDate()} at ${readableTime()}</li>
             </ul>
-            <p>If this was you, no further action is needed. If you do not recognize this activity, please secure your account immediately.</p>
+            <p>If this was you, no further action is needed.</p>
+            <p>
+                If you did not authorize this login, please secure your account immediately by changing your password and reviewing your account activity.
+            </p>
         </div>
         `;
     },
