@@ -2,14 +2,9 @@
 
 import { CustomQRCodeGenerator } from "@/components/custom-qr-generator";
 import TopBackButton from "@/components/top-back-button";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, QrCode, Sparkles } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { QrCode, Sparkles } from "lucide-react";
 
 export default function QRGeneratorPage() {
-    const router = useRouter();
-
     return (
         <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8 my-12">
             {/* Header */}

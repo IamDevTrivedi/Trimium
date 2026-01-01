@@ -14,6 +14,7 @@ import { httpLoggerMiddleware } from "@/middlewares/httpLogger";
 import { UAParserMiddleware } from "@middlewares/UAParser";
 import { IPMiddleware } from "@middlewares/IP";
 import { locationMiddleware } from "@middlewares/location";
+import { globalRateLimiter } from "@middlewares/rateLimiter";
 
 const init = async () => {
     checkEnv();
@@ -34,6 +35,7 @@ const init = async () => {
     );
     app.use(cookieParser());
 
+    app.use(globalRateLimiter);
     app.use(httpLoggerMiddleware);
     app.use(UAParserMiddleware);
     app.use(IPMiddleware);
