@@ -636,7 +636,7 @@ export function WorkspacePerformance({
                                         className="-ml-3 h-8 font-bold"
                                         onClick={() => toggleSort("totalClicks")}
                                     >
-                                        Clicks <SortIcon columnKey="totalClicks" />
+                                        Redirects <SortIcon columnKey="totalClicks" />
                                     </Button>
                                 </TableHead>
                                 <TableHead className="text-right">
