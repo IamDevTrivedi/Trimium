@@ -44,6 +44,7 @@ import {
     Download,
 } from "lucide-react";
 import TopBackButton from "./top-back-button";
+import { ShortcodeTags } from "./shortcode-tags";
 
 export interface ShortCodePerformanceData {
     title: string;
@@ -600,6 +601,13 @@ export function ShortCodePerformance() {
                         </div>
                     </CardContent>
                 </Card>
+
+                {/* Shortcode Tags Section */}
+                <ShortcodeTags
+                    shortCode={shortCodeData.shortCode}
+                    workspaceID={shortCodeData.workspaceID}
+                    permission={permission}
+                />
 
                 <div className="space-y-6">
                     <h2 className="text-xl font-semibold">Performance Metrics</h2>

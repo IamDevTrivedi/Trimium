@@ -71,6 +71,7 @@ import { format } from "date-fns";
 import { LoadingPage } from "@/components/loading";
 import { EMAIL } from "@/constants/regex";
 import { WorkspacePerformance } from "./workspace-performance";
+import { WorkspaceTags } from "./workspace-tags";
 import { Separator } from "./ui/separator";
 import TopBackButton from "./top-back-button";
 
@@ -571,6 +572,13 @@ export function WorkspaceDetails() {
                         </CardHeader>
                     </Card>
                 )}
+
+                {/* Workspace Tags Section */}
+                <WorkspaceTags
+                    workspaceID={workspaceID}
+                    isAdmin={isAdmin}
+                    permission={permission}
+                />
 
                 <Separator />
 
