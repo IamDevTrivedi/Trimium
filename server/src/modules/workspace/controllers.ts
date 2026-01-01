@@ -13,6 +13,8 @@ import { z } from "zod";
 import { DEFAULT_TAG, TAGS_ID_RANGE } from "@/constants/tags";
 import { TAGS, TAGS_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
 import { URL } from "@/models/url";
+import { Analytics } from "@/models/analytics";
+import mongoose from "mongoose";
 
 export const controllers = {
     createWorkspace: async (req: Request, res: Response) => {
@@ -469,13 +471,39 @@ export const controllers = {
             }
 
             if (deleteWorkspace) {
-                await existingWorkspace.deleteOne();
+                const session = await mongoose.startSession();
+                try {
+                    if (config.isProduction) {
+                        await session.withTransaction(async () => {
+                            await existingWorkspace.deleteOne({ session });
+                            await Invitation.deleteMany({ workspaceID }, { session });
+                            await URL.deleteMany({ workspaceID }, { session });
+                            await Analytics.deleteMany({ workspaceID }, { session });
+                        });
+                    } else {
+                        await existingWorkspace.deleteOne();
+                        await Invitation.deleteMany({ workspaceID });
+                        await URL.deleteMany({ workspaceID });
+                        await Analytics.deleteMany({ workspaceID });
+                    }
 
-                return sendResponse(res, {
-                    success: true,
-                    statusCode: StatusCodes.OK,
-                    message: "Workspace deleted successfully",
-                });
+                    return sendResponse(res, {
+                        success: true,
+                        statusCode: StatusCodes.OK,
+                        message: "Workspace deleted successfully",
+                    });
+                } catch (error) {
+                    logger.error("Error deleting workspace in transaction:");
+                    logger.error(error);
+
+                    return sendResponse(res, {
+                        success: false,
+                        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                        message: "Failed to delete workspace",
+                    });
+                } finally {
+                    await session.endSession();
+                }
             }
 
             if (title) {
