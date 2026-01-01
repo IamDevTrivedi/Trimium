@@ -5,13 +5,7 @@ import { backend } from "@/config/backend";
 import { handleResponse } from "@/lib/handle-response";
 import { toastError } from "@/lib/toast-error";
 import { Toast } from "@/components/toast";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -225,22 +219,11 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
 
     const renderTagPreview = (tagID: number, tagName: string) => {
         const tagStyle = getTagById(tagID) || DEFAULT_TAG;
-        return (
-            <Badge className={cn(tagStyle.bg, tagStyle.text, "font-medium")}>
-                {tagName}
-            </Badge>
-        );
+        return <Badge className={cn(tagStyle.bg, tagStyle.text, "font-medium")}>{tagName}</Badge>;
     };
 
-    const renderColorSelector = (
-        value: number,
-        onChange: (val: number) => void,
-        id: string
-    ) => (
-        <Select
-            value={value.toString()}
-            onValueChange={(val) => val && onChange(parseInt(val))}
-        >
+    const renderColorSelector = (value: number, onChange: (val: number) => void, id: string) => (
+        <Select value={value.toString()} onValueChange={(val) => val && onChange(parseInt(val))}>
             <SelectTrigger id={id} className="bg-muted/30">
                 <SelectValue>
                     {(() => {
@@ -316,7 +299,11 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="tagColor">Tag Color</Label>
-                                    {renderColorSelector(newTagColorID, setNewTagColorID, "tagColor")}
+                                    {renderColorSelector(
+                                        newTagColorID,
+                                        setNewTagColorID,
+                                        "tagColor"
+                                    )}
                                 </div>
                                 {newTagName && (
                                     <div className="space-y-2">
@@ -426,10 +413,12 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
                                                                     size="icon-sm"
                                                                     className="h-8 w-8 text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive"
                                                                     disabled={
-                                                                        deleteLoading === tagData.tag
+                                                                        deleteLoading ===
+                                                                        tagData.tag
                                                                     }
                                                                 >
-                                                                    {deleteLoading === tagData.tag ? (
+                                                                    {deleteLoading ===
+                                                                    tagData.tag ? (
                                                                         <Loader2 className="h-4 w-4 animate-spin" />
                                                                     ) : (
                                                                         <Trash2 className="h-4 w-4" />
@@ -482,9 +471,7 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Edit Tag</DialogTitle>
-                        <DialogDescription>
-                            Update the tag name or color theme.
-                        </DialogDescription>
+                        <DialogDescription>Update the tag name or color theme.</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="space-y-2">
@@ -499,9 +486,7 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
                                 }}
                                 className="bg-muted/30"
                             />
-                            {editError && (
-                                <p className="text-sm text-destructive">{editError}</p>
-                            )}
+                            {editError && <p className="text-sm text-destructive">{editError}</p>}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="editTagColor">Tag Color</Label>

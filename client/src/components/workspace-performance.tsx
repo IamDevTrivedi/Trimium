@@ -36,7 +36,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { backend } from "@/config/backend";
 import { handleResponse } from "@/lib/handle-response";
 import { toastError } from "@/lib/toast-error";
-import { getTagById, DEFAULT_TAG } from "@/constants/tags";
+import { getTagById } from "@/lib/tags-getter";
+import { DEFAULT_TAG } from "@/constants/tags";
 import { cn } from "@/lib/utils";
 import {
     type ChartConfig,
@@ -203,8 +204,7 @@ export function WorkspacePerformance({
             const matchesActive = activeOnly ? url.isActive : true;
             // Tag filtering: if any tags are selected, URL must have at least one of them
             const matchesTags =
-                selectedTags.size === 0 ||
-                url.tags.some((tag) => selectedTags.has(tag));
+                selectedTags.size === 0 || url.tags.some((tag) => selectedTags.has(tag));
             return matchesSearch && matchesActive && matchesTags;
         });
 
@@ -278,7 +278,7 @@ export function WorkspacePerformance({
                             {Math.round(
                                 (workspacePerformance.totalActiveURLs /
                                     workspacePerformance.totalURLS) *
-                                100
+                                    100
                             )}
                             %)
                         </p>
@@ -498,7 +498,9 @@ export function WorkspacePerformance({
                                                 {workspaceTags.map((tagData) => {
                                                     const tagStyle =
                                                         getTagById(tagData.tagID) || DEFAULT_TAG;
-                                                    const isSelected = selectedTags.has(tagData.tag);
+                                                    const isSelected = selectedTags.has(
+                                                        tagData.tag
+                                                    );
                                                     return (
                                                         <div
                                                             key={tagData.tag}
@@ -703,7 +705,7 @@ export function WorkspacePerformance({
                                                         );
                                                         const tagStyle = tagData
                                                             ? getTagById(tagData.tagID) ||
-                                                            DEFAULT_TAG
+                                                              DEFAULT_TAG
                                                             : DEFAULT_TAG;
                                                         return (
                                                             <Badge

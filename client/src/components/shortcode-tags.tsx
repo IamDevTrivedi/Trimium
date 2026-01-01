@@ -5,13 +5,7 @@ import { backend } from "@/config/backend";
 import { handleResponse } from "@/lib/handle-response";
 import { toastError } from "@/lib/toast-error";
 import { Toast } from "@/components/toast";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -107,10 +101,13 @@ export function ShortcodeTags({
     const handleAddTag = async (tagName: string) => {
         try {
             setAddLoading(tagName);
-            const { data: resData } = await backend.post("/api/v1/workspace/set-tags-to-shortcode", {
-                shortCode,
-                tagsToAdd: [tagName],
-            });
+            const { data: resData } = await backend.post(
+                "/api/v1/workspace/set-tags-to-shortcode",
+                {
+                    shortCode,
+                    tagsToAdd: [tagName],
+                }
+            );
 
             if (handleResponse(resData)) {
                 Toast.success(`Tag "${tagName}" added successfully`);
@@ -129,10 +126,13 @@ export function ShortcodeTags({
     const handleRemoveTag = async (tagName: string) => {
         try {
             setRemoveLoading(tagName);
-            const { data: resData } = await backend.post("/api/v1/workspace/set-tags-to-shortcode", {
-                shortCode,
-                tagsToRemove: [tagName],
-            });
+            const { data: resData } = await backend.post(
+                "/api/v1/workspace/set-tags-to-shortcode",
+                {
+                    shortCode,
+                    tagsToRemove: [tagName],
+                }
+            );
 
             if (handleResponse(resData)) {
                 Toast.success(`Tag "${tagName}" removed successfully`);
@@ -227,10 +227,13 @@ export function ShortcodeTags({
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="py-4">
-                                <ScrollArea className={availableTags.length > 8 ? "h-[300px]" : "h-auto"}>
+                                <ScrollArea
+                                    className={availableTags.length > 8 ? "h-[300px]" : "h-auto"}
+                                >
                                     <div className="grid gap-2">
                                         {availableTags.map((tagData) => {
-                                            const tagStyle = getTagById(tagData.tagID) || DEFAULT_TAG;
+                                            const tagStyle =
+                                                getTagById(tagData.tagID) || DEFAULT_TAG;
                                             const isAdding = addLoading === tagData.tag;
 
                                             return (
@@ -271,10 +274,7 @@ export function ShortcodeTags({
                                 </ScrollArea>
                             </div>
                             <DialogFooter>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setIsAddDialogOpen(false)}
-                                >
+                                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                                     Close
                                 </Button>
                             </DialogFooter>
