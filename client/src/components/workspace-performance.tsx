@@ -11,6 +11,11 @@ import {
     Search,
     ArrowUpDown,
     ExternalLink,
+    Tag,
+    Filter,
+    Loader2,
+    X,
+    ChevronDown,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -25,6 +30,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { backend } from "@/config/backend";
+import { handleResponse } from "@/lib/handle-response";
+import { toastError } from "@/lib/toast-error";
+import { getTagById, DEFAULT_TAG } from "@/constants/tags";
+import { cn } from "@/lib/utils";
 import {
     type ChartConfig,
     ChartContainer,
@@ -77,6 +90,7 @@ interface WorkspacePerformanceProps {
         totalClicks: number;
         lands: number;
         uniqueVisitors: number;
+        tags: string[]; // ADDED: to include tags
     }[];
 }
 
@@ -92,10 +106,57 @@ export function WorkspacePerformance({
         direction: "asc" | "desc";
     } | null>(null);
 
+    // Tag filtering state
+    const [workspaceTags, setWorkspaceTags] = React.useState<{ tag: string; tagID: number }[]>([]);
+    const [selectedTags, setSelectedTags] = React.useState<Set<string>>(new Set());
+    const [tagsLoading, setTagsLoading] = React.useState(false);
+    const [isTagFilterOpen, setIsTagFilterOpen] = React.useState(false);
+
     const router = useRouter();
     const params = useParams();
     const { workspaceID } = params;
-    console.log(workspaceID);
+
+    // Fetch workspace tags when filter dropdown opens
+    const fetchWorkspaceTags = React.useCallback(async () => {
+        if (!workspaceID) return;
+        try {
+            setTagsLoading(true);
+            const { data: resData } = await backend.post("/api/v1/workspace/get-tags", {
+                workspaceID,
+            });
+
+            if (handleResponse(resData, true)) {
+                setWorkspaceTags(resData.data || []);
+            }
+        } catch (error) {
+            toastError(error);
+        } finally {
+            setTagsLoading(false);
+        }
+    }, [workspaceID]);
+
+    // Fetch tags when popover opens
+    React.useEffect(() => {
+        if (isTagFilterOpen) {
+            fetchWorkspaceTags();
+        }
+    }, [isTagFilterOpen, fetchWorkspaceTags]);
+
+    const toggleTagSelection = (tagName: string) => {
+        setSelectedTags((prev) => {
+            const newSet = new Set(prev);
+            if (newSet.has(tagName)) {
+                newSet.delete(tagName);
+            } else {
+                newSet.add(tagName);
+            }
+            return newSet;
+        });
+    };
+
+    const clearTagFilters = () => {
+        setSelectedTags(new Set());
+    };
 
     const deviceData = [
         { device: "Desktop", value: workspacePerformance.deviceStats.desktop },
@@ -140,7 +201,11 @@ export function WorkspacePerformance({
                 url.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 url.shortCode.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesActive = activeOnly ? url.isActive : true;
-            return matchesSearch && matchesActive;
+            // Tag filtering: if any tags are selected, URL must have at least one of them
+            const matchesTags =
+                selectedTags.size === 0 ||
+                url.tags.some((tag) => selectedTags.has(tag));
+            return matchesSearch && matchesActive && matchesTags;
         });
 
         if (sortConfig) {
@@ -166,7 +231,7 @@ export function WorkspacePerformance({
         }
 
         return result;
-    }, [workspacePerformance.allURLsWithTitle, searchQuery, activeOnly, sortConfig]);
+    }, [workspacePerformance.allURLsWithTitle, searchQuery, activeOnly, sortConfig, selectedTags]);
 
     type SortKey = "title" | "shortCode" | "totalClicks" | "lands" | "uniqueVisitors";
 
@@ -213,7 +278,7 @@ export function WorkspacePerformance({
                             {Math.round(
                                 (workspacePerformance.totalActiveURLs /
                                     workspacePerformance.totalURLS) *
-                                    100
+                                100
                             )}
                             %)
                         </p>
@@ -365,7 +430,7 @@ export function WorkspacePerformance({
             {/* URL Management Table */}
             <Card className="shadow-sm border-none bg-muted/30">
                 <CardHeader className="px-6">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex flex-col gap-4">
                         <div>
                             <CardTitle className="text-lg font-semibold">URL Inventory</CardTitle>
                             <CardDescription>
@@ -373,6 +438,104 @@ export function WorkspacePerformance({
                             </CardDescription>
                         </div>
                         <div className="flex items-center gap-3">
+                            {/* Tag Filter Dropdown */}
+                            <Popover open={isTagFilterOpen} onOpenChange={setIsTagFilterOpen}>
+                                <PopoverTrigger>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className={cn(
+                                            "h-9 gap-2",
+                                            selectedTags.size > 0 && "border-primary"
+                                        )}
+                                    >
+                                        <Filter className="h-4 w-4 mr-2" />
+                                        Tags
+                                        {selectedTags.size > 0 && (
+                                            <Badge
+                                                variant="secondary"
+                                                className="ml-1 h-5 px-1.5 text-xs"
+                                            >
+                                                {selectedTags.size}
+                                            </Badge>
+                                        )}
+                                        <ChevronDown className="h-4 w-4 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[250px] p-0" align="end">
+                                    <div className="p-3 border-b">
+                                        <div className="flex items-center justify-between">
+                                            <h4 className="text-sm font-semibold flex items-center gap-2">
+                                                <Tag className="h-4 w-4" />
+                                                Filter by Tags
+                                            </h4>
+                                            {selectedTags.size > 0 && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-6 px-2 text-xs"
+                                                    onClick={clearTagFilters}
+                                                >
+                                                    Clear
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <ScrollArea className="max-h-[250px]">
+                                        {tagsLoading ? (
+                                            <div className="flex items-center justify-center py-6">
+                                                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                                            </div>
+                                        ) : workspaceTags.length === 0 ? (
+                                            <div className="flex flex-col items-center justify-center py-6 text-center">
+                                                <Tag className="h-8 w-8 text-muted-foreground/50 mb-2" />
+                                                <p className="text-sm text-muted-foreground">
+                                                    No tags in workspace
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            <div className="p-2 space-y-1">
+                                                {workspaceTags.map((tagData) => {
+                                                    const tagStyle =
+                                                        getTagById(tagData.tagID) || DEFAULT_TAG;
+                                                    const isSelected = selectedTags.has(tagData.tag);
+                                                    return (
+                                                        <div
+                                                            key={tagData.tag}
+                                                            className={cn(
+                                                                "flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors",
+                                                                isSelected
+                                                                    ? "bg-primary/10"
+                                                                    : "hover:bg-muted"
+                                                            )}
+                                                            onClick={() =>
+                                                                toggleTagSelection(tagData.tag)
+                                                            }
+                                                        >
+                                                            <Checkbox
+                                                                checked={isSelected}
+                                                                onCheckedChange={() =>
+                                                                    toggleTagSelection(tagData.tag)
+                                                                }
+                                                            />
+                                                            <Badge
+                                                                className={cn(
+                                                                    tagStyle.bg,
+                                                                    tagStyle.text,
+                                                                    "font-medium"
+                                                                )}
+                                                            >
+                                                                {tagData.tag}
+                                                            </Badge>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </ScrollArea>
+                                </PopoverContent>
+                            </Popover>
+
                             <div className="flex items-center space-x-2 mr-2">
                                 <Switch
                                     id="active-toggle"
@@ -398,6 +561,45 @@ export function WorkspacePerformance({
                             </div>
                         </div>
                     </div>
+
+                    {/* Selected Tags Display */}
+                    {selectedTags.size > 0 && (
+                        <div className="flex items-center gap-2 mt-3 flex-wrap">
+                            <span className="text-xs text-muted-foreground">Filtering by:</span>
+                            {Array.from(selectedTags).map((tagName) => {
+                                const tagData = workspaceTags.find((t) => t.tag === tagName);
+                                const tagStyle = tagData
+                                    ? getTagById(tagData.tagID) || DEFAULT_TAG
+                                    : DEFAULT_TAG;
+                                return (
+                                    <Badge
+                                        key={tagName}
+                                        className={cn(
+                                            tagStyle.bg,
+                                            tagStyle.text,
+                                            "font-medium pr-1 flex items-center gap-1"
+                                        )}
+                                    >
+                                        {tagName}
+                                        <button
+                                            className="ml-1 p-0.5 rounded-full hover:bg-black/20 transition-colors"
+                                            onClick={() => toggleTagSelection(tagName)}
+                                        >
+                                            <X className="h-3 w-3" />
+                                        </button>
+                                    </Badge>
+                                );
+                            })}
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 px-2 text-xs text-muted-foreground"
+                                onClick={clearTagFilters}
+                            >
+                                Clear all
+                            </Button>
+                        </div>
+                    )}
                 </CardHeader>
                 <CardContent className="px-6 py-0 border-t">
                     <Table>
@@ -424,6 +626,7 @@ export function WorkspacePerformance({
                                     </Button>
                                 </TableHead>
                                 <TableHead>Status</TableHead>
+                                <TableHead>Tags</TableHead>
                                 <TableHead className="text-right">
                                     <Button
                                         variant="ghost"
@@ -491,6 +694,45 @@ export function WorkspacePerformance({
                                                 </Badge>
                                             )}
                                         </TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                                {url.tags.length > 0 ? (
+                                                    url.tags.slice(0, 3).map((tagName) => {
+                                                        const tagData = workspaceTags.find(
+                                                            (t) => t.tag === tagName
+                                                        );
+                                                        const tagStyle = tagData
+                                                            ? getTagById(tagData.tagID) ||
+                                                            DEFAULT_TAG
+                                                            : DEFAULT_TAG;
+                                                        return (
+                                                            <Badge
+                                                                key={tagName}
+                                                                className={cn(
+                                                                    tagStyle.bg,
+                                                                    tagStyle.text,
+                                                                    "font-medium text-[10px] h-5 px-1.5"
+                                                                )}
+                                                            >
+                                                                {tagName}
+                                                            </Badge>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <span className="text-xs text-muted-foreground">
+                                                        —
+                                                    </span>
+                                                )}
+                                                {url.tags.length > 3 && (
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="text-[10px] h-5 px-1.5"
+                                                    >
+                                                        +{url.tags.length - 3}
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                        </TableCell>
                                         <TableCell className="text-right font-semibold">
                                             {url.totalClicks.toLocaleString()}
                                         </TableCell>
@@ -519,7 +761,7 @@ export function WorkspacePerformance({
                             ) : (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={7}
+                                        colSpan={8}
                                         className="h-32 text-center text-muted-foreground"
                                     >
                                         No links found matching your search.

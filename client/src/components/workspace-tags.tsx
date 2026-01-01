@@ -53,7 +53,8 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Plus, Trash2, Pencil, Tag, Loader2 } from "lucide-react";
-import { TAGS, getTagById, DEFAULT_TAG, ITAG } from "@/constants/tags";
+import { TAGS, DEFAULT_TAG, ITAG } from "@/constants/tags";
+import { getTagById } from "@/lib/tags-getter";
 import { cn } from "@/lib/utils";
 
 interface WorkspaceTag {

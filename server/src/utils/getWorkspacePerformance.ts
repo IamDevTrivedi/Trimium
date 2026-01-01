@@ -372,6 +372,7 @@ export const getWorkspacePerformance = async (workspaceID: string) => {
                 {
                     title: 1,
                     isActive: 1,
+                    tags: 1,
                     _id: 0,
                 }
             ).lean();

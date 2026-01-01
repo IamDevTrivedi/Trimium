@@ -36,7 +36,8 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Plus, Trash2, Tag, Loader2, X } from "lucide-react";
-import { getTagById, DEFAULT_TAG } from "@/constants/tags";
+import { DEFAULT_TAG } from "@/constants/tags";
+import { getTagById } from "@/lib/tags-getter";
 import { cn } from "@/lib/utils";
 
 interface WorkspaceTag {
