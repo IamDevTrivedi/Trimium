@@ -1,4 +1,0 @@
-=> **link-in-bio builder**
-	> drag-and-drop block editor (links, text, images)
-	> 5-10 pre-made themes with live preview
-	> custom theme colors
