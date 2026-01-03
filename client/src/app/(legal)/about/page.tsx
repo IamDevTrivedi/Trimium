@@ -7,6 +7,12 @@ export const metadata: Metadata = {
     title: "About Us",
     description:
         "Learn about Trimium, our mission to simplify URL management, and the team behind the platform. Discover why thousands of users trust us for their link needs.",
+    openGraph: {
+        title: "About Us | Trimium",
+        description:
+            "Learn about Trimium, our mission to simplify URL management, and the team behind the platform.",
+        images: ["/og-about.png"],
+    },
 };
 
 export default function Page() {

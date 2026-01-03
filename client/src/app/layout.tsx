@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
     subsets: ["latin"],
 });
 
-const siteUrl = config.PUBLIC_FRONTEND_URL || "https://trimium.com";
+const siteUrl = config.PUBLIC_FRONTEND_URL;
 
 export const metadata: Metadata = {
     title: {
@@ -47,12 +47,14 @@ export const metadata: Metadata = {
         title: "Trimium - Professional URL Shortener & Link Management",
         description:
             "Shorten, track, and optimize your links with Trimium. Create powerful short URLs, generate custom QR codes, and gain deep insights with advanced analytics.",
+        images: ["/og-home.png"],
     },
     twitter: {
         card: "summary_large_image",
         title: "Trimium - Professional URL Shortener & Link Management",
         description:
             "Shorten, track, and optimize your links with Trimium. Create powerful short URLs, generate custom QR codes, and gain deep insights with advanced analytics.",
+        images: ["/og-home.png"],
     },
     robots: {
         index: true,

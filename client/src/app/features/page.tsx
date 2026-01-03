@@ -39,6 +39,7 @@ export const metadata: Metadata = {
         title: "Features | Trimium",
         description:
             "Discover all the powerful features Trimium offers for professional link management, analytics, and team collaboration.",
+        images: ["/og-features.png"],
     },
 };
 

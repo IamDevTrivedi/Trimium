@@ -17,10 +17,7 @@ export function Footer() {
                     {/* Brand Section */}
                     <div className="flex flex-col gap-4">
                         <Link href="/" className="flex items-center gap-2">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                                <Link2 className="h-5 w-5 text-primary-foreground" />
-                            </div>
-                            <span className="text-xl font-semibold">ShortlyPro</span>
+                            <span className="text-xl font-semibold">Trimium</span>
                         </Link>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                             Professional URL shortening and QR code generation service with advanced

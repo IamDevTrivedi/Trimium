@@ -64,8 +64,6 @@ interface ShortCodeInfo {
     __v: number;
 }
 
-
-
 export function EditRedirectForm() {
     const [shortCodeInfo, setShortCodeInfo] = React.useState<ShortCodeInfo | null>(null);
     const [updateShortCodeInfo, setUpdateShortCodeInfo] = React.useState<ShortCodeInfo | null>(
@@ -193,7 +191,7 @@ export function EditRedirectForm() {
 
             password:
                 updateShortCodeInfo?.passwordProtect.isEnabled &&
-                    shortCodeInfo?.passwordProtect.isEnabled === false
+                shortCodeInfo?.passwordProtect.isEnabled === false
                     ? password
                     : undefined,
             maxTransfers: updateShortCodeInfo?.transfer.isEnabled
@@ -202,18 +200,18 @@ export function EditRedirectForm() {
 
             schedule:
                 updateShortCodeInfo?.schedule.isEnabled &&
-                    (shortCodeInfo?.schedule.startAt !== updateShortCodeInfo?.schedule.startAt ||
-                        shortCodeInfo?.schedule.endAt !== updateShortCodeInfo?.schedule.endAt ||
-                        shortCodeInfo?.schedule.countdownEnabled !==
+                (shortCodeInfo?.schedule.startAt !== updateShortCodeInfo?.schedule.startAt ||
+                    shortCodeInfo?.schedule.endAt !== updateShortCodeInfo?.schedule.endAt ||
+                    shortCodeInfo?.schedule.countdownEnabled !==
                         updateShortCodeInfo?.schedule.countdownEnabled ||
-                        shortCodeInfo?.schedule.messageToDisplay !==
+                    shortCodeInfo?.schedule.messageToDisplay !==
                         updateShortCodeInfo?.schedule.messageToDisplay)
                     ? {
-                        startAt: updateShortCodeInfo?.schedule.startAt,
-                        endAt: updateShortCodeInfo?.schedule.endAt,
-                        countdownEnabled: updateShortCodeInfo?.schedule.countdownEnabled,
-                        messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
-                    }
+                          startAt: updateShortCodeInfo?.schedule.startAt,
+                          endAt: updateShortCodeInfo?.schedule.endAt,
+                          countdownEnabled: updateShortCodeInfo?.schedule.countdownEnabled,
+                          messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
+                      }
                     : undefined,
 
             rmSchedule: !updateShortCodeInfo?.schedule.isEnabled,
@@ -506,7 +504,9 @@ export function EditRedirectForm() {
                                         type="datetime-local"
                                         className="pl-9"
                                         disabled={!updateShortCodeInfo?.schedule.isEnabled}
-                                        value={numberToDatetimeLocal(updateShortCodeInfo?.schedule.startAt)}
+                                        value={numberToDatetimeLocal(
+                                            updateShortCodeInfo?.schedule.startAt
+                                        )}
                                         onChange={(e) => {
                                             const target = e.target.value;
                                             setUpdateShortCodeInfo({
@@ -534,7 +534,9 @@ export function EditRedirectForm() {
                                         type="datetime-local"
                                         className="pl-9"
                                         disabled={!updateShortCodeInfo?.schedule.isEnabled}
-                                        value={numberToDatetimeLocal(updateShortCodeInfo?.schedule.endAt)}
+                                        value={numberToDatetimeLocal(
+                                            updateShortCodeInfo?.schedule.endAt
+                                        )}
                                         onChange={(e) => {
                                             const target = e.target.value;
 

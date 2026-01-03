@@ -8,6 +8,7 @@ export const metadata: Metadata = {
         title: "QR Code Generator | Trimium",
         description:
             "Create stunning, branded QR codes for your business. Customize colors, add logos, and download in multiple formats.",
+        images: ["/og-qr-generator.png"],
     },
 };
 

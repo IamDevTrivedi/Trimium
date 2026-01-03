@@ -25,6 +25,7 @@ export const metadata: Metadata = {
         title: "Trimium - Professional URL Shortener & Link Management",
         description:
             "Create powerful short URLs, generate custom QR codes, and gain deep insights with advanced analytics. Perfect for businesses, marketers, and teams.",
+        images: ["/og-home.png"],
     },
 };
 
@@ -74,7 +75,6 @@ export default function HomePage() {
             <section className="w-full max-w-6xl mx-auto border-y border-border py-12">
                 <div className="container px-4">
                     <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
-
                         <Card className="border-2 transition-all">
                             <CardContent className="p-6">
                                 <div className="flex items-start gap-4">
@@ -130,8 +130,6 @@ export default function HomePage() {
                                 </div>
                             </CardContent>
                         </Card>
-
-
                     </div>
                 </div>
             </section>

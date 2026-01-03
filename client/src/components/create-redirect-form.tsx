@@ -159,14 +159,14 @@ export function CreateRedirectForm() {
             maxTransfers: isLimited ? maxTransfers : undefined,
             schedule: isScheduled
                 ? {
-                    startAt: new Date(startAt!).getTime(),
-                    endAt: new Date(endAt!).getTime(),
-                    countdownEnabled: showCountdown,
-                    messageToDisplay:
-                        messageToDisplay.trim().length > 0
-                            ? messageToDisplay.trim()
-                            : "This link is not yet active.",
-                }
+                      startAt: new Date(startAt!).getTime(),
+                      endAt: new Date(endAt!).getTime(),
+                      countdownEnabled: showCountdown,
+                      messageToDisplay:
+                          messageToDisplay.trim().length > 0
+                              ? messageToDisplay.trim()
+                              : "This link is not yet active.",
+                  }
                 : undefined,
         };
 
