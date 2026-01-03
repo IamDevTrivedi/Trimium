@@ -1,11 +1,4 @@
-import {
-    PASSWORD,
-    PASSWORD_NOTICE,
-    SHORTCODE,
-    SHORTCODE_NOTICE,
-    UTC_DATE,
-    UTC_DATE_NOTICE,
-} from "@/constants/regex";
+import { PASSWORD, PASSWORD_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
 import { URL } from "@/models/url";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
@@ -97,8 +90,8 @@ export const controllers = {
 
                 schedule: z
                     .object({
-                        startAt: z.string().regex(UTC_DATE, UTC_DATE_NOTICE),
-                        endAt: z.string().regex(UTC_DATE, UTC_DATE_NOTICE),
+                        startAt: z.int(),
+                        endAt: z.int(),
                         countdownEnabled: z.boolean(),
                         messageToDisplay: z
                             .string()
@@ -107,11 +100,13 @@ export const controllers = {
                             .default("This link is not yet active."),
                     })
                     .refine((data) => {
-                        const now = new Date();
-                        if (new Date(data.startAt) < now || new Date(data.endAt) < now) {
+                        const now = Date.now();
+
+                        if (data.startAt < now || data.endAt < now) {
                             return false;
                         }
-                        return new Date(data.startAt) < new Date(data.endAt);
+
+                        return data.startAt < data.endAt;
                     })
                     .optional(),
             });
@@ -178,8 +173,8 @@ export const controllers = {
 
             type Schedule = {
                 isEnabled: boolean;
-                startAt: Date;
-                endAt: Date;
+                startAt: number;
+                endAt: number;
                 countdownEnabled: boolean;
                 messageToDisplay: string;
             };
@@ -206,8 +201,8 @@ export const controllers = {
             if (typeof schedule === "object") {
                 scheduleObj = {
                     isEnabled: true,
-                    startAt: new Date(schedule.startAt),
-                    endAt: new Date(schedule.endAt),
+                    startAt: schedule.startAt,
+                    endAt: schedule.endAt,
                     countdownEnabled: schedule.countdownEnabled,
                     messageToDisplay: schedule.messageToDisplay,
                 };
@@ -336,17 +331,19 @@ export const controllers = {
 
                 schedule: z
                     .object({
-                        startAt: z.string().regex(UTC_DATE, UTC_DATE_NOTICE),
-                        endAt: z.string().regex(UTC_DATE, UTC_DATE_NOTICE),
+                        startAt: z.int(),
+                        endAt: z.int(),
                         countdownEnabled: z.boolean(),
                         messageToDisplay: z.string().max(512).optional(),
                     })
                     .refine((data) => {
-                        const now = new Date();
-                        if (new Date(data.startAt) < now || new Date(data.endAt) < now) {
+                        const now = Date.now();
+
+                        if (data.startAt < now || data.endAt < now) {
                             return false;
                         }
-                        return new Date(data.startAt) < new Date(data.endAt);
+
+                        return data.startAt < data.endAt;
                     })
                     .optional(),
 
@@ -432,8 +429,8 @@ export const controllers = {
 
             if (typeof schedule === "object") {
                 existingURL.schedule.isEnabled = true;
-                existingURL.schedule.startAt = new Date(schedule.startAt);
-                existingURL.schedule.endAt = new Date(schedule.endAt);
+                existingURL.schedule.startAt = schedule.startAt;
+                existingURL.schedule.endAt = schedule.endAt;
                 existingURL.schedule.countdownEnabled = schedule.countdownEnabled;
                 if (schedule.messageToDisplay) {
                     existingURL.schedule.messageToDisplay = schedule.messageToDisplay;
@@ -561,7 +558,7 @@ export const controllers = {
             }
 
             if (existingURL.schedule.isEnabled) {
-                if (now < existingURL.schedule.startAt) {
+                if (now.getTime() < existingURL.schedule.startAt) {
                     if (existingURL.schedule.countdownEnabled) {
                         return sendResponse(res, {
                             statusCode: StatusCodes.OK,
@@ -581,7 +578,7 @@ export const controllers = {
                             verdict: "INVALID" as VERDICT,
                         });
                     }
-                } else if (now > existingURL.schedule.endAt) {
+                } else if (now.getTime() > existingURL.schedule.endAt) {
                     return sendResponse(res, {
                         statusCode: StatusCodes.OK,
                         success: true,
@@ -665,19 +662,28 @@ export const controllers = {
 
             existingAnalytics.browserStats[browserType] += 1;
 
-            const currentToday = now.toISOString().split("T")[0];
-            const dailyStat = existingAnalytics.dailyStats.find(
-                (ds) => ds.date.toISOString().split("T")[0] === currentToday
-            );
+            const currentToday = now;
+            currentToday.setHours(0);
+            currentToday.setMinutes(0);
+            currentToday.setSeconds(0);
+            currentToday.setMilliseconds(0);
 
-            if (dailyStat) {
-                dailyStat.totalClicks += 1;
-                if (!dailyStat.uniqueVisitors.includes(IPHash)) {
-                    dailyStat.uniqueVisitors.push(IPHash);
+            const len = existingAnalytics.dailyStats.length;
+
+            if (len == 0) {
+                existingAnalytics.dailyStats.push({
+                    date: currentToday.getTime(),
+                    totalClicks: 1,
+                    uniqueVisitors: [IPHash],
+                });
+            } else if (existingAnalytics.dailyStats[len - 1].date === currentToday.getTime()) {
+                existingAnalytics.dailyStats[len - 1].totalClicks += 1;
+                if (!existingAnalytics.dailyStats[len - 1].uniqueVisitors.includes(IPHash)) {
+                    existingAnalytics.dailyStats[len - 1].uniqueVisitors.push(IPHash);
                 }
             } else {
                 existingAnalytics.dailyStats.push({
-                    date: new Date(currentToday),
+                    date: currentToday.getTime(),
                     totalClicks: 1,
                     uniqueVisitors: [IPHash],
                 });

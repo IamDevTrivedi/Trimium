@@ -19,6 +19,7 @@ import config from "@/config/env";
 import { z } from "zod";
 import { PASSWORD, PASSWORD_NOTICE } from "@/constants/regex";
 import TopBackButton from "./top-back-button";
+import { numberToDatetimeLocal } from "@/lib/date";
 
 interface FormErrors {
     title?: string;
@@ -51,8 +52,8 @@ interface ShortCodeInfo {
 
     schedule: {
         isEnabled: boolean;
-        startAt: string;
-        endAt: string;
+        startAt: number;
+        endAt: number;
         countdownEnabled: boolean;
         messageToDisplay: string;
     };
@@ -62,6 +63,8 @@ interface ShortCodeInfo {
 
     __v: number;
 }
+
+
 
 export function EditRedirectForm() {
     const [shortCodeInfo, setShortCodeInfo] = React.useState<ShortCodeInfo | null>(null);
@@ -147,15 +150,13 @@ export function EditRedirectForm() {
         }
 
         if (up.schedule.isEnabled) {
-            const now = new Date();
-            const startAt = new Date(up.schedule.startAt);
-            const endAt = new Date(up.schedule.endAt);
+            const now = Date.now();
 
-            if (now > startAt) {
+            if (now > up.schedule.startAt) {
                 errors.startAt = "Start time must be in the future.";
-            } else if (now > endAt) {
+            } else if (now > up.schedule.endAt) {
                 errors.endAt = "End time must be in the future.";
-            } else if (startAt >= endAt) {
+            } else if (up.schedule.startAt >= up.schedule.endAt) {
                 errors.endAt = "End time must be after Start time.";
             }
         }
@@ -168,9 +169,6 @@ export function EditRedirectForm() {
         if (!validator()) {
             return;
         }
-
-        console.log(updateShortCodeInfo?.schedule.startAt);
-        console.log(updateShortCodeInfo?.schedule.endAt);
 
         const payload = {
             shortCode: shortCode,
@@ -195,7 +193,7 @@ export function EditRedirectForm() {
 
             password:
                 updateShortCodeInfo?.passwordProtect.isEnabled &&
-                shortCodeInfo?.passwordProtect.isEnabled === false
+                    shortCodeInfo?.passwordProtect.isEnabled === false
                     ? password
                     : undefined,
             maxTransfers: updateShortCodeInfo?.transfer.isEnabled
@@ -204,18 +202,18 @@ export function EditRedirectForm() {
 
             schedule:
                 updateShortCodeInfo?.schedule.isEnabled &&
-                (shortCodeInfo?.schedule.startAt !== updateShortCodeInfo?.schedule.startAt ||
-                    shortCodeInfo?.schedule.endAt !== updateShortCodeInfo?.schedule.endAt ||
-                    shortCodeInfo?.schedule.countdownEnabled !==
+                    (shortCodeInfo?.schedule.startAt !== updateShortCodeInfo?.schedule.startAt ||
+                        shortCodeInfo?.schedule.endAt !== updateShortCodeInfo?.schedule.endAt ||
+                        shortCodeInfo?.schedule.countdownEnabled !==
                         updateShortCodeInfo?.schedule.countdownEnabled ||
-                    shortCodeInfo?.schedule.messageToDisplay !==
+                        shortCodeInfo?.schedule.messageToDisplay !==
                         updateShortCodeInfo?.schedule.messageToDisplay)
                     ? {
-                          startAt: updateShortCodeInfo?.schedule.startAt,
-                          endAt: updateShortCodeInfo?.schedule.endAt,
-                          countdownEnabled: updateShortCodeInfo?.schedule.countdownEnabled,
-                          messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
-                      }
+                        startAt: updateShortCodeInfo?.schedule.startAt,
+                        endAt: updateShortCodeInfo?.schedule.endAt,
+                        countdownEnabled: updateShortCodeInfo?.schedule.countdownEnabled,
+                        messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
+                    }
                     : undefined,
 
             rmSchedule: !updateShortCodeInfo?.schedule.isEnabled,
@@ -508,21 +506,14 @@ export function EditRedirectForm() {
                                         type="datetime-local"
                                         className="pl-9"
                                         disabled={!updateShortCodeInfo?.schedule.isEnabled}
-                                        value={
-                                            updateShortCodeInfo?.schedule.isEnabled
-                                                ? updateShortCodeInfo.schedule.startAt.slice(0, 16)
-                                                : ""
-                                        }
+                                        value={numberToDatetimeLocal(updateShortCodeInfo?.schedule.startAt)}
                                         onChange={(e) => {
-                                            const target = e.target.value + ":00.000Z";
-                                            const result = !isNaN(new Date(target).getTime())
-                                                ? new Date(target).toISOString()
-                                                : "";
+                                            const target = e.target.value;
                                             setUpdateShortCodeInfo({
                                                 ...updateShortCodeInfo!,
                                                 schedule: {
                                                     ...updateShortCodeInfo!.schedule,
-                                                    startAt: result,
+                                                    startAt: new Date(target).getTime(),
                                                 },
                                             });
                                         }}
@@ -543,21 +534,15 @@ export function EditRedirectForm() {
                                         type="datetime-local"
                                         className="pl-9"
                                         disabled={!updateShortCodeInfo?.schedule.isEnabled}
-                                        value={
-                                            updateShortCodeInfo?.schedule.isEnabled
-                                                ? updateShortCodeInfo.schedule.endAt.slice(0, 16)
-                                                : ""
-                                        }
+                                        value={numberToDatetimeLocal(updateShortCodeInfo?.schedule.endAt)}
                                         onChange={(e) => {
-                                            const target = e.target.value + ":00.000Z";
-                                            const result = !isNaN(new Date(target).getTime())
-                                                ? new Date(target).toISOString()
-                                                : "";
+                                            const target = e.target.value;
+
                                             setUpdateShortCodeInfo({
                                                 ...updateShortCodeInfo!,
                                                 schedule: {
                                                     ...updateShortCodeInfo!.schedule,
-                                                    endAt: result,
+                                                    endAt: new Date(target).getTime(),
                                                 },
                                             });
                                         }}

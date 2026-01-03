@@ -1,3 +1,5 @@
+// Standalone script to clean all build artifacts and dependencies
+
 import fs from "fs";
 import path from "path";
 
@@ -30,5 +32,3 @@ itemsToDelete.forEach((item) => {
         console.error(error);
     }
 });
-
-console.log("\n\nCleanup completed!");

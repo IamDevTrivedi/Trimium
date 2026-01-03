@@ -47,13 +47,13 @@ const scheduleSchema = new mongoose.Schema(
         },
 
         startAt: {
-            type: Date,
-            default: () => new Date("1900-01-01T00:00:00.000Z"),
+            type: Number,
+            default: () => new Date("1900-01-01T00:00:00.000Z").getTime(),
         },
 
         endAt: {
-            type: Date,
-            default: () => new Date("2999-12-31T23:59:59.999Z"),
+            type: Number,
+            default: () => new Date("2999-12-31T23:59:59.999Z").getTime(),
         },
 
         countdownEnabled: {

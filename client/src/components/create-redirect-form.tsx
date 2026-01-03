@@ -159,16 +159,18 @@ export function CreateRedirectForm() {
             maxTransfers: isLimited ? maxTransfers : undefined,
             schedule: isScheduled
                 ? {
-                      startAt: new Date(startAt! + ":00.000Z").toISOString(),
-                      endAt: new Date(endAt! + ":00.000Z").toISOString(),
-                      countdownEnabled: showCountdown,
-                      messageToDisplay:
-                          messageToDisplay.trim().length > 0
-                              ? messageToDisplay.trim()
-                              : "This link is not yet active.",
-                  }
+                    startAt: new Date(startAt!).getTime(),
+                    endAt: new Date(endAt!).getTime(),
+                    countdownEnabled: showCountdown,
+                    messageToDisplay:
+                        messageToDisplay.trim().length > 0
+                            ? messageToDisplay.trim()
+                            : "This link is not yet active.",
+                }
                 : undefined,
         };
+
+        console.log(payload);
 
         try {
             setLoading(true);
@@ -477,7 +479,6 @@ export function CreateRedirectForm() {
                                         value={startAt ?? ""}
                                         onChange={(e) => {
                                             setStartAt(e.target.value);
-                                            console.log(e.target.value);
                                         }}
                                         disabled={!isScheduled}
                                     />
@@ -497,7 +498,6 @@ export function CreateRedirectForm() {
                                         value={endAt ?? ""}
                                         onChange={(e) => {
                                             setEndAt(e.target.value);
-                                            console.log(e.target.value);
                                         }}
                                         disabled={!isScheduled}
                                     />

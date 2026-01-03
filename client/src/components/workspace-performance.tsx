@@ -91,7 +91,7 @@ interface WorkspacePerformanceProps {
         totalClicks: number;
         lands: number;
         uniqueVisitors: number;
-        tags: string[]; // ADDED: to include tags
+        tags: string[];
     }[];
 }
 

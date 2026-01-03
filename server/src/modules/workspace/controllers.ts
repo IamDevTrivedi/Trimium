@@ -1,5 +1,4 @@
 import { getWorkspacePerformance } from "@utils/getWorkspacePerformance";
-import { Invitation } from "@/models/invitation";
 import { User } from "@/models/user";
 import { Workspace } from "@/models/workspace";
 import { config } from "@config/env";
@@ -12,6 +11,7 @@ import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 import { DEFAULT_TAG, TAGS_ID_RANGE } from "@/constants/tags";
 import { TAGS, TAGS_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
+import { Invitation } from "@/models/invitation";
 import { URL } from "@/models/url";
 import { Analytics } from "@/models/analytics";
 import mongoose from "mongoose";

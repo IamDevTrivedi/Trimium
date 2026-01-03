@@ -62,8 +62,8 @@ export interface ShortCodePerformanceData {
         isEnabled: boolean;
         countdownEnabled: boolean;
         messageToDisplay: string;
-        startAt: string;
-        endAt: string;
+        startAt: number;
+        endAt: number;
     };
     shortCode: string;
     workspaceID: string;
@@ -86,7 +86,7 @@ export interface ShortCodePerformanceData {
         others: number;
     };
     dailyStats: {
-        date: string;
+        date: number;
         totalClicks: number;
         uniqueVisitors: number;
     }[];

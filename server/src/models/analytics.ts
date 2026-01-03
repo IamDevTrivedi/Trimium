@@ -33,9 +33,8 @@ const browserStatsSchema = new mongoose.Schema(
 const dailyStatsSchema = new mongoose.Schema(
     {
         date: {
-            type: Date,
+            type: Number,
             required: true,
-            set: (d: Date) => new Date(d.toISOString().split("T")[0]),
         },
 
         totalClicks: {
@@ -45,7 +44,7 @@ const dailyStatsSchema = new mongoose.Schema(
 
         uniqueVisitors: {
             type: [String],
-            default: () => [],
+            default: [],
         },
     },
     {

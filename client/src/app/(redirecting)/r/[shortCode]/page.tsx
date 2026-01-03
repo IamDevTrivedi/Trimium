@@ -42,7 +42,7 @@ function CountdownTimer({
     startAt,
     messageToDisplay,
 }: {
-    startAt: string;
+    startAt: number;
     messageToDisplay: string;
 }) {
     const [timeLeft, setTimeLeft] = useState(() => {

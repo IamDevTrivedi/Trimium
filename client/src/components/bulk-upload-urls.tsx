@@ -246,18 +246,15 @@ const validateRow = (row: CSVRow): ValidationResult => {
     }
 
     if (row.scheduleStart || row.scheduleEnd) {
-        const startAt = row.scheduleStart + ":00.000Z";
-        const endAt = row.scheduleEnd + ":00.000Z";
+        const startAt = new Date(row.scheduleStart).getTime();
+        const endAt = new Date(row.scheduleEnd).getTime();
+        const now = Date.now();
 
-        const startDate = row.scheduleStart ? new Date(startAt) : null;
-        const endDate = row.scheduleEnd ? new Date(endAt) : null;
-        const now = new Date();
-
-        if (row.scheduleStart && !startDate) {
+        if (row.scheduleStart && isNaN(startAt)) {
             errors.push("Invalid schedule start date format (use YYYY-MM-DDTHH:mm)");
         }
 
-        if (row.scheduleEnd && !endDate) {
+        if (row.scheduleEnd && isNaN(endAt)) {
             errors.push("Invalid schedule end date format (use YYYY-MM-DDTHH:mm)");
         }
 
@@ -269,15 +266,15 @@ const validateRow = (row: CSVRow): ValidationResult => {
             errors.push("Schedule start date is required when end date is provided");
         }
 
-        if (startDate && startDate <= now) {
+        if (startAt && startAt <= now) {
             errors.push("Schedule start date must be in the future");
         }
 
-        if (endDate && endDate <= now) {
+        if (endAt && endAt <= now) {
             errors.push("Schedule end date must be in the future");
         }
 
-        if (startDate && endDate && startDate >= endDate) {
+        if (startAt && endAt && startAt >= endAt) {
             errors.push("Schedule end date must be after start date");
         }
     }
@@ -398,8 +395,8 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
 
         if (row.scheduleStart && row.scheduleEnd) {
             payload.schedule = {
-                startAt: new Date(row.scheduleStart + ":00.000Z").toISOString(),
-                endAt: new Date(row.scheduleEnd + ":00.000Z").toISOString(),
+                startAt: new Date(row.scheduleStart).getTime(),
+                endAt: new Date(row.scheduleEnd).getTime(),
                 countdownEnabled: true,
                 messageToDisplay: row.scheduleMessage || "This link is not yet active.",
             };
