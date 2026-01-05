@@ -48,5 +48,8 @@ const loginHistorySchema = new mongoose.Schema(
     }
 );
 
+loginHistorySchema.index({ accountID: 1 });
+loginHistorySchema.index({ accountID: 1, createdAt: -1 });
+
 export const LoginHistory = mongoose.model("LoginHistory", loginHistorySchema);
 export type ILoginHistory = mongoose.Document & mongoose.InferSchemaType<typeof loginHistorySchema>;

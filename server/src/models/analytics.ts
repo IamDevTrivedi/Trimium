@@ -134,5 +134,7 @@ const analyticsSchema = new mongoose.Schema(
     }
 );
 
+analyticsSchema.index({ workspaceID: 1 });
+
 export const Analytics = mongoose.model("Analytics", analyticsSchema);
 export type IAnalytics = mongoose.Document & mongoose.InferSchemaType<typeof analyticsSchema>;

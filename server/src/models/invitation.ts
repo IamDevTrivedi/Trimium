@@ -42,5 +42,9 @@ const invitationSchema = new mongoose.Schema(
     }
 );
 
+invitationSchema.index({ workspaceID: 1 });
+invitationSchema.index({ email: 1 });
+invitationSchema.index({ workspaceID: 1, email: 1 });
+
 export const Invitation = mongoose.model("Invitation", invitationSchema);
 export type IInvitation = mongoose.Document & mongoose.InferSchemaType<typeof invitationSchema>;

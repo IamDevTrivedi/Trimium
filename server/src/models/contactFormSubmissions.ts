@@ -47,11 +47,5 @@ const contactFormSubmissionSchema = new mongoose.Schema(
     }
 );
 
-export const ContactFormSubmission = mongoose.model(
-    "ContactFormSubmission",
-    contactFormSubmissionSchema
-);
-
-export type ContactFormSubmissionType = mongoose.InferSchemaType<
-    typeof contactFormSubmissionSchema
->;
+export const ContactFormSubmission = mongoose.model("ContactFormSubmission", contactFormSubmissionSchema);
+export type ContactFormSubmissionType = mongoose.InferSchemaType<typeof contactFormSubmissionSchema>;

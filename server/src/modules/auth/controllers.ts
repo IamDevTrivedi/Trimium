@@ -592,7 +592,7 @@ export const controllers = {
                 z.string().regex(USERNAME).safeParse(identity).success
                     ? { username: identity }
                     : { email: identity }
-            );
+            ).lean();
 
             if (!existingUser) {
                 return sendResponse(res, {
@@ -652,7 +652,7 @@ export const controllers = {
             await newLogin.save();
 
             const data = {
-                ...existingUser.toObject(),
+                ...existingUser,
                 passwordHash: undefined,
                 tokenVersion: undefined,
                 __v: undefined,

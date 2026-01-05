@@ -137,5 +137,7 @@ const urlSchema = new mongoose.Schema(
     }
 );
 
+urlSchema.index({ workspaceID: 1 });
+
 export const URL = mongoose.model("URL", urlSchema);
 export type IURL = mongoose.Document & mongoose.InferSchemaType<typeof urlSchema>;

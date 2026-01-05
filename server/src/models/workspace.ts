@@ -51,5 +51,8 @@ const workspaceSchema = new mongoose.Schema(
     }
 );
 
+workspaceSchema.index({ "members.userID": 1 });
+workspaceSchema.index({ "members.userID": 1, "members.permission": 1 });
+
 export const Workspace = mongoose.model("Workspace", workspaceSchema);
 export type IWorkspace = mongoose.Document & mongoose.InferSchemaType<typeof workspaceSchema>;
