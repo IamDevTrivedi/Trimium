@@ -511,9 +511,7 @@ export const controllers = {
 
             const existingURL = await URL.findOne({
                 shortCode: shortCode,
-            }).select(
-                "isActive schedule passwordProtect transfer originalURL workspaceID"
-            );
+            }).select("isActive schedule passwordProtect transfer originalURL workspaceID");
 
             if (!existingURL) {
                 return sendResponse(res, {

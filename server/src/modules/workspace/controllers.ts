@@ -295,7 +295,8 @@ export const controllers = {
                         title: ws.title,
                         description: ws.description,
                         workspaceID: ws._id,
-                        permission: ws.members.find((m) => m.userID.toString() === userID)!.permission,
+                        permission: ws.members.find((m) => m.userID.toString() === userID)!
+                            .permission,
                         createdAt: ws.createdAt,
                         size: ws.members.length,
                     };
@@ -788,9 +789,7 @@ export const controllers = {
             const { workspaceID, tag, tagID } = result.data;
             const { userID } = res.locals;
 
-            const existingWorkspace = await Workspace.findById(workspaceID).select(
-                "tags members"
-            );
+            const existingWorkspace = await Workspace.findById(workspaceID).select("tags members");
 
             if (!existingWorkspace) {
                 return sendResponse(res, {
@@ -870,9 +869,7 @@ export const controllers = {
             const { workspaceID, oldTag, newTag, newTagID } = result.data;
             const { userID } = res.locals;
 
-            const existingWorkspace = await Workspace.findById(workspaceID).select(
-                "tags members"
-            );
+            const existingWorkspace = await Workspace.findById(workspaceID).select("tags members");
 
             if (!existingWorkspace) {
                 return sendResponse(res, {
@@ -988,9 +985,7 @@ export const controllers = {
             const { workspaceID, tag } = result.data;
             const { userID } = res.locals;
 
-            const existingWorkspace = await Workspace.findById(workspaceID).select(
-                "tags members"
-            );
+            const existingWorkspace = await Workspace.findById(workspaceID).select("tags members");
 
             if (!existingWorkspace) {
                 return sendResponse(res, {
