@@ -670,7 +670,7 @@ export const controllers = {
 
             existingAnalytics.browserStats[browserType] += 1;
 
-            const currentToday = now;
+            const currentToday = new Date();
             currentToday.setHours(0);
             currentToday.setMinutes(0);
             currentToday.setSeconds(0);
@@ -697,10 +697,10 @@ export const controllers = {
                 });
             }
 
-            const currentHour = now.getHours();
+            const currentHour = new Date().getUTCHours();
             existingAnalytics.hourlyStats[currentHour] += 1;
 
-            const currentWeek = now.getDay();
+            const currentWeek = new Date().getUTCDay();
             existingAnalytics.weeklyStats[currentWeek] += 1;
 
             const currentLocation = res.locals.location.country || "Unknown";
