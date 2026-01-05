@@ -42,7 +42,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
         const existingUser = await User.findOne({
             _id: userID,
             tokenVersion,
-        });
+        }).lean();
 
         if (!existingUser) {
             return sendResponse(res, {
@@ -56,7 +56,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
             _id: loginHistoryID,
             accountID: userID,
             tokenVersion,
-        });
+        }).lean();
 
         if (!existingLogin) {
             return sendResponse(res, {

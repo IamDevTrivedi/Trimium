@@ -43,7 +43,7 @@ export const controllers = {
             const { userID } = res.locals;
 
             const existingUser = await User.findById(userID).select(
-                "-passwordHash -tokenVersion -__v"
+                "firstName lastName email username createdAt updatedAt"
             );
 
             if (!existingUser) {
@@ -102,7 +102,7 @@ export const controllers = {
             const { currentPassword, newPassword } = result.data;
             const { userID } = res.locals;
 
-            const existingUser = await User.findById(userID);
+            const existingUser = await User.findById(userID).select("passwordHash");
 
             if (!existingUser) {
                 return sendResponse(res, {
@@ -175,7 +175,9 @@ export const controllers = {
                 });
             }
 
-            const usernameTaken = await User.findOne({ username: newUsername }).select("_id");
+            const usernameTaken = await User.findOne({ username: newUsername })
+                .select("_id")
+                .lean();
 
             if (usernameTaken) {
                 return sendResponse(res, {

@@ -45,7 +45,7 @@ export const controllers = {
             const { email } = result.data;
             const existingUser = await User.findOne({
                 email,
-            });
+            }).select("_id").lean();
 
             if (existingUser) {
                 return sendResponse(res, {
@@ -250,7 +250,7 @@ export const controllers = {
 
             const exist = await User.findOne({
                 $or: [{ email }, { username }],
-            });
+            }).select("_id").lean();
 
             if (exist) {
                 return sendResponse(res, {
@@ -311,7 +311,7 @@ export const controllers = {
                 z.string().regex(USERNAME).safeParse(identity).success
                     ? { username: identity }
                     : { email: identity }
-            );
+            ).select("email").lean();
 
             if (!existingUser) {
                 return sendResponse(res, {
@@ -385,7 +385,7 @@ export const controllers = {
                 z.string().regex(USERNAME).safeParse(identity).success
                     ? { username: identity }
                     : { email: identity }
-            );
+            ).select("email").lean();
 
             if (!existingUser) {
                 return sendResponse(res, {
@@ -513,7 +513,7 @@ export const controllers = {
                 z.string().regex(USERNAME).safeParse(identity).success
                     ? { username: identity }
                     : { email: identity }
-            );
+            ).select("email passwordHash");
 
             if (!existingUser) {
                 return sendResponse(res, {
@@ -678,9 +678,9 @@ export const controllers = {
         try {
             const { loginHistoryID } = res.locals;
 
-            const existingLogin = await LoginHistory.findOne({
-                _id: loginHistoryID,
-            });
+            const existingLogin = await LoginHistory.findById(loginHistoryID).select(
+                "tokenVersion"
+            );
 
             // NOTE: This case should not occur as protectRoute middleware already checks for existing login
             if (!existingLogin) {
@@ -715,8 +715,10 @@ export const controllers = {
         try {
             const { userID, loginHistoryID } = res.locals;
 
-            const existingUser = await User.findById(userID);
-            const existingLogin = await LoginHistory.findById(loginHistoryID);
+            const existingUser = await User.findById(userID).select("tokenVersion");
+            const existingLogin = await LoginHistory.findById(loginHistoryID).select(
+                "tokenVersion"
+            );
 
             // NOTE: This case should not occur as protectRoute middleware already checks for existing user
             if (!existingUser || !existingLogin) {
@@ -793,7 +795,7 @@ export const controllers = {
             const existingLogin = await LoginHistory.findOne({
                 _id: targetLoginHistoryID,
                 tokenVersion,
-            });
+            }).select("tokenVersion");
 
             if (!existingLogin) {
                 return sendResponse(res, {
@@ -906,14 +908,10 @@ export const controllers = {
                     const parsedUA = new UAParser(entry.UA).getResult();
 
                     return {
+                        ...entry,
                         parsedUA,
-                        loginHistory: entry,
                         isActive: entry.tokenVersion === tokenVersion,
                         currentDevice: entry._id.toString() === loginHistoryID,
-                        IPAddress: entry.IPAddress,
-                        lat: entry.lat,
-                        lon: entry.lon,
-                        displayName: entry.displayName,
                     };
                 });
 

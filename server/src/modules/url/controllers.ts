@@ -144,9 +144,9 @@ export const controllers = {
                 });
             }
 
-            const existingWorkspace = await Workspace.findOne({
-                _id: workspaceID,
-            });
+            const existingWorkspace = await Workspace.findById(workspaceID)
+                .select("members")
+                .lean();
 
             const permission = existingWorkspace?.members.find(
                 (m) => m.userID.toString() === userID
@@ -282,7 +282,9 @@ export const controllers = {
                 });
             }
 
-            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).lean();
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID)
+                .select("members")
+                .lean();
 
             const member = existingWorkspace?.members.find((m) => m.userID.toString() === userID);
 
@@ -388,7 +390,9 @@ export const controllers = {
                 });
             }
 
-            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).lean();
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID)
+                .select("members")
+                .lean();
             const member = existingWorkspace?.members.find((m) => m.userID.toString() === userID);
 
             if (!member || member.permission === "viewer") {
@@ -507,7 +511,9 @@ export const controllers = {
 
             const existingURL = await URL.findOne({
                 shortCode: shortCode,
-            });
+            }).select(
+                "isActive schedule passwordProtect transfer originalURL workspaceID"
+            );
 
             if (!existingURL) {
                 return sendResponse(res, {
@@ -518,7 +524,9 @@ export const controllers = {
                 });
             }
 
-            const existingAnalytics = await Analytics.findOne({ shortCode: shortCode });
+            const existingAnalytics = await Analytics.findOne({ shortCode: shortCode }).select(
+                "totalClicks lands uniqueVisitors deviceStats browserStats dailyStats hourlyStats weeklyStats locationStats referrersStats"
+            );
             if (!existingAnalytics) {
                 return sendResponse(res, {
                     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
@@ -765,7 +773,9 @@ export const controllers = {
                 });
             }
 
-            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).lean();
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID)
+                .select("members")
+                .lean();
             const member = existingWorkspace?.members.find((m) => m.userID.toString() === userID);
 
             if (!member) {
@@ -853,7 +863,9 @@ export const controllers = {
                 });
             }
 
-            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).lean();
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID)
+                .select("members")
+                .lean();
             const member = existingWorkspace?.members.find((m) => m.userID.toString() === userID);
 
             if (!member) {

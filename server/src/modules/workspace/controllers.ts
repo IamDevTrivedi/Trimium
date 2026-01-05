@@ -14,7 +14,7 @@ import { Invitation } from "@/models/invitation";
 import { URL } from "@/models/url";
 import { Analytics } from "@/models/analytics";
 import mongoose from "mongoose";
-import { emailQueue } from "../queue";
+import { emailQueue } from "@modules/queue/queues";
 
 export const controllers = {
     createWorkspace: async (req: Request, res: Response) => {
@@ -56,7 +56,9 @@ export const controllers = {
             const { title, description, members } = result.data;
             const { userID } = res.locals;
 
-            const existingUser = await User.findById(userID).lean();
+            const existingUser = await User.findById(userID)
+                .select("email firstName lastName")
+                .lean();
 
             if (!existingUser) {
                 return sendResponse(res, {
@@ -140,7 +142,7 @@ export const controllers = {
         try {
             const { userID } = res.locals;
 
-            const existingUser = await User.findById(userID).lean();
+            const existingUser = await User.findById(userID).select("email").lean();
 
             if (!existingUser) {
                 return sendResponse(res, {
@@ -150,21 +152,18 @@ export const controllers = {
                 });
             }
 
-            const invitations = await Invitation.find({ email: existingUser.email }).lean();
+            const invitations = await Invitation.find({ email: existingUser.email })
+                .select("title description updatedAt permission")
+                .lean();
 
             return sendResponse(res, {
                 success: true,
                 statusCode: StatusCodes.OK,
                 message: "Invitations fetched successfully",
-                data: invitations.map((inv) => {
-                    return {
-                        title: inv.title,
-                        description: inv.description,
-                        updatedAt: inv.updatedAt,
-                        _id: inv._id,
-                        permission: inv.permission,
-                    };
-                }),
+                data: invitations.map((inv) => ({
+                    ...inv,
+                    _id: inv._id,
+                })),
             });
         } catch (error) {
             logger.error("Error in getAllInvitations controller:");
@@ -198,7 +197,7 @@ export const controllers = {
             const { invitationID, accept } = result.data;
             const { userID } = res.locals;
 
-            const existingUser = await User.findById(userID).lean();
+            const existingUser = await User.findById(userID).select("email").lean();
 
             if (!existingUser) {
                 return sendResponse(res, {
@@ -283,7 +282,9 @@ export const controllers = {
     getMyWorkspaces: async (req: Request, res: Response) => {
         try {
             const { userID } = res.locals;
-            const workspaces = await Workspace.find({ "members.userID": userID });
+            const workspaces = await Workspace.find({ "members.userID": userID })
+                .select("title description members createdAt")
+                .lean();
 
             return sendResponse(res, {
                 success: true,
@@ -294,7 +295,7 @@ export const controllers = {
                         title: ws.title,
                         description: ws.description,
                         workspaceID: ws._id,
-                        permission: ws.members.find((m) => m.userID.equals(userID))!.permission,
+                        permission: ws.members.find((m) => m.userID.toString() === userID)!.permission,
                         createdAt: ws.createdAt,
                         size: ws.members.length,
                     };
@@ -444,11 +445,11 @@ export const controllers = {
             } = result.data;
             const { userID } = res.locals;
 
-            const existingWorkspace = await Workspace.findOne({
-                _id: workspaceID,
-            });
+            const existingWorkspace = await Workspace.findById(workspaceID);
 
-            const existingUser = await User.findById(userID).lean();
+            const existingUser = await User.findById(userID)
+                .select("firstName lastName email")
+                .lean();
 
             if (!existingWorkspace) {
                 return sendResponse(res, {
@@ -544,7 +545,9 @@ export const controllers = {
                         continue;
                     }
 
-                    const existingMember = await User.findOne({ email: member.email });
+                    const existingMember = await User.findOne({ email: member.email })
+                        .select("_id")
+                        .lean();
 
                     if (existingMember) {
                         const isAlreadyMember = existingWorkspace.members.some((m) =>
@@ -653,7 +656,9 @@ export const controllers = {
 
             const members = await Promise.all(
                 existingWorkspace.members.map(async (member) => {
-                    const detail = await User.findById(member.userID).lean();
+                    const detail = await User.findById(member.userID)
+                        .select("firstName lastName email username")
+                        .lean();
 
                     return {
                         userID: detail!._id,
@@ -712,7 +717,9 @@ export const controllers = {
             const { workspaceID } = result.data;
             const { userID } = res.locals;
 
-            const existingWorkspace = await Workspace.findById(workspaceID).lean();
+            const existingWorkspace = await Workspace.findById(workspaceID)
+                .select("members")
+                .lean();
 
             if (!existingWorkspace) {
                 return sendResponse(res, {
@@ -781,7 +788,9 @@ export const controllers = {
             const { workspaceID, tag, tagID } = result.data;
             const { userID } = res.locals;
 
-            const existingWorkspace = await Workspace.findById(workspaceID);
+            const existingWorkspace = await Workspace.findById(workspaceID).select(
+                "tags members"
+            );
 
             if (!existingWorkspace) {
                 return sendResponse(res, {
@@ -861,7 +870,9 @@ export const controllers = {
             const { workspaceID, oldTag, newTag, newTagID } = result.data;
             const { userID } = res.locals;
 
-            const existingWorkspace = await Workspace.findById(workspaceID);
+            const existingWorkspace = await Workspace.findById(workspaceID).select(
+                "tags members"
+            );
 
             if (!existingWorkspace) {
                 return sendResponse(res, {
@@ -977,7 +988,9 @@ export const controllers = {
             const { workspaceID, tag } = result.data;
             const { userID } = res.locals;
 
-            const existingWorkspace = await Workspace.findById(workspaceID);
+            const existingWorkspace = await Workspace.findById(workspaceID).select(
+                "tags members"
+            );
 
             if (!existingWorkspace) {
                 return sendResponse(res, {
@@ -1058,7 +1071,9 @@ export const controllers = {
             const { userID } = res.locals;
 
             if (workspaceID) {
-                const existingWorkspace = await Workspace.findById(workspaceID);
+                const existingWorkspace = await Workspace.findById(workspaceID)
+                    .select("tags members")
+                    .lean();
 
                 if (!existingWorkspace) {
                     return sendResponse(res, {
@@ -1068,7 +1083,9 @@ export const controllers = {
                     });
                 }
 
-                const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
+                const member = existingWorkspace.members.find(
+                    (m) => m.userID.toString() === userID
+                );
 
                 if (!member) {
                     return sendResponse(res, {
@@ -1082,7 +1099,7 @@ export const controllers = {
                     success: true,
                     statusCode: StatusCodes.OK,
                     message: "Tags fetched successfully",
-                    data: Array.from(existingWorkspace.tags.entries()).map(([tag, tagID]) => ({
+                    data: Object.entries(existingWorkspace.tags).map(([tag, tagID]) => ({
                         tag,
                         tagID,
                     })),
@@ -1090,7 +1107,9 @@ export const controllers = {
             } else {
                 const existingURL = await URL.findOne({
                     shortCode: shortCode,
-                });
+                })
+                    .select("workspaceID tags")
+                    .lean();
 
                 if (!existingURL) {
                     return sendResponse(res, {
@@ -1100,7 +1119,9 @@ export const controllers = {
                     });
                 }
 
-                const existingWorkspace = await Workspace.findById(existingURL.workspaceID);
+                const existingWorkspace = await Workspace.findById(existingURL.workspaceID)
+                    .select("tags members")
+                    .lean();
 
                 if (!existingWorkspace) {
                     return sendResponse(res, {
@@ -1110,7 +1131,9 @@ export const controllers = {
                     });
                 }
 
-                const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
+                const member = existingWorkspace.members.find(
+                    (m) => m.userID.toString() === userID
+                );
 
                 if (!member) {
                     return sendResponse(res, {
@@ -1127,7 +1150,7 @@ export const controllers = {
                     data: existingURL.tags.map((tag) => {
                         return {
                             tag,
-                            tagID: existingWorkspace.tags.get(tag)!,
+                            tagID: existingWorkspace.tags[tag],
                         };
                     }),
                 });
@@ -1185,7 +1208,9 @@ export const controllers = {
                 });
             }
 
-            const existingWorkspace = await Workspace.findById(existingURL.workspaceID);
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).select(
+                "tags members"
+            );
 
             if (!existingWorkspace) {
                 return sendResponse(res, {

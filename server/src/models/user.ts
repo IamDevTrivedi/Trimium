@@ -63,5 +63,7 @@ const userSchema = new mongoose.Schema(
     }
 );
 
+userSchema.index({ email: 1, username: 1 });
+
 export const User = mongoose.model("User", userSchema);
 export type IUser = mongoose.Document & mongoose.InferSchemaType<typeof userSchema>;
