@@ -15,6 +15,8 @@ import { UAParserMiddleware } from "@middlewares/UAParser";
 import { IPMiddleware } from "@middlewares/IP";
 import { locationMiddleware } from "@middlewares/location";
 
+import "@modules/queue";
+
 const init = async () => {
     checkEnv();
     await connectMongo();

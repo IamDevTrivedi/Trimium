@@ -4,7 +4,6 @@ import { StatusCodes } from "http-status-codes";
 import { UAParser } from "ua-parser-js";
 import { Request, Response } from "express";
 import { config } from "@config/env";
-import { transporter } from "@config/mailer";
 import { redisClient } from "@db/connectRedis";
 import { User } from "@models/user";
 import { generateOTP } from "@utils/generateOTP";
@@ -14,6 +13,7 @@ import { z } from "zod";
 import { NAME, OTP as OTP_REGEX, PASSWORD, USERNAME } from "@constants/regex";
 import { LoginHistory } from "@models/loginHistory";
 import { emailTemplates } from "@utils/emailTemplates";
+import { emailQueue } from "../queue";
 
 const getCookieOptions = (clear = false) => {
     return {
@@ -69,7 +69,7 @@ export const controllers = {
                 },
             });
 
-            await transporter.sendMail({
+            await emailQueue.add("emailQueue", {
                 from: config.SENDER_EMAIL,
                 to: email,
                 subject: "Your Account Creation OTP",
@@ -335,7 +335,7 @@ export const controllers = {
                 },
             });
 
-            await transporter.sendMail({
+            await emailQueue.add("emailQueue", {
                 from: config.SENDER_EMAIL,
                 to: existingUser.email,
                 subject: "Your Password Reset OTP",
@@ -638,7 +638,7 @@ export const controllers = {
 
             res.cookie(`authToken`, authToken, cookieOptions);
 
-            await transporter.sendMail({
+            await emailQueue.add("emailQueue", {
                 from: config.SENDER_EMAIL,
                 to: existingUser.email,
                 subject: "New Login Alert",

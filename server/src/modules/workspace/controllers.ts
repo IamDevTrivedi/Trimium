@@ -2,7 +2,6 @@ import { getWorkspacePerformance } from "@utils/getWorkspacePerformance";
 import { User } from "@/models/user";
 import { Workspace } from "@/models/workspace";
 import { config } from "@config/env";
-import { transporter } from "@config/mailer";
 import { emailTemplates } from "@utils/emailTemplates";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
@@ -15,6 +14,7 @@ import { Invitation } from "@/models/invitation";
 import { URL } from "@/models/url";
 import { Analytics } from "@/models/analytics";
 import mongoose from "mongoose";
+import { emailQueue } from "../queue";
 
 export const controllers = {
     createWorkspace: async (req: Request, res: Response) => {
@@ -99,7 +99,7 @@ export const controllers = {
 
                     await newInvitation.save();
 
-                    await transporter.sendMail({
+                    await emailQueue.add("emailQueue", {
                         to: member.email,
                         from: config.SENDER_EMAIL,
                         subject: `Invitation to join workspace: ${newWorkspace.title}`,
@@ -573,7 +573,7 @@ export const controllers = {
 
                     await newInvitation.save();
 
-                    await transporter.sendMail({
+                    await emailQueue.add("emailQueue", {
                         to: member.email,
                         from: config.SENDER_EMAIL,
                         subject: `Invitation to join workspace: ${existingWorkspace.title}`,

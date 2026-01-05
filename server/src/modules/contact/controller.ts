@@ -1,12 +1,12 @@
 import { ContactFormSubmission } from "@/models/contactFormSubmissions";
 import { config } from "@config/env";
-import { transporter } from "@config/mailer";
 import { emailTemplates } from "@utils/emailTemplates";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
+import { emailQueue } from "../queue";
 
 export const controller = {
     submitContactForm: async (req: Request, res: Response) => {
@@ -42,7 +42,7 @@ export const controller = {
 
             await newSubmission.save();
 
-            transporter.sendMail({
+            await emailQueue.add("emailQueue", {
                 from: config.SENDER_EMAIL,
                 to: email,
                 subject: `Contact Form Submission Received: ${subject}`,
