@@ -13,7 +13,7 @@ import { z } from "zod";
 import { NAME, OTP as OTP_REGEX, PASSWORD, USERNAME } from "@constants/regex";
 import { LoginHistory } from "@models/loginHistory";
 import { emailTemplates } from "@utils/emailTemplates";
-import { emailQueue } from "../queue";
+import { emailQueue, QueueNames } from "@modules/queue/queues";
 
 const getCookieOptions = (clear = false) => {
     return {
@@ -71,7 +71,7 @@ export const controllers = {
                 },
             });
 
-            await emailQueue.add("emailQueue", {
+            await emailQueue.add(QueueNames.SEND_EMAIL, {
                 from: config.SENDER_EMAIL,
                 to: email,
                 subject: "Your Account Creation OTP",
@@ -341,7 +341,7 @@ export const controllers = {
                 },
             });
 
-            await emailQueue.add("emailQueue", {
+            await emailQueue.add(QueueNames.SEND_EMAIL, {
                 from: config.SENDER_EMAIL,
                 to: existingUser.email,
                 subject: "Your Password Reset OTP",
@@ -646,7 +646,7 @@ export const controllers = {
 
             res.cookie(`authToken`, authToken, cookieOptions);
 
-            await emailQueue.add("emailQueue", {
+            await emailQueue.add(QueueNames.SEND_EMAIL, {
                 from: config.SENDER_EMAIL,
                 to: existingUser.email,
                 subject: "New Login Alert",

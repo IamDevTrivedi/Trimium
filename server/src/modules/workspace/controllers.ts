@@ -14,7 +14,7 @@ import { Invitation } from "@/models/invitation";
 import { URL } from "@/models/url";
 import { Analytics } from "@/models/analytics";
 import mongoose from "mongoose";
-import { emailQueue } from "@modules/queue/queues";
+import { emailQueue, QueueNames } from "@modules/queue/queues";
 
 export const controllers = {
     createWorkspace: async (req: Request, res: Response) => {
@@ -101,7 +101,7 @@ export const controllers = {
 
                     await newInvitation.save();
 
-                    await emailQueue.add("emailQueue", {
+                    await emailQueue.add(QueueNames.SEND_EMAIL, {
                         to: member.email,
                         from: config.SENDER_EMAIL,
                         subject: `Invitation to join workspace: ${newWorkspace.title}`,
@@ -577,7 +577,7 @@ export const controllers = {
 
                     await newInvitation.save();
 
-                    await emailQueue.add("emailQueue", {
+                    await emailQueue.add(QueueNames.SEND_EMAIL, {
                         to: member.email,
                         from: config.SENDER_EMAIL,
                         subject: `Invitation to join workspace: ${existingWorkspace.title}`,

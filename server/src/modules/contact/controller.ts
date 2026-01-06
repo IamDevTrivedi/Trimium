@@ -6,7 +6,7 @@ import { sendResponse } from "@utils/sendResponse";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
-import { emailQueue } from "../queue";
+import { emailQueue, QueueNames } from "@modules/queue/queues";
 
 export const controller = {
     submitContactForm: async (req: Request, res: Response) => {
@@ -42,7 +42,7 @@ export const controller = {
 
             await newSubmission.save();
 
-            await emailQueue.add("emailQueue", {
+            await emailQueue.add(QueueNames.SEND_EMAIL, {
                 from: config.SENDER_EMAIL,
                 to: email,
                 subject: `Contact Form Submission Received: ${subject}`,
