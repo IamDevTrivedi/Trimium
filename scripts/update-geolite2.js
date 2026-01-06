@@ -50,12 +50,12 @@ function downloadFile(url, destination) {
                 });
             })
             .on("error", (err) => {
-                fs.unlink(destination, () => {});
+                fs.unlink(destination, () => { });
                 reject(err);
             });
 
         file.on("error", (err) => {
-            fs.unlink(destination, () => {});
+            fs.unlink(destination, () => { });
             reject(err);
         });
     });
@@ -144,6 +144,7 @@ async function main() {
         cleanup(TEMP_DIR);
 
         console.log("\nUpdate completed successfully!");
+        process.exit(0);
     } catch (error) {
         console.error("\nError:", error.message);
         cleanup(TEMP_DIR);
