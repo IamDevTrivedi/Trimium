@@ -2,16 +2,21 @@
 
 ```
 .
-├── DIRECTORY_STRUCTURE.md
 ├── LICENSE
 ├── README.md
-├── TODO.txt
 ├── client
 │   ├── components.json
 │   ├── next-env.d.ts
 │   ├── next.config.ts
 │   ├── package.json
 │   ├── postcss.config.mjs
+│   ├── public
+│   │   ├── brand.png
+│   │   ├── favicon.png
+│   │   ├── og-about.png
+│   │   ├── og-features.png
+│   │   ├── og-home.png
+│   │   └── og-qr-generator.png
 │   ├── resources
 │   │   ├── about.mdx
 │   │   ├── privacy.mdx
@@ -78,6 +83,7 @@
 │   │   │   │       ├── new
 │   │   │   │       │   └── page.tsx
 │   │   │   │       └── page.tsx
+│   │   │   ├── favicon.ico
 │   │   │   ├── features
 │   │   │   │   └── page.tsx
 │   │   │   ├── globals.css
@@ -181,6 +187,7 @@
 │   │   ├── hooks
 │   │   │   └── use-mobile.tsx
 │   │   ├── lib
+│   │   │   ├── date.ts
 │   │   │   ├── handle-response.ts
 │   │   │   ├── readFileContent.ts
 │   │   │   ├── tags-getter.ts
@@ -193,82 +200,102 @@
 │   │       ├── reset-password-store.ts
 │   │       └── user-store.ts
 │   └── tsconfig.json
+├── docs
+│   ├── DIRECTORY_STRUCTURE.md
+│   └── SETUP.md
 ├── eslint.config.ts
 ├── package.json
+├── public
+│   └── preview.png
 ├── scripts
 │   ├── clean-all.js
 │   ├── install-all.js
-│   └── reset-all.js
-└── server
-    ├── logs
-    │   ├── app-development.log
-    │   ├── app-production.log
-    │   ├── error-development.log
-    │   └── error-production.log
-    ├── package.json
-    ├── src
-    │   ├── config
-    │   │   ├── checkEnv.ts
-    │   │   ├── env.ts
-    │   │   └── mailer.ts
-    │   ├── constants
-    │   │   ├── regex.ts
-    │   │   └── tags.ts
-    │   ├── db
-    │   │   ├── connectMongo.ts
-    │   │   └── connectRedis.ts
-    │   ├── index.ts
-    │   ├── middlewares
-    │   │   ├── IP.ts
-    │   │   ├── UAParser.ts
-    │   │   ├── httpLogger.ts
-    │   │   ├── location.ts
-    │   │   ├── protectRoute.ts
-    │   │   └── rateLimiter.ts
-    │   ├── models
-    │   │   ├── analytics.ts
-    │   │   ├── contactFormSubmissions.ts
-    │   │   ├── invitation.ts
-    │   │   ├── loginHistory.ts
-    │   │   ├── url.ts
-    │   │   ├── user.ts
-    │   │   └── workspace.ts
-    │   ├── modules
-    │   │   ├── auth
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   ├── contact
-    │   │   │   ├── controller.ts
-    │   │   │   └── routes.ts
-    │   │   ├── health
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   ├── root
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   ├── url
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   ├── user
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   └── workspace
-    │   │       ├── controllers.ts
-    │   │       └── routes.ts
-    │   └── utils
-    │       ├── date.ts
-    │       ├── emailTemplates.ts
-    │       ├── generateOTP.ts
-    │       ├── generateShortCode.ts
-    │       ├── getWorkspacePerformance.ts
-    │       ├── logger.ts
-    │       ├── normalizeEmail.ts
-    │       ├── sendResponse.ts
-    │       ├── sha256.ts
-    │       └── tags.ts
-    └── tsconfig.json
+│   ├── reset-all.js
+│   └── update-geolite2.js
+├── server
+│   ├── logs
+│   │   ├── app-development.log
+│   │   ├── app-production.log
+│   │   ├── error-development.log
+│   │   ├── error-production.log
+│   │   ├── pm2-error.log
+│   │   └── pm2-out.log
+│   ├── package.json
+│   ├── src
+│   │   ├── config
+│   │   │   ├── checkEnv.ts
+│   │   │   ├── env.ts
+│   │   │   └── mailer.ts
+│   │   ├── constants
+│   │   │   ├── GeoLite2-City.mmdb
+│   │   │   ├── GeoLite2-City.mmdb.backup
+│   │   │   ├── regex.ts
+│   │   │   └── tags.ts
+│   │   ├── db
+│   │   │   ├── connectMongo.ts
+│   │   │   └── connectRedis.ts
+│   │   ├── index.ts
+│   │   ├── middlewares
+│   │   │   ├── IP.ts
+│   │   │   ├── UAParser.ts
+│   │   │   ├── httpLogger.ts
+│   │   │   ├── location.ts
+│   │   │   ├── protectRoute.ts
+│   │   │   └── rateLimiter.ts
+│   │   ├── models
+│   │   │   ├── analytics.ts
+│   │   │   ├── contactFormSubmissions.ts
+│   │   │   ├── invitation.ts
+│   │   │   ├── loginHistory.ts
+│   │   │   ├── url.ts
+│   │   │   ├── user.ts
+│   │   │   └── workspace.ts
+│   │   ├── modules
+│   │   │   ├── auth
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── contact
+│   │   │   │   ├── controller.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── health
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── queue
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── processors
+│   │   │   │   │   └── sendEmail.ts
+│   │   │   │   ├── queues.ts
+│   │   │   │   ├── redisConfig.ts
+│   │   │   │   └── workers.ts
+│   │   │   ├── root
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── url
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── user
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   └── workspace
+│   │   │       ├── controllers.ts
+│   │   │       └── routes.ts
+│   │   └── utils
+│   │       ├── date.ts
+│   │       ├── emailTemplates.ts
+│   │       ├── generateOTP.ts
+│   │       ├── generateShortCode.ts
+│   │       ├── getWorkspacePerformance.ts
+│   │       ├── logger.ts
+│   │       ├── normalizeEmail.ts
+│   │       ├── sendResponse.ts
+│   │       ├── sha256.ts
+│   │       └── tags.ts
+│   └── tsconfig.json
+└── tests
+    ├── Dockerfile
+    └── docker-compose.yml
 
-62 directories, 204 files
+68 directories, 226 files
 ```
 
 ## Overview

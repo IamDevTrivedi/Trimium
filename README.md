@@ -85,46 +85,7 @@ A professional URL shortener and link management platform. Create powerful short
 
 ## Getting Started
 
-### Prerequisites
-
-- **Node.js** (v18 or higher)
-- **pnpm** (v10.27.0 recommended)
-- **MongoDB** (local or Atlas)
-- **Redis** (local or cloud)
-
-### Installation
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/IamDevTrivedi/Trimium.git
-   cd Trimium
-   ```
-
-2. **Install all dependencies**
-
-   ```bash
-   # recommended to use pnpm
-   pnpm install:all
-
-   # alternatively, you can use npm or yarn in each of the client and server directories
-   npm run install:all
-
-   # or
-   yarn run install:all
-   ```
-
-3. **Set up environment variables**
-
-    Please refer to the `.env.example` files in both `client` and `server` directories.
-
-4. **Start the development mode**
-
-   ```bash
-   pnpm dev
-   ```
-
-   This will start both the client & server concurrently. The PORTs will be picked from the respective env files. 
+- Please refer to the [SETUP.md](./docs/SETUP.md) file for detailed setup instructions.
 
 ### Available Scripts
 

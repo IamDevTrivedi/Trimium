@@ -1,7 +1,7 @@
 {
     "name": "project",
     "version": "0.0.1",
-    "description": "This is my Project! OK ?",
+    "description": "",
     "type": "module",
     "scripts": {
         "format": "prettier --write \"**/*.{js,ts,tsx,json,css}\"",
@@ -26,6 +26,7 @@
         "eslint": "^9.39.2",
         "globals": "^16.5.0",
         "jiti": "^2.6.1",
+        "tar": "^7.5.2",
         "typescript-eslint": "^8.50.0"
     }
 }
