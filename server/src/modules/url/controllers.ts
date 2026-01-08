@@ -538,7 +538,7 @@ export const controllers = {
             const parsedReferer = referer ? await parse(referer) : null;
 
             if (parsedReferer?.referer) {
-                const refDomain = parsedReferer.referer;
+                const refDomain = parsedReferer.referer.replace(/\./g, "_");
                 if (existingAnalytics.referrersStats.has(refDomain)) {
                     existingAnalytics.referrersStats.set(
                         refDomain,

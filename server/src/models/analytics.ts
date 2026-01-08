@@ -120,13 +120,13 @@ const analyticsSchema = new mongoose.Schema(
         locationStats: {
             type: Map,
             of: Number,
-            default: new Map<string, number>(),
+            default: () => new Map<string, number>(),
         },
 
         referrersStats: {
             type: Map,
             of: Number,
-            default: new Map<string, number>(),
+            default: () => new Map<string, number>(),
         },
     },
     {
