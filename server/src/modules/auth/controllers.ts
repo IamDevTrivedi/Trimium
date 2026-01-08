@@ -908,13 +908,14 @@ export const controllers = {
                     accountID: userID,
                 })
                     .select("-__v")
+                    .lean()
                     .sort({ createdAt: -1 });
 
                 const data = allLoginHistories.map((entry) => {
                     const parsedUA = new UAParser(entry.UA).getResult();
 
                     return {
-                        ...entry,
+                        loginHistory: entry,
                         parsedUA,
                         isActive: entry.tokenVersion === tokenVersion,
                         currentDevice: entry._id.toString() === loginHistoryID,

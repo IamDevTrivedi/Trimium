@@ -154,6 +154,7 @@ export function LoginHistory() {
             }
         } catch (error) {
             toastError(error);
+            router.push("/account");
         } finally {
             setLoadingPage(false);
             setRefreshing(false);
@@ -373,8 +374,8 @@ export function LoginHistory() {
                                                     <div className="font-medium">
                                                         {session.parsedUA.device.type
                                                             ? getDeviceTypeLabel(
-                                                                  session.parsedUA.device.type
-                                                              )
+                                                                session.parsedUA.device.type
+                                                            )
                                                             : "Unknown Device"}
                                                     </div>
                                                     <div className="text-sm text-muted-foreground">
