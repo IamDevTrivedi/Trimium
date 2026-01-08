@@ -11,7 +11,8 @@
         "install:all": "node ./scripts/install-all.js",
         "clean:all": "node ./scripts/clean-all.js",
         "reset:all": "node ./scripts/reset-all.js",
-        "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"pnpm --filter client dev\" \"pnpm --filter server dev\""
+        "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"pnpm --filter client dev\" \"pnpm --filter server dev\"",
+        "download:geoip": "node ./scripts/update-geolite2.js && ./scripts/transfer-geofile.sh"
     },
     "keywords": [],
     "author": "",
