@@ -340,7 +340,7 @@ export default function FeaturesPage() {
             </section>
 
             {/* Link-in-Bio */}
-            <section className="w-full max-w-6xl mx-auto border-y border-border bg-muted/10 py-16">
+            {/* <section className="w-full max-w-6xl mx-auto border-y border-border bg-muted/10 py-16">
                 <div className="container px-4">
                     <div className="mx-auto max-w-6xl">
                         <div className="mb-12">
@@ -418,7 +418,7 @@ export default function FeaturesPage() {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             {/* FAQ Section */}
             <section className="w-full max-w-6xl mx-auto container px-4 py-16 md:py-24">
