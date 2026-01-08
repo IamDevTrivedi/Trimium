@@ -262,6 +262,7 @@ export function AccountPage() {
                 showNew: false,
                 showConfirm: false,
             });
+            setLoading((prev) => ({ ...prev, password: false }));
         }
     };
 
