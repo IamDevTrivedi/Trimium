@@ -11,8 +11,7 @@ type UseErrorToastOptions = {
 };
 
 export const toastError = (error: unknown, options?: UseErrorToastOptions) => {
-    const { fallbackMessage = "An unexpected error occurred." } =
-        options || {};
+    const { fallbackMessage = "An unexpected error occurred." } = options || {};
 
     const err = error as AxiosError<ApiErrorResponse>;
 
