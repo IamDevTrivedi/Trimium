@@ -32,6 +32,7 @@ export const envSchema = z
         SMTP_USER: z.string().min(1),
         SMTP_PASSWORD: z.string().min(1),
         SENDER_EMAIL: z.email(),
+        BREVO_API_KEY: z.string().min(1),
 
         JWT_KEY: z.string().min(32),
 

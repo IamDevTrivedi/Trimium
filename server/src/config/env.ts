@@ -57,6 +57,7 @@ export const config = {
     SMTP_USER: process.env.SMTP_USER as string,
     SMTP_PASSWORD: process.env.SMTP_PASSWORD as string,
     SENDER_EMAIL: process.env.SENDER_EMAIL as string,
+    BREVO_API_KEY: process.env.BREVO_API_KEY as string,
 
     JWT_KEY: process.env.JWT_KEY as string,
 
