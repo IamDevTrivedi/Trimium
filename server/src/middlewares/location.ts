@@ -49,7 +49,7 @@ const CACHE_TTL = 86400;
 let reader: Reader<CityResponse> | null = null;
 let useMMDB = false;
 
-const initializeReader = async () => {
+export const initializeReader = async () => {
     if (reader) return reader;
 
     if (fs.existsSync(MMDB_PATH)) {
@@ -69,8 +69,6 @@ const initializeReader = async () => {
 
     return reader;
 };
-
-initializeReader();
 
 const getLocationFromMMDB = (ip: string): LocationData | null => {
     if (!reader) return null;

@@ -4,6 +4,8 @@ import rateLimit from "express-rate-limit";
 import { config } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { redisClient } from "@/db/connectRedis";
+import { Request } from "express";
+import { getClientIP } from "./IP";
 
 interface RateLimitOptions {
     windowMs: number;
@@ -29,6 +31,7 @@ export const createRateLimiter = ({
         legacyHeaders: false,
         skipFailedRequests: false,
         skipSuccessfulRequests: false,
+        keyGenerator: (req: Request) => getClientIP(req),
 
         handler: (req, res, _next, options) => {
             logger.warn(

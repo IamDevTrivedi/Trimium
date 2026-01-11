@@ -7,7 +7,9 @@ declare module "express-serve-static-core" {
 }
 
 const isPrivateIP = (ip: string): boolean => {
-    if (!ip) return false;
+    if (!ip) {
+        return false;
+    }
 
     return (
         ip.startsWith("10.") ||
@@ -18,15 +20,38 @@ const isPrivateIP = (ip: string): boolean => {
                 return second >= 16 && second <= 31;
             })()) ||
         ip === "::1" ||
+        ip === "127.0.0.1" ||
         ip.startsWith("fc") ||
         ip.startsWith("fd")
     );
 };
 
+export const getClientIP = (req: Request): string => {
+    const xForwardedFor = req.headers["x-forwarded-for"];
+    if (xForwardedFor) {
+        const ips = Array.isArray(xForwardedFor)
+            ? xForwardedFor[0]
+            : xForwardedFor.split(",")[0];
+        return ips.trim();
+    }
+
+    const xRealIP = req.headers["x-real-ip"];
+    if (xRealIP) {
+        return Array.isArray(xRealIP) ? xRealIP[0] : xRealIP;
+    }
+
+    return req.ip || "";
+};
+
 export const IPMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let clientIP = req.ip || "";
-        if (isPrivateIP(clientIP)) {
+        let clientIP = getClientIP(req);
+
+        if (clientIP.startsWith("::ffff:")) {
+            clientIP = clientIP.substring(7);
+        }
+
+        if (isPrivateIP(clientIP) || !clientIP) {
             clientIP = "8.8.8.8";
         }
 

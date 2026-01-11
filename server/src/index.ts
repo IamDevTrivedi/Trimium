@@ -13,7 +13,7 @@ import { logger } from "@utils/logger";
 import { httpLoggerMiddleware } from "@/middlewares/httpLogger";
 import { UAParserMiddleware } from "@middlewares/UAParser";
 import { IPMiddleware } from "@middlewares/IP";
-import { locationMiddleware } from "@middlewares/location";
+import { initializeReader, locationMiddleware } from "@middlewares/location";
 
 import "@modules/queue";
 
@@ -22,6 +22,7 @@ const init = async () => {
     await connectMongo();
     await connectRedis();
     await verifyEmailTransporter();
+    await initializeReader();
 
     const app = express();
     app.set("trust proxy", 1);
@@ -37,12 +38,13 @@ const init = async () => {
     );
     app.use(cookieParser());
 
-    const { globalRateLimiter } = await import("@middlewares/rateLimiter");
-    app.use(globalRateLimiter);
     app.use(httpLoggerMiddleware);
     app.use(UAParserMiddleware);
     app.use(IPMiddleware);
     app.use(locationMiddleware);
+
+    const { globalRateLimiter } = await import("@middlewares/rateLimiter");
+    app.use(globalRateLimiter);
 
     const { default: rootRoutes } = await import("@modules/root/routes");
     const { default: healthRoutes } = await import("@modules/health/routes");
