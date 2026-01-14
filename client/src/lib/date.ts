@@ -12,3 +12,20 @@ export const numberToDatetimeLocal = (timestamp: number | undefined) => {
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
+
+export const readableDate = (date: Date = new Date()): string => {
+    return date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+};
+
+export const readableTime = (date: Date = new Date()): string => {
+    return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZoneName: "short",
+    });
+};

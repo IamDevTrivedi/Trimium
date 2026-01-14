@@ -8,6 +8,7 @@ import { LoadingPage } from "./loading";
 import { toastError } from "@/lib/toast-error";
 import { backend } from "@/config/backend";
 import { handleResponse } from "@/lib/handle-response";
+import { format } from "timeago.js";
 
 interface Invitation {
     title: string;
@@ -111,7 +112,7 @@ export function PendingInvitations() {
                                 <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
                                     <div className="flex items-center gap-1.5">
                                         <Calendar className="h-3.5 w-3.5 shrink-0" />
-                                        <span>Received {formatDate(invitation.updatedAt)}</span>
+                                        <span>Received {format(invitation.updatedAt)}</span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
                                         <Shield className="h-3.5 w-3.5 shrink-0" />
@@ -147,24 +148,6 @@ export function PendingInvitations() {
             </div>
         </div>
     );
-}
-
-function formatDate(dateString: string) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "today";
-    if (diffDays === 1) return "yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-
-    return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
-    });
 }
 
 function PermissionBadge({ permission }: { permission: string }) {

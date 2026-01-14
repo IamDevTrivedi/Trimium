@@ -1,14 +1,14 @@
 "use client";
-import { Users, ExternalLink, Shield, Calendar, User, UserCog } from "lucide-react";
+import { Users, Shield, Calendar, UserCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import React from "react";
 import { toastError } from "@/lib/toast-error";
 import { backend } from "@/config/backend";
 import { handleResponse } from "@/lib/handle-response";
 import { LoadingPage } from "./loading";
 import { useRouter } from "next/navigation";
+import { format } from "timeago.js";
 
 interface Workspace {
     title: string;
@@ -89,7 +89,7 @@ export function WorkspaceList() {
                         <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
                             <div className="flex items-center gap-1.5">
                                 <Calendar className="h-3.5 w-3.5 shrink-0" />
-                                <span>Created {formatDate(workspace.createdAt)}</span>
+                                <span>Created {format(workspace.createdAt)}</span>
                             </div>
                             <div className="flex items-center gap-1.5">
                                 <Users className="h-3.5 w-3.5 shrink-0" />
@@ -105,22 +105,4 @@ export function WorkspaceList() {
             ))}
         </div>
     );
-}
-
-function formatDate(dateString: string) {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) return "today";
-    if (diffDays === 1) return "yesterday";
-    if (diffDays < 7) return `${diffDays} days ago`;
-    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
-
-    return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
-    });
 }

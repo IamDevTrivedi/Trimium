@@ -74,6 +74,7 @@ import { WorkspacePerformance } from "./workspace-performance";
 import { WorkspaceTags } from "./workspace-tags";
 import { Separator } from "./ui/separator";
 import TopBackButton from "./top-back-button";
+import { readableDate, readableTime } from "@/lib/date";
 
 interface workspaceData {
     _id: string;
@@ -310,7 +311,7 @@ export function WorkspaceDetails() {
                 <p className="text-sm text-muted-foreground">{workspaceData.description}</p>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
-                    <span>Created on {format(new Date(workspaceData.createdAt), "PPP")}</span>
+                    <span>Created on {readableDate(new Date(workspaceData.createdAt))} at {readableTime(new Date(workspaceData.createdAt))}</span>
                 </div>
             </div>
 
