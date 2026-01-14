@@ -15,6 +15,12 @@ import { HASH_OPTIONS } from "@constants/hash";
 import { LoginHistory } from "@models/loginHistory";
 import { emailTemplates } from "@utils/emailTemplates";
 import { emailQueue, QueueNames } from "@modules/queue";
+import {
+    checkLoginCooldown,
+    recordFailedAttempt,
+    clearFailedAttempts,
+    loginThrottleConfig,
+} from "@utils/loginThrottle";
 
 const getCookieOptions = (clear = false) => {
     return {
@@ -620,15 +626,73 @@ export const controllers = {
                 });
             }
 
+            // Check if account is in cooldown due to failed attempts
+            const cooldownStatus = await checkLoginCooldown(existingUser.email);
+            if (cooldownStatus.blocked) {
+                res.setHeader("Retry-After", cooldownStatus.remainingSeconds);
+                return sendResponse(res, {
+                    success: false,
+                    message: `Account temporarily locked due to multiple failed login attempts. Please try again in ${Math.ceil(cooldownStatus.remainingSeconds / 60)} minutes.`,
+                    statusCode: StatusCodes.TOO_MANY_REQUESTS,
+                    retryAfter: cooldownStatus.remainingSeconds,
+                });
+            }
+
             const match = await argon2.verify(existingUser.passwordHash, password);
 
             if (!match) {
+                // Record failed attempt and check thresholds
+                const { count, shouldWarn, shouldLockout } = await recordFailedAttempt(
+                    existingUser.email
+                );
+
+                // Send warning email at threshold (3 attempts)
+                if (shouldWarn) {
+                    emailQueue.add(QueueNames.SEND_EMAIL, {
+                        from: config.SENDER_EMAIL,
+                        to: existingUser.email,
+                        subject: "Failed Login Attempts on Your Account",
+                        html: emailTemplates.failedLoginWarning({
+                            attemptCount: count,
+                            maxAttempts: loginThrottleConfig.MAX_FAILED_ATTEMPTS,
+                            UAinfo: res.locals.ua,
+                            locationData: res.locals.location,
+                            IPAddress: res.locals.clientIP,
+                        }),
+                    });
+                }
+
+                // Send lockout email when max attempts reached
+                if (shouldLockout) {
+                    emailQueue.add(QueueNames.SEND_EMAIL, {
+                        from: config.SENDER_EMAIL,
+                        to: existingUser.email,
+                        subject: "Your Account Has Been Temporarily Locked",
+                        html: emailTemplates.accountLockout({
+                            cooldownMinutes: Math.ceil(loginThrottleConfig.COOLDOWN_TTL / 60),
+                            UAinfo: res.locals.ua,
+                            locationData: res.locals.location,
+                            IPAddress: res.locals.clientIP,
+                        }),
+                    });
+
+                    return sendResponse(res, {
+                        success: false,
+                        message: `Account temporarily locked due to multiple failed login attempts. Please try again in ${Math.ceil(loginThrottleConfig.COOLDOWN_TTL / 60)} minutes.`,
+                        statusCode: StatusCodes.TOO_MANY_REQUESTS,
+                        retryAfter: loginThrottleConfig.COOLDOWN_TTL,
+                    });
+                }
+
                 return sendResponse(res, {
                     success: false,
                     message: "Invalid credentials",
                     statusCode: StatusCodes.UNAUTHORIZED,
                 });
             }
+
+            // Clear failed attempts on successful login
+            await clearFailedAttempts(existingUser.email);
 
             const newLogin = new LoginHistory({
                 accountID: existingUser._id,

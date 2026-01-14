@@ -126,4 +126,70 @@ export const emailTemplates = {
         </div>
         `;
     },
+
+    failedLoginWarning: ({
+        attemptCount,
+        maxAttempts,
+        UAinfo,
+        locationData,
+        IPAddress,
+    }: {
+        attemptCount: number;
+        maxAttempts: number;
+        UAinfo: ParsedUA;
+        locationData: LocationData;
+        IPAddress: string;
+    }) => {
+        return `
+        <div>
+            <h2>Failed Login Attempts Detected</h2>
+            <p>We detected <strong>${attemptCount}</strong> failed login attempts on your account. Your account will be temporarily locked after <strong>${maxAttempts}</strong> failed attempts.</p>
+            <h3>Latest Attempt Details:</h3>
+            <ul>
+                <li><strong>Browser:</strong> ${UAinfo.browser.name} ${UAinfo.browser.version !== "unknown" ? UAinfo.browser.version : ""}</li>
+                <li><strong>Operating System:</strong> ${UAinfo.os.name} ${UAinfo.os.version !== "unknown" ? UAinfo.os.version : ""}</li>
+                <li><strong>Device:</strong> ${UAinfo.device.type}</li>
+                <li><strong>Location:</strong> ${locationData.displayName}</li>
+                <li><strong>IP Address:</strong> ${IPAddress}</li>
+                <li><strong>Time:</strong> ${readableDate()} at ${readableTime()}</li>
+            </ul>
+            <p>If this was you, please ensure you're using the correct password.</p>
+            <p>If this wasn't you, we recommend changing your password immediately.</p>
+        </div>
+        `;
+    },
+
+    accountLockout: ({
+        cooldownMinutes,
+        UAinfo,
+        locationData,
+        IPAddress,
+    }: {
+        cooldownMinutes: number;
+        UAinfo: ParsedUA;
+        locationData: LocationData;
+        IPAddress: string;
+    }) => {
+        return `
+        <div>
+            <h2>Account Temporarily Locked</h2>
+            <p>Your account has been temporarily locked for <strong>${cooldownMinutes} minutes</strong> due to multiple failed login attempts.</p>
+            <h3>Last Attempt Details:</h3>
+            <ul>
+                <li><strong>Browser:</strong> ${UAinfo.browser.name} ${UAinfo.browser.version !== "unknown" ? UAinfo.browser.version : ""}</li>
+                <li><strong>Operating System:</strong> ${UAinfo.os.name} ${UAinfo.os.version !== "unknown" ? UAinfo.os.version : ""}</li>
+                <li><strong>Device:</strong> ${UAinfo.device.type}</li>
+                <li><strong>Location:</strong> ${locationData.displayName}</li>
+                <li><strong>IP Address:</strong> ${IPAddress}</li>
+                <li><strong>Time:</strong> ${readableDate()} at ${readableTime()}</li>
+            </ul>
+            <p>If this was you, please wait and try again later with the correct password.</p>
+            <p><strong>If this wasn't you</strong>, someone may be trying to access your account. We strongly recommend:</p>
+            <ul>
+                <li>Changing your password immediately after the lockout expires</li>
+                <li>Reviewing your recent account activity</li>
+            </ul>
+        </div>
+        `;
+    },
 };
