@@ -29,9 +29,7 @@ const isPrivateIP = (ip: string): boolean => {
 export const getClientIP = (req: Request): string => {
     const xForwardedFor = req.headers["x-forwarded-for"];
     if (xForwardedFor) {
-        const ips = Array.isArray(xForwardedFor)
-            ? xForwardedFor[0]
-            : xForwardedFor.split(",")[0];
+        const ips = Array.isArray(xForwardedFor) ? xForwardedFor[0] : xForwardedFor.split(",")[0];
         return ips.trim();
     }
 

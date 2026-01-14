@@ -24,9 +24,11 @@ export const transporter = {
                 sender: {
                     email: from,
                 },
-                to: [{
-                    email: to,
-                }],
+                to: [
+                    {
+                        email: to,
+                    },
+                ],
                 subject: subject,
                 htmlContent: html,
             };

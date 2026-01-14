@@ -140,7 +140,7 @@ const getLocationFromAPI = async (ip: string): Promise<LocationData> => {
             expiration: {
                 type: "EX",
                 value: CACHE_TTL,
-            }
+            },
         });
 
         return locationData;

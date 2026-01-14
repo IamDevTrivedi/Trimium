@@ -5,4 +5,4 @@ export const HASH_OPTIONS: Options = Object.freeze({
     memoryCost: 65536,
     timeCost: 3,
     parallelism: 4,
-}); 
+});

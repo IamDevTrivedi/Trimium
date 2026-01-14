@@ -662,6 +662,20 @@ export const controllers = {
 
             await newLogin.save();
 
+            await redisClient.set(`userID:${existingUser._id}`, existingUser.tokenVersion, {
+                expiration: {
+                    type: "EX",
+                    value: 1 * 60 * 60,
+                },
+            });
+
+            await redisClient.set(`loginHistoryID:${newLogin._id}`, existingUser.tokenVersion, {
+                expiration: {
+                    type: "EX",
+                    value: 1 * 60 * 60,
+                },
+            });
+
             const data = {
                 ...existingUser,
                 passwordHash: undefined,
@@ -704,6 +718,13 @@ export const controllers = {
             existingLogin.tokenVersion -= 1;
             await existingLogin.save();
 
+            await redisClient.set(`loginHistoryID:${loginHistoryID}`, existingLogin.tokenVersion, {
+                expiration: {
+                    type: "EX",
+                    value: 1 * 60 * 60,
+                },
+            });
+
             res.clearCookie("authToken", getCookieOptions(true));
 
             return sendResponse(res, {
@@ -743,6 +764,20 @@ export const controllers = {
 
             await existingUser.save();
             await existingLogin.save();
+
+            await redisClient.set(`userID:${userID}`, existingUser.tokenVersion, {
+                expiration: {
+                    type: "EX",
+                    value: 1 * 60 * 60,
+                },
+            });
+
+            await redisClient.set(`loginHistoryID:${loginHistoryID}`, existingLogin.tokenVersion, {
+                expiration: {
+                    type: "EX",
+                    value: 1 * 60 * 60,
+                },
+            });
 
             const authToken = jwt.sign(
                 {
@@ -817,6 +852,17 @@ export const controllers = {
             existingLogin.tokenVersion -= 1;
             await existingLogin.save();
 
+            await redisClient.set(
+                `loginHistoryID:${targetLoginHistoryID}`,
+                existingLogin.tokenVersion,
+                {
+                    expiration: {
+                        type: "EX",
+                        value: 1 * 60 * 60,
+                    },
+                }
+            );
+
             return sendResponse(res, {
                 message: "Logged out from particular device successfully",
             });
@@ -883,9 +929,10 @@ export const controllers = {
             const { targetLoginHistoryID } = result.data || {};
             const { tokenVersion, userID, loginHistoryID } = res.locals;
 
-            if (targetLoginHistoryID) {
-                const loginHistory =
-                    await LoginHistory.findById(targetLoginHistoryID).select("-__v");
+            if (typeof targetLoginHistoryID === "string") {
+                const loginHistory = await LoginHistory.findById(targetLoginHistoryID)
+                    .select("-__v")
+                    .lean();
 
                 if (!loginHistory) {
                     return sendResponse(res, {
