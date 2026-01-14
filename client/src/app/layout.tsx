@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/next";
 import config from "@/config/env";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { ServiceWorkerRegister } from "@/components/service-worker-register";
 
 const notoSans = Noto_Sans({ variable: "--font-sans" });
 
@@ -83,6 +84,7 @@ export default function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                 >
+                    <ServiceWorkerRegister />
                     <Navbar />
                     {children}
                     <Footer />
