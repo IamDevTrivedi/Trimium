@@ -31,7 +31,6 @@ export function PendingInvitations() {
                 );
                 if (handleResponse(resData, true)) {
                     setInvitationData(resData.data);
-                    console.log(resData.data);
                 }
             } catch (error) {
                 toastError(error);

@@ -103,7 +103,6 @@ export function EditRedirectForm() {
                 } else {
                     setShortCodeInfo(resData.data);
                     setUpdateShortCodeInfo(resData.data);
-                    console.log(resData.data);
                 }
             } catch (error) {
                 router.push(`/w/${workspaceID}/`);

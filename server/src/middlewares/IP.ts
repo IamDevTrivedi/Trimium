@@ -1,3 +1,4 @@
+import { logger } from "@utils/logger";
 import { NextFunction, Request, Response } from "express";
 
 declare module "express-serve-static-core" {
@@ -54,9 +55,10 @@ export const IPMiddleware = async (req: Request, res: Response, next: NextFuncti
         }
 
         res.locals.clientIP = clientIP;
+    } catch (error) {
+        logger.error("IPMiddleware error:");
+        logger.error(error);
+    } finally {
         next();
-    } catch (err) {
-        console.error("IPMiddleware error:", err);
-        next(err);
     }
 };

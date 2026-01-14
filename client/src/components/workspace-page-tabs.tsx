@@ -17,9 +17,6 @@ export default function WorkspacePageTabs() {
         tab = "all";
     }
 
-    console.log("Search Query Tab:", tab);
-    console.log("WorkspacePageTabs rendered");
-
     return (
         <Tabs defaultValue={tab} className="w-full">
             <div className="mb-6 flex flex-col md:flex-row gap-2 items-center justify-between">

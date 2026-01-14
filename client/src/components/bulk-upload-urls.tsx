@@ -340,7 +340,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
             setShowPreview(true);
         } catch (error) {
             Toast.error("Failed to parse CSV file");
-            console.error(error);
         } finally {
             setIsValidating(false);
         }

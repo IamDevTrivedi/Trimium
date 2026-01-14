@@ -106,8 +106,6 @@ export function CreateWorkspaceForm() {
                 members: members.map(({ email, permission }) => ({ email, permission })),
             };
 
-            console.log("Submitting payload:", payload);
-
             const { data: resData } = await backend.post(
                 "/api/v1/workspace/create-workspace",
                 payload

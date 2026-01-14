@@ -152,8 +152,6 @@ const getLocationFromAPI = async (ip: string): Promise<LocationData> => {
 
 export const locationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const { clientIP } = res.locals;
-    console.time(`Location lookup for IP: ${clientIP}`);
-
     try {
         let locationData: LocationData;
 
@@ -169,7 +167,5 @@ export const locationMiddleware = async (req: Request, res: Response, next: Next
         res.locals.location = DEFAULT_LOCATION;
         logger.error(`Location Middleware Error: ${error}`);
         next();
-    } finally {
-        console.timeEnd(`Location lookup for IP: ${clientIP}`);
     }
 };

@@ -271,9 +271,7 @@ export const controllers = {
                 });
             }
 
-            console.time("passwordHashing");
             const passwordHash = await argon2.hash(password, HASH_OPTIONS);
-            console.timeEnd("passwordHashing");
 
             const newUser = new User({
                 firstName: firstName,
@@ -573,7 +571,7 @@ export const controllers = {
                 expiration: {
                     type: "EX",
                     value: 1 * 60 * 60,
-                }
+                },
             });
 
             await redisClient.del(`resetPassword:${existingUser.email}`);

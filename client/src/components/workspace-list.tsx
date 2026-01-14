@@ -32,7 +32,6 @@ export function WorkspaceList() {
                 const { data: resData } = await backend.post("/api/v1/workspace/my-workspaces");
                 if (handleResponse(resData, true)) {
                     setWorkspaceData(resData.data);
-                    console.log(resData.data);
                 }
             } catch (error) {
                 toastError(error);

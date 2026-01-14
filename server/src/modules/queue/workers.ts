@@ -9,11 +9,7 @@ export const emailWorker = new Worker(QueueNames.SEND_EMAIL, sendEmail, {
     concurrency: 5,
 });
 
-export const lastActivityWorker = new Worker(
-    QueueNames.UPDATE_LAST_ACTIVITY,
-    updateLastActivity,
-    {
-        connection: redisConfig,
-        concurrency: 10,
-    }
-);
+export const lastActivityWorker = new Worker(QueueNames.UPDATE_LAST_ACTIVITY, updateLastActivity, {
+    connection: redisConfig,
+    concurrency: 10,
+});

@@ -512,7 +512,6 @@ export function CreateAccountPassword() {
                 router.replace("/login");
                 router.refresh();
             }
-            console.log("eeee");
         } catch (error: unknown) {
             toastError(error);
         }

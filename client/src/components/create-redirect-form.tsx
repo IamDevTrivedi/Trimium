@@ -170,8 +170,6 @@ export function CreateRedirectForm() {
                 : undefined,
         };
 
-        console.log(payload);
-
         try {
             setLoading(true);
             const { data: resData } = await backend.post("/api/v1/url/create-shortcode", payload);

@@ -60,7 +60,6 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
         res.locals.tokenVersion = tokenVersion;
         res.locals.loginHistoryID = loginHistoryID;
 
-
         updateLastActivityDebounced(loginHistoryID);
 
         next();
