@@ -6,13 +6,14 @@ import {
     USERNAME,
     USERNAME_NOTICE,
 } from "@/constants/regex";
+import { HASH_OPTIONS } from "@/constants/hash";
 import { User } from "@/models/user";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 
 export const controllers = {
     changeName: async (req: Request, res: Response) => {
@@ -112,7 +113,7 @@ export const controllers = {
                 });
             }
 
-            const match = await bcrypt.compare(currentPassword, existingUser.passwordHash);
+            const match = await argon2.verify(existingUser.passwordHash, currentPassword);
 
             if (!match) {
                 return sendResponse(res, {
@@ -122,7 +123,7 @@ export const controllers = {
                 });
             }
 
-            const passwordHash = await bcrypt.hash(newPassword, 14);
+            const passwordHash = await argon2.hash(newPassword, HASH_OPTIONS);
             existingUser.passwordHash = passwordHash;
             await existingUser.save();
 

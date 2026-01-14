@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
 import { UAParser } from "ua-parser-js";
@@ -11,6 +11,7 @@ import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
 import { z } from "zod";
 import { NAME, OTP as OTP_REGEX, PASSWORD, USERNAME } from "@constants/regex";
+import { HASH_OPTIONS } from "@constants/hash";
 import { LoginHistory } from "@models/loginHistory";
 import { emailTemplates } from "@utils/emailTemplates";
 import { emailQueue, QueueNames } from "@modules/queue/queues";
@@ -264,7 +265,9 @@ export const controllers = {
                 });
             }
 
-            const passwordHash = await bcrypt.hash(password, 14);
+            console.time("passwordHashing");
+            const passwordHash = await argon2.hash(password, HASH_OPTIONS);
+            console.timeEnd("passwordHashing");
 
             const newUser = new User({
                 firstName: firstName,
@@ -556,7 +559,7 @@ export const controllers = {
                 });
             }
 
-            const passwordHash = await bcrypt.hash(password, 14);
+            const passwordHash = await argon2.hash(password, HASH_OPTIONS);
             existingUser.passwordHash = passwordHash;
             await existingUser.save();
 
@@ -610,7 +613,7 @@ export const controllers = {
                 });
             }
 
-            const match = await bcrypt.compare(password, existingUser.passwordHash);
+            const match = await argon2.verify(existingUser.passwordHash, password);
 
             if (!match) {
                 return sendResponse(res, {

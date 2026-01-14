@@ -1,11 +1,12 @@
 import { PASSWORD, PASSWORD_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
+import { HASH_OPTIONS } from "@/constants/hash";
 import { URL } from "@/models/url";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 import { generateShortcode } from "@utils/generateShortCode";
 import { Analytics } from "@/models/analytics";
 import { Workspace } from "@/models/workspace";
@@ -184,7 +185,7 @@ export const controllers = {
             let scheduleObj: Schedule | undefined = undefined;
 
             if (typeof password === "string") {
-                const passwordHash = await bcrypt.hash(password, 12);
+                const passwordHash = await argon2.hash(password, HASH_OPTIONS);
                 passwordProtect = {
                     isEnabled: true,
                     passwordHash,
@@ -426,7 +427,7 @@ export const controllers = {
             }
 
             if (typeof password === "string") {
-                const passwordHash = await bcrypt.hash(password, 12);
+                const passwordHash = await argon2.hash(password, HASH_OPTIONS);
                 existingURL.passwordProtect.isEnabled = true;
                 existingURL.passwordProtect.passwordHash = passwordHash;
             }
@@ -615,9 +616,9 @@ export const controllers = {
                     });
                 }
 
-                const isPasswordCorrect = await bcrypt.compare(
-                    password,
-                    existingURL.passwordProtect.passwordHash
+                const isPasswordCorrect = await argon2.verify(
+                    existingURL.passwordProtect.passwordHash,
+                    password
                 );
 
                 if (!isPasswordCorrect) {
