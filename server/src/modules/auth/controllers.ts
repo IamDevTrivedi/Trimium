@@ -524,7 +524,7 @@ export const controllers = {
                 z.string().regex(USERNAME).safeParse(identity).success
                     ? { username: identity }
                     : { email: identity }
-            ).select("email passwordHash");
+            ).select("email passwordHash _id tokenVersion");
 
             if (!existingUser) {
                 return sendResponse(res, {
@@ -559,9 +559,16 @@ export const controllers = {
                 });
             }
 
-            const passwordHash = await argon2.hash(password, HASH_OPTIONS);
-            existingUser.passwordHash = passwordHash;
+            existingUser.passwordHash = await argon2.hash(password, HASH_OPTIONS);
+            existingUser.tokenVersion += 1;
             await existingUser.save();
+
+            await redisClient.set(`userID:${existingUser._id}`, existingUser.tokenVersion, {
+                expiration: {
+                    type: "EX",
+                    value: 1 * 60 * 60,
+                }
+            });
 
             await redisClient.del(`resetPassword:${existingUser.email}`);
 
