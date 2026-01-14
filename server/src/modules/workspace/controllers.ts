@@ -14,7 +14,7 @@ import { Invitation } from "@/models/invitation";
 import { URL } from "@/models/url";
 import { Analytics } from "@/models/analytics";
 import mongoose from "mongoose";
-import { emailQueue, QueueNames } from "@modules/queue/queues";
+import { emailQueue, QueueNames } from "@modules/queue";
 
 export const controllers = {
     createWorkspace: async (req: Request, res: Response) => {

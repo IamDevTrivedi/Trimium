@@ -8,6 +8,7 @@ import { config } from "@config/env";
 import { LoginHistory } from "@/models/loginHistory";
 import { User } from "@/models/user";
 import { redisClient } from "@db/connectRedis";
+import { lastActivityQueue } from "@modules/queue";
 
 declare module "express-serve-static-core" {
     interface Locals {
@@ -58,6 +59,9 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
         res.locals.userID = userID;
         res.locals.tokenVersion = tokenVersion;
         res.locals.loginHistoryID = loginHistoryID;
+
+
+        updateLastActivityDebounced(loginHistoryID);
 
         next();
     } catch (error) {
@@ -114,4 +118,30 @@ const getLoginHistoryTokenVersion = async (loginHistoryID: string): Promise<numb
     });
 
     return existingLoginHistory.tokenVersion;
+};
+
+const updateLastActivityDebounced = async (loginHistoryID: string): Promise<void> => {
+    try {
+        const debounceKey = `activity:debounce:${loginHistoryID}`;
+
+        const exists = await redisClient.exists(debounceKey);
+        if (exists) {
+            return;
+        }
+
+        await redisClient.set(debounceKey, "1", {
+            expiration: {
+                type: "EX",
+                value: 3 * 60,
+            },
+        });
+
+        lastActivityQueue.add("updateActivity", {
+            loginHistoryID,
+            timestamp: Date.now(),
+        });
+    } catch (error) {
+        logger.error("Error in updateLastActivityDebounced:");
+        logger.error(error);
+    }
 };

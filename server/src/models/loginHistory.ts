@@ -18,6 +18,12 @@ const loginHistorySchema = new mongoose.Schema(
             required: true,
         },
 
+        lastAccessedAt: {
+            type: Number,
+            default: () => Date.now(),
+            required: true,
+        },
+
         IPAddress: {
             type: String,
             required: true,

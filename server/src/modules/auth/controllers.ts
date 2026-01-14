@@ -14,7 +14,7 @@ import { NAME, OTP as OTP_REGEX, PASSWORD, USERNAME } from "@constants/regex";
 import { HASH_OPTIONS } from "@constants/hash";
 import { LoginHistory } from "@models/loginHistory";
 import { emailTemplates } from "@utils/emailTemplates";
-import { emailQueue, QueueNames } from "@modules/queue/queues";
+import { emailQueue, QueueNames } from "@modules/queue";
 
 const getCookieOptions = (clear = false) => {
     return {
@@ -695,12 +695,12 @@ export const controllers = {
                 data: data,
             });
         } catch (error) {
-            logger.error("Error in setting new password for Reset Password");
+            logger.error("Error in login");
             logger.error(error);
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in setting new password for Reset Password",
+                message: "Error in login",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }

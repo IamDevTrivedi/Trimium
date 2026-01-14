@@ -37,6 +37,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { handleResponse } from "@/lib/handle-response";
 import { useRouter } from "next/navigation";
 import TopBackButton from "./top-back-button";
+import { format } from "timeago.js";
 
 export interface LoginSession {
     parsedUA: {
@@ -69,6 +70,7 @@ export interface LoginSession {
         UA: string;
         createdAt: string;
         updatedAt: string;
+        lastAccessedAt: number;
         IPAddress: string;
         lat: number;
         lon: number;
@@ -101,23 +103,6 @@ const formatDate = (dateString: string) => {
         hour: "2-digit",
         minute: "2-digit",
     });
-};
-
-const formatTimeAgo = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-    if (diffInMinutes < 60) {
-        return `${diffInMinutes} minute${diffInMinutes !== 1 ? "s" : ""} ago`;
-    } else if (diffInHours < 24) {
-        return `${diffInHours} hour${diffInHours !== 1 ? "s" : ""} ago`;
-    } else {
-        return `${diffInDays} day${diffInDays !== 1 ? "s" : ""} ago`;
-    }
 };
 
 const getDeviceTypeLabel = (deviceType?: string) => {
@@ -374,8 +359,8 @@ export function LoginHistory() {
                                                     <div className="font-medium">
                                                         {session.parsedUA.device.type
                                                             ? getDeviceTypeLabel(
-                                                                  session.parsedUA.device.type
-                                                              )
+                                                                session.parsedUA.device.type
+                                                            )
                                                             : "Unknown Device"}
                                                     </div>
                                                     <div className="text-sm text-muted-foreground">
@@ -395,7 +380,7 @@ export function LoginHistory() {
                                             <div className="text-right text-sm text-muted-foreground">
                                                 <div>Last active</div>
                                                 <div>
-                                                    {formatTimeAgo(session.loginHistory.updatedAt)}
+                                                    {format(session.loginHistory.lastAccessedAt)}
                                                 </div>
                                             </div>
                                         </div>
@@ -526,7 +511,7 @@ function SessionCard({ session, onLogout, loggingOut }: SessionCardProps) {
                     <div className="flex items-center gap-2 text-sm">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
                         <span className="font-medium">Last Active:</span>
-                        <span>{formatTimeAgo(session.loginHistory.updatedAt)}</span>
+                        <span>{format(session.loginHistory.lastAccessedAt)}</span>
                     </div>
                 </div>
             </CardContent>

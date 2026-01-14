@@ -6,7 +6,7 @@ import { sendResponse } from "@utils/sendResponse";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
-import { emailQueue, QueueNames } from "@modules/queue/queues";
+import { emailQueue, QueueNames } from "@modules/queue";
 
 export const controller = {
     submitContactForm: async (req: Request, res: Response) => {
