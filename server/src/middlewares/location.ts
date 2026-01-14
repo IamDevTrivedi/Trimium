@@ -136,7 +136,13 @@ const getLocationFromAPI = async (ip: string): Promise<LocationData> => {
             locationData = DEFAULT_LOCATION;
         }
 
-        await redisClient.setEx(cacheKey, CACHE_TTL, JSON.stringify(locationData));
+        await redisClient.set(cacheKey, JSON.stringify(locationData), {
+            expiration: {
+                type: "EX",
+                value: CACHE_TTL,
+            }
+        });
+
         return locationData;
     } catch (error) {
         logger.error(`API geolocation error for IP ${ip}: ${error}`);
