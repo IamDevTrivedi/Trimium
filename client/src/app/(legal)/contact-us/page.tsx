@@ -50,10 +50,10 @@ export default function ContactPage() {
                         </CardHeader>
                         <CardContent className="pt-0">
                             <a
-                                href="mailto:support@trimium.com"
+                                href="mailto:devtrivedi.work@gmail.com"
                                 className="text-sm text-primary hover:underline"
                             >
-                                support@trimium.com
+                                devtrivedi.work@gmail.com
                             </a>
                         </CardContent>
                     </Card>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Link2, Facebook, Twitter, Instagram, Linkedin, ArrowUp } from "lucide-react";
+import { Mail, Github, Linkedin, ArrowUp } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 
 export function Footer() {
@@ -129,35 +129,32 @@ export function Footer() {
                             </Link>
                         </div>
                         <div className="flex flex-col gap-4 pt-4">
-                            <h3 className="font-semibold">Follow Us</h3>
+                            <h3 className="font-semibold">Connect</h3>
                             <div className="flex gap-3">
                                 <Link
-                                    href="https://facebook.com"
+                                    href="mailto:devtrivedi.work@gmail.com"
                                     className="flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors hover:bg-accent hover:text-accent-foreground"
-                                    aria-label="Facebook"
+                                    aria-label="Email"
                                 >
-                                    <Facebook className="h-4 w-4" />
+                                    <Mail className="h-4 w-4" />
                                 </Link>
                                 <Link
-                                    href="https://twitter.com"
-                                    className="flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors hover:bg-accent hover:text-accent-foreground"
-                                    aria-label="Twitter"
-                                >
-                                    <Twitter className="h-4 w-4" />
-                                </Link>
-                                <Link
-                                    href="https://instagram.com"
-                                    className="flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors hover:bg-accent hover:text-accent-foreground"
-                                    aria-label="Instagram"
-                                >
-                                    <Instagram className="h-4 w-4" />
-                                </Link>
-                                <Link
-                                    href="https://linkedin.com"
+                                    href="https://in.linkedin.com/in/contact-devtrivedi"
                                     className="flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors hover:bg-accent hover:text-accent-foreground"
                                     aria-label="LinkedIn"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                 >
                                     <Linkedin className="h-4 w-4" />
+                                </Link>
+                                <Link
+                                    href="https://github.com/IamDevTrivedi"
+                                    className="flex h-9 w-9 items-center justify-center rounded-md border border-border transition-colors hover:bg-accent hover:text-accent-foreground"
+                                    aria-label="GitHub"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <Github className="h-4 w-4" />
                                 </Link>
                             </div>
                         </div>
@@ -167,7 +164,7 @@ export function Footer() {
                 {/* Bottom Bar */}
                 <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row">
                     <p className="text-sm text-muted-foreground">
-                        © {new Date().getFullYear()} ShortlyPro. All rights reserved.
+                        © {new Date().getFullYear()} Trimium. All rights reserved.
                     </p>
                     <div className="flex items-center gap-4">
                         <ModeToggle />

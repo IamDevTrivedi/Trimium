@@ -426,17 +426,17 @@ export default function FeaturesPage() {
                     <div className="mb-12 text-center">
                         <h2 className="mb-4 text-3xl font-bold">Frequently Asked Questions</h2>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            Get answers to common questions about ShortlyPro
+                            Get answers to common questions about Trimium
                         </p>
                     </div>
 
                     <Accordion className="w-full">
                         <AccordionItem value="item-1">
                             <AccordionTrigger className="text-left">
-                                What is ShortlyPro and how does it work?
+                                What is Trimium and how does it work?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                ShortlyPro is a comprehensive URL shortening and management
+                                Trimium is a comprehensive URL shortening and management
                                 platform. It transforms long URLs into short, memorable links while
                                 providing advanced analytics, QR code generation, and team
                                 collaboration features. Simply paste your long URL, customize your
@@ -446,10 +446,10 @@ export default function FeaturesPage() {
 
                         <AccordionItem value="item-2">
                             <AccordionTrigger className="text-left">
-                                Is ShortlyPro free to use?
+                                Is Trimium free to use?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Yes! ShortlyPro offers a free forever plan with essential features
+                                Yes! Trimium offers a free forever plan with essential features
                                 including URL shortening, basic analytics, and QR code generation.
                             </AccordionContent>
                         </AccordionItem>
@@ -467,10 +467,10 @@ export default function FeaturesPage() {
 
                         <AccordionItem value="item-4">
                             <AccordionTrigger className="text-left">
-                                What kind of analytics does ShortlyPro provide?
+                                What kind of analytics does Trimium provide?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                ShortlyPro provides comprehensive analytics including click
+                                Trimium provides comprehensive analytics including click
                                 tracking, geographic distribution (country), device and browser
                                 breakdowns, click patterns by hour/day, unique vs returning
                                 visitors, and exportable reports in CSV format.
@@ -479,10 +479,10 @@ export default function FeaturesPage() {
 
                         <AccordionItem value="item-5">
                             <AccordionTrigger className="text-left">
-                                How does team collaboration work in ShortlyPro?
+                                How does team collaboration work in Trimium?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                ShortlyPro allows you to create workspaces where you can invite team
+                                Trimium allows you to create workspaces where you can invite team
                                 members with different permission levels (admin, editor, or viewer).
                                 You can organize links with tags, share access to specific projects,
                                 and collaborate on link management while maintaining control over
@@ -495,7 +495,7 @@ export default function FeaturesPage() {
                                 Can I protect my links with passwords or set expiration dates?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Yes! ShortlyPro offers multiple security features including password
+                                Yes! Trimium offers multiple security features including password
                                 protection for sensitive links, the ability to set start and end
                                 dates for time-sensitive content, and traffic limits to control
                                 bandwidth usage. These features help you maintain control over who
@@ -519,7 +519,7 @@ export default function FeaturesPage() {
                                 Can I create multiple short URLs at once?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Yes! ShortlyPro supports bulk URL generation through CSV template
+                                Yes! Trimium supports bulk URL generation through CSV template
                                 upload. Simply download our template, fill in your URLs and custom
                                 parameters, upload the file, and create tens of short links at once.
                                 Our system includes error handling with line numbers to help you
@@ -529,7 +529,7 @@ export default function FeaturesPage() {
 
                         <AccordionItem value="item-9">
                             <AccordionTrigger className="text-left">
-                                Are my links and data secure with ShortlyPro?
+                                Are my links and data secure with Trimium?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
                                 Security is our top priority. All data is encrypted in transit and
@@ -543,7 +543,7 @@ export default function FeaturesPage() {
 
                         <AccordionItem value="item-10">
                             <AccordionTrigger className="text-left">
-                                How do I get started with ShortlyPro?
+                                How do I get started with Trimium?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
                                 Getting started is easy! Simply sign up for a free account, no

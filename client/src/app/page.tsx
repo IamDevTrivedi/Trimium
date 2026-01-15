@@ -247,7 +247,7 @@ export default function HomePage() {
                             Ready to Get Started?
                         </h2>
                         <p className="mb-8 text-pretty text-lg leading-relaxed">
-                            Join thousands of users who trust ShortlyPro for their link management
+                            Join thousands of users who trust Trimium for their link management
                             needs
                         </p>
                         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
