@@ -535,21 +535,23 @@ export function WorkspaceDetails() {
                 </Card>
 
                 {/* New Short Link Section */}
-                <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-                    <CardHeader className="flex items-center justify-between bg-muted/5">
-                        <div className="space-y-1">
-                            <CardTitle className="text-xl">Create a New Short Link</CardTitle>
-                            <CardDescription>
-                                Short links help you to easily share long URLs with your world.
-                            </CardDescription>
-                        </div>
-                        <div>
-                            <Button onClick={() => router.push(`/w/${workspaceID}/create-url`)}>
-                                <Plus className="mr-2 h-4 w-4" /> New Short Link
-                            </Button>
-                        </div>
-                    </CardHeader>
-                </Card>
+                {
+                    permission !== "viewer" && <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
+                        <CardHeader className="flex items-center justify-between bg-muted/5">
+                            <div className="space-y-1">
+                                <CardTitle className="text-xl">Create a New Short Link</CardTitle>
+                                <CardDescription>
+                                    Short links help you to easily share long URLs with your world.
+                                </CardDescription>
+                            </div>
+                            <div>
+                                <Button onClick={() => router.push(`/w/${workspaceID}/create-url`)}>
+                                    <Plus className="mr-2 h-4 w-4" /> New Short Link
+                                </Button>
+                            </div>
+                        </CardHeader>
+                    </Card>
+                }
 
                 {/* Bulk Upload Section */}
                 {permission !== "viewer" && (
