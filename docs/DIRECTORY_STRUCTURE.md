@@ -288,7 +288,7 @@
 │   │       ├── logger.ts
 │   │       ├── normalizeEmail.ts
 │   │       ├── sendResponse.ts
-│   │       ├── sha256.ts
+│   │       ├── hash.ts
 │   │       └── tags.ts
 │   └── tsconfig.json
 └── tests

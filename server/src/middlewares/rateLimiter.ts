@@ -5,8 +5,8 @@ import { config } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { redisClient } from "@/db/connectRedis";
 import { Request, Response } from "express";
-import { getClientIP } from "./IP";
-import { sha256 } from "@utils/sha256";
+import { getClientIP } from "@middlewares/IP";
+import { sha256 } from "@utils/hash";
 
 declare module "express-serve-static-core" {
     interface Locals {
