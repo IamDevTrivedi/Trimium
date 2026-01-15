@@ -10,7 +10,6 @@ import argon2 from "argon2";
 import { generateShortcode } from "@utils/generateShortCode";
 import { Analytics } from "@/models/analytics";
 import { Workspace } from "@/models/workspace";
-import { sha256 } from "@utils/sha256";
 import { parse } from "ts-referer-parser";
 
 export const controllers = {
@@ -631,10 +630,10 @@ export const controllers = {
                 }
             }
 
-            const IPHash = sha256(res.locals.clientIP);
+            const visitorID = res.locals.visitorID;
             existingAnalytics.totalClicks += 1;
-            if (!existingAnalytics.uniqueVisitors.includes(IPHash)) {
-                existingAnalytics.uniqueVisitors.push(IPHash);
+            if (!existingAnalytics.uniqueVisitors.includes(visitorID)) {
+                existingAnalytics.uniqueVisitors.push(visitorID);
             }
 
             const currentDevice = res.locals.ua.device.type;
@@ -681,18 +680,18 @@ export const controllers = {
                 existingAnalytics.dailyStats.push({
                     date: currentToday.getTime(),
                     totalClicks: 1,
-                    uniqueVisitors: [IPHash],
+                    uniqueVisitors: [visitorID],
                 });
             } else if (existingAnalytics.dailyStats[len - 1].date === currentToday.getTime()) {
                 existingAnalytics.dailyStats[len - 1].totalClicks += 1;
-                if (!existingAnalytics.dailyStats[len - 1].uniqueVisitors.includes(IPHash)) {
-                    existingAnalytics.dailyStats[len - 1].uniqueVisitors.push(IPHash);
+                if (!existingAnalytics.dailyStats[len - 1].uniqueVisitors.includes(visitorID)) {
+                    existingAnalytics.dailyStats[len - 1].uniqueVisitors.push(visitorID);
                 }
             } else {
                 existingAnalytics.dailyStats.push({
                     date: currentToday.getTime(),
                     totalClicks: 1,
-                    uniqueVisitors: [IPHash],
+                    uniqueVisitors: [visitorID],
                 });
             }
 

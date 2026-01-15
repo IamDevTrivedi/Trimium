@@ -4,8 +4,15 @@ import rateLimit from "express-rate-limit";
 import { config } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { redisClient } from "@/db/connectRedis";
-import { Request } from "express";
+import { Request, Response } from "express";
 import { getClientIP } from "./IP";
+import { sha256 } from "@utils/sha256";
+
+declare module "express-serve-static-core" {
+    interface Locals {
+        visitorID: string;
+    }
+}
 
 interface RateLimitOptions {
     windowMs: number;
@@ -31,7 +38,12 @@ export const createRateLimiter = ({
         legacyHeaders: false,
         skipFailedRequests: false,
         skipSuccessfulRequests: false,
-        keyGenerator: (req: Request) => getClientIP(req),
+        keyGenerator: (req: Request, res: Response) => {
+            const ip = getClientIP(req);
+            const ua = JSON.stringify(res.locals.ua);
+            res.locals.visitorID = `${ip}|${ua}`;
+            return sha256(res.locals.visitorID);
+        },
 
         handler: (req, res, _next, options) => {
             logger.warn(
