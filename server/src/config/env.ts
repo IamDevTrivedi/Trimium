@@ -61,5 +61,8 @@ export const config = {
 
     JWT_KEY: process.env.JWT_KEY as string,
 
+    PoW_SECRET: process.env.PoW_SECRET as string,
+    PoW_DIFFICULTY: Number(process.env.PoW_DIFFICULTY),
+
     ADMIN_EMAILS: (process.env.ADMIN_EMAILS as string).split("|").filter(Boolean),
 } as const;

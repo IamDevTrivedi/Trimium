@@ -36,6 +36,9 @@ export const envSchema = z
 
         JWT_KEY: z.string().min(32),
 
+        PoW_SECRET: z.string().min(32),
+        PoW_DIFFICULTY: z.number().min(1).max(6),
+
         ADMIN_EMAILS: z.array(z.email()).min(1),
     })
     .strict();
