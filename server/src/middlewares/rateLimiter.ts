@@ -6,7 +6,6 @@ import { logger } from "@/utils/logger";
 import { redisClient } from "@/db/connectRedis";
 import { Request, Response } from "express";
 import { getClientIP } from "@middlewares/IP";
-import { sha256 } from "@utils/hash";
 
 declare module "express-serve-static-core" {
     interface Locals {
@@ -39,10 +38,8 @@ export const createRateLimiter = ({
         skipFailedRequests: false,
         skipSuccessfulRequests: false,
         keyGenerator: (req: Request, res: Response) => {
-            const ip = getClientIP(req);
-            const ua = JSON.stringify(res.locals.ua);
-            res.locals.visitorID = `${ip}|${ua}`;
-            return sha256(res.locals.visitorID);
+            res.locals.visitorID = getClientIP(req);
+            return res.locals.visitorID;
         },
 
         handler: (req, res, _next, options) => {
