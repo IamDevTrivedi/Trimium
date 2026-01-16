@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import RedisStore from "rate-limit-redis";
 import rateLimit from "express-rate-limit";
 import crypto from "crypto";
@@ -132,7 +133,7 @@ export const createRateLimiter = ({
         },
 
         handler: (req, res, _next, options) => {
-            logger.warn(`Rate limit exceeded for IP: ${getClientIP(req)}, prefix: ${prefix})`);
+            logger.warn(`Rate limit exceeded for IP: ${res.locals.visitorID}, prefix: ${prefix})`);
 
             const PoW = req.headers["x-pow"];
             if (typeof PoW === "undefined") {
