@@ -44,7 +44,7 @@ export const createRateLimiter = ({
 
         handler: (req, res, _next, options) => {
             logger.warn(
-                `Rate limit exceeded for IP: ${req.ip} (limit: ${options.limit}, window: ${options.windowMs}ms, prefix: ${prefix})`
+                `Rate limit exceeded for IP: ${getClientIP(req)} (limit: ${options.limit}, window: ${options.windowMs}ms, prefix: ${prefix})`
             );
 
             res.status(options.statusCode).json({
