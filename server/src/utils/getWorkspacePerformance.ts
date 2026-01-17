@@ -392,35 +392,35 @@ export const getWorkspacePerformance = async (workspaceID: string) => {
 
         deviceStats: totalDeviceStats[0]
             ? {
-                  desktop: totalDeviceStats[0].desktop,
-                  mobile: totalDeviceStats[0].mobile,
-                  tablet: totalDeviceStats[0].tablet,
-                  others: totalDeviceStats[0].others,
-              }
+                desktop: totalDeviceStats[0].desktop,
+                mobile: totalDeviceStats[0].mobile,
+                tablet: totalDeviceStats[0].tablet,
+                others: totalDeviceStats[0].others,
+            }
             : {
-                  desktop: 0,
-                  mobile: 0,
-                  tablet: 0,
-                  others: 0,
-              },
+                desktop: 0,
+                mobile: 0,
+                tablet: 0,
+                others: 0,
+            },
 
         browserStats: totalBrowserStats[0]
             ? {
-                  chrome: totalBrowserStats[0].chrome,
-                  firefox: totalBrowserStats[0].firefox,
-                  safari: totalBrowserStats[0].safari,
-                  edge: totalBrowserStats[0].edge,
-                  opera: totalBrowserStats[0].opera,
-                  others: totalBrowserStats[0].others,
-              }
+                chrome: totalBrowserStats[0].chrome,
+                firefox: totalBrowserStats[0].firefox,
+                safari: totalBrowserStats[0].safari,
+                edge: totalBrowserStats[0].edge,
+                opera: totalBrowserStats[0].opera,
+                others: totalBrowserStats[0].others,
+            }
             : {
-                  chrome: 0,
-                  firefox: 0,
-                  safari: 0,
-                  edge: 0,
-                  opera: 0,
-                  others: 0,
-              },
+                chrome: 0,
+                firefox: 0,
+                safari: 0,
+                edge: 0,
+                opera: 0,
+                others: 0,
+            },
 
         totalUniqueLocations: totalUniqueLocations[0]
             ? totalUniqueLocations[0].totalUniqueLocations
@@ -434,8 +434,8 @@ export const getWorkspacePerformance = async (workspaceID: string) => {
             ? averageClicksPerLink[0].averageClicksPerLink
             : 0,
 
-        mostActiveDay: mostActiveDay[0] ? mostActiveDay[0] : { day: null, totalClicks: 0 },
-        mostActiveHour: mostActiveHour[0] ? mostActiveHour[0] : { hour: null, totalClicks: 0 },
+        mostActiveDay: mostActiveDay[0] ? mostActiveDay[0] : { day: 0, totalClicks: 0 },
+        mostActiveHour: mostActiveHour[0] ? mostActiveHour[0] : { hour: 0, totalClicks: 0 },
 
         allURLsWithTitle: allURLsWithTitle,
     };
