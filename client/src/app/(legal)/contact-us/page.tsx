@@ -139,16 +139,16 @@ export default function ContactPage() {
                 </p>
                 <div className="flex justify-center gap-4">
                     <a
-                        href="https://twitter.com/trimiumapp"
+                        href="https://www.linkedin.com/in/contact-devtrivedi/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline"
                     >
-                        Twitter / X
+                        LinkedIn
                     </a>
                     <span className="text-muted-foreground">•</span>
                     <a
-                        href="https://github.com/trimium"
+                        href="https://github.com/IamDevTrivedi/Trimium"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline"
