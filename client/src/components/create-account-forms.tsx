@@ -117,6 +117,7 @@ export function CreateAccountVerify() {
     const [resentIn, setResentIn] = React.useState(60);
     const [wrong, setWrong] = React.useState(0);
     const [loadingResend, setLoadingResend] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     const router = useRouter();
 
@@ -175,6 +176,7 @@ export function CreateAccountVerify() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setOTP(OTP);
+        setLoading(true);
 
         try {
             const { data: resData } = await backend.post(
@@ -192,6 +194,9 @@ export function CreateAccountVerify() {
         } catch (error: unknown) {
             toastError(error);
             setWrong((prev) => prev + 1);
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -233,7 +238,12 @@ export function CreateAccountVerify() {
             </FieldGroup>
 
             <div className="space-y-4">
-                <Button type="submit" className="w-full" size="lg">
+                <Button
+                    type="submit"
+                    className="w-full"
+                    size="lg"
+                    loading={loading}
+                >
                     Verify Account
                 </Button>
                 <FieldDescription className="text-center">
