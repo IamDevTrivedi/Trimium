@@ -1,4 +1,5 @@
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 import {
     Accordion,
     AccordionContent,
@@ -246,13 +247,13 @@ export default function FeaturesPage() {
                                     Create stunning, branded QR codes with advanced customization
                                 </p>
                             </div>
-                            <a
+                            <Link
                                 href="/qr-generator"
                                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
                             >
                                 Try QR Generator
                                 <QrCode className="h-4 w-4" />
-                            </a>
+                            </Link>
                         </div>
 
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
