@@ -371,7 +371,7 @@ export default function FeaturesPage() {
                                     <Palette className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>5 Modern Themes</CardTitle>
                                     <CardDescription>
-                                        Choose from Midnight, Sunset, Forest, Ocean, or Lavender 
+                                        Choose from Midnight, Sunset, Forest, Ocean, or Lavender
                                         themes to match your style
                                     </CardDescription>
                                 </CardHeader>
@@ -382,8 +382,8 @@ export default function FeaturesPage() {
                                     <Link2 className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Custom Links</CardTitle>
                                     <CardDescription>
-                                        Add up to 20 links with titles, toggle visibility, 
-                                        and drag to reorder them
+                                        Add up to 20 links with titles, toggle visibility, and drag
+                                        to reorder them
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -393,8 +393,8 @@ export default function FeaturesPage() {
                                     <Users className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Social Profiles</CardTitle>
                                     <CardDescription>
-                                        Add Instagram, LinkedIn, GitHub, X, YouTube, TikTok, 
-                                        and more with one-click icons
+                                        Add Instagram, LinkedIn, GitHub, X, YouTube, TikTok, and
+                                        more with one-click icons
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -404,8 +404,7 @@ export default function FeaturesPage() {
                                     <Eye className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Live Preview</CardTitle>
                                     <CardDescription>
-                                        See your changes in real-time as you edit your 
-                                        LinkHub page
+                                        See your changes in real-time as you edit your LinkHub page
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -415,8 +414,8 @@ export default function FeaturesPage() {
                                     <Globe className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Your Username URL</CardTitle>
                                     <CardDescription>
-                                        Share your page at trimium.com/t/yourname — easy to 
-                                        remember and share
+                                        Share your page at trimium.com/t/yourname — easy to remember
+                                        and share
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -426,8 +425,8 @@ export default function FeaturesPage() {
                                     <Shield className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Publish Control</CardTitle>
                                     <CardDescription>
-                                        Keep your page private while editing, then publish 
-                                        when you&apos;re ready
+                                        Keep your page private while editing, then publish when
+                                        you&apos;re ready
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -524,10 +523,10 @@ export default function FeaturesPage() {
                                 What is LinkHub?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                LinkHub is your personal link-in-bio page at /t/yourname. 
-                                Add all your important links, connect your social profiles 
-                                (Instagram, LinkedIn, GitHub, X, and more), choose from 5 modern 
-                                themes, and share one simple link everywhere.
+                                LinkHub is your personal link-in-bio page at /t/yourname. Add all
+                                your important links, connect your social profiles (Instagram,
+                                LinkedIn, GitHub, X, and more), choose from 5 modern themes, and
+                                share one simple link everywhere.
                             </AccordionContent>
                         </AccordionItem>
 

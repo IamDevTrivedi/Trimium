@@ -146,8 +146,9 @@ export default function HomePage() {
                                         LinkHub - Your Link-in-Bio Page
                                     </h3>
                                     <p className="text-sm text-muted-foreground leading-relaxed">
-                                        Create a personalized page with all your links and social profiles. 
-                                        Choose from 5 modern themes and share one link everywhere.
+                                        Create a personalized page with all your links and social
+                                        profiles. Choose from 5 modern themes and share one link
+                                        everywhere.
                                     </p>
                                 </div>
                                 <Link href="/linkhub-editor">
@@ -223,8 +224,8 @@ export default function HomePage() {
                                 </div>
                                 <h3 className="mb-2 text-lg font-semibold">LinkHub Pages</h3>
                                 <p className="text-sm text-muted-foreground leading-relaxed">
-                                    Build your link-in-bio page with custom links, social icons, 
-                                    and 5 modern themes at /t/username
+                                    Build your link-in-bio page with custom links, social icons, and
+                                    5 modern themes at /t/username
                                 </p>
                             </CardContent>
                         </Card>
