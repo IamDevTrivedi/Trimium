@@ -608,7 +608,7 @@ export function AccountPage() {
                         <CardContent>
                             <Button
                                 className="w-full md:w-auto"
-                                onClick={() => router.push("/linkhub")}
+                                onClick={() => router.push("/linkhub-editor")}
                             >
                                 Manage your LinkHub
                             </Button>
