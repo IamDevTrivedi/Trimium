@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUserStore } from "@/store/user-store";
-import { Calendar, Mail, Hash, BadgeCheck, Eye, EyeOff } from "lucide-react";
+import { Calendar, Mail, Hash, BadgeCheck, Eye, EyeOff, Link2 } from "lucide-react";
 import { NAME, NAME_NOTICE, PASSWORD, USERNAME, USERNAME_NOTICE } from "@/constants/regex";
 import { toastError } from "@/lib/toast-error";
 import { backend } from "@/config/backend";
@@ -590,6 +590,26 @@ export function AccountPage() {
                                 loading={loading.logoutAll}
                             >
                                 Logout all Devices
+                            </Button>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Link2 className="h-5 w-5" />
+                                Link Profile
+                            </CardTitle>
+                            <CardDescription>
+                                Create your personalized link-in-bio page to share all your important links
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button
+                                className="w-full md:w-auto"
+                                onClick={() => router.push("/account/linktree")}
+                            >
+                                Manage Link Profile
                             </Button>
                         </CardContent>
                     </Card>

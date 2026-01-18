@@ -53,6 +53,7 @@ const init = async () => {
     const { default: urlRoutes } = await import("@modules/url/routes");
     const { default: workspaceRoutes } = await import("@modules/workspace/routes");
     const { default: contactRoutes } = await import("@modules/contact/routes");
+    const { default: linktreeRoutes } = await import("@modules/linktree/routes");
 
     app.use("/", rootRoutes);
     app.use("/api/v1/health", healthRoutes);
@@ -61,6 +62,7 @@ const init = async () => {
     app.use("/api/v1/url", urlRoutes);
     app.use("/api/v1/workspace", workspaceRoutes);
     app.use("/api/v1/contact", contactRoutes);
+    app.use("/api/v1/linktree", linktreeRoutes);
 
     app.listen(config.PORT, () => {
         logger.info(`Envrionment: ${config.NODE_ENV}`);
