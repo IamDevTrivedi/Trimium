@@ -4,18 +4,18 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { Loader2, ExternalLink, User } from "lucide-react";
 import { backend } from "@/config/backend";
-import { getTheme } from "@/constants/linktree-themes";
+import { getTheme } from "@/constants/linkhub-themes";
 import { SOCIAL_PLATFORMS, getSocialUrl } from "@/constants/socials";
 import { cn } from "@/lib/utils";
 
-interface LinktreeLink {
+interface LinkhubLink {
     id: string;
     title: string;
     url: string;
     isActive: boolean;
 }
 
-interface LinktreeSocials {
+interface LinkhubSocials {
     instagram?: string;
     linkedin?: string;
     github?: string;
@@ -26,30 +26,30 @@ interface LinktreeSocials {
     email?: string;
 }
 
-interface LinktreeProfile {
+interface LinkhubProfile {
     username: string;
     firstName: string;
     lastName: string;
     title: string;
     bio: string;
     avatarUrl?: string;
-    links: LinktreeLink[];
-    socials: LinktreeSocials;
+    links: LinkhubLink[];
+    socials: LinkhubSocials;
     theme: string;
 }
 
-export default function LinktreePage() {
+export default function LinkhubPage() {
     const params = useParams();
     const username = params.username as string;
 
-    const [profile, setProfile] = useState<LinktreeProfile | null>(null);
+    const [profile, setProfile] = useState<LinkhubProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await backend.get(`/api/v1/linktree/u/${username}`);
+                const response = await backend.get(`/api/v1/linkhub/u/${username}`);
                 if (response.data.success) {
                     setProfile(response.data.data);
                 } else {
@@ -92,7 +92,7 @@ export default function LinktreePage() {
     const theme = getTheme(profile.theme);
 
     const activeSocials = SOCIAL_PLATFORMS.filter(
-        (platform) => profile.socials[platform.id as keyof LinktreeSocials]
+        (platform) => profile.socials[platform.id as keyof LinkhubSocials]
     );
 
     return (
@@ -146,7 +146,7 @@ export default function LinktreePage() {
                 {activeSocials.length > 0 && (
                     <div className="flex justify-center gap-3 mb-8 flex-wrap">
                         {activeSocials.map((platform) => {
-                            const value = profile.socials[platform.id as keyof LinktreeSocials];
+                            const value = profile.socials[platform.id as keyof LinkhubSocials];
                             if (!value) return null;
 
                             const Icon = platform.icon;

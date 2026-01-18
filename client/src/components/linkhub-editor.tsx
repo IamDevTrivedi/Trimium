@@ -16,7 +16,6 @@ import {
     ExternalLink,
     Eye,
     Save,
-    Loader2,
     Link2,
     Check,
     Copy,
@@ -27,19 +26,19 @@ import { toastError } from "@/lib/toast-error";
 import { Toast } from "@/components/toast";
 import { useUserStore } from "@/store/user-store";
 import { SOCIAL_PLATFORMS } from "@/constants/socials";
-import { LINKTREE_THEMES, LinktreeThemeId } from "@/constants/linktree-themes";
+import { LINKHUB_THEMES, LinkhubThemeId } from "@/constants/linkhub-themes";
 import { cn } from "@/lib/utils";
 import config from "@/config/env";
 import { LoadingPage } from "./loading";
 
-interface LinktreeLink {
+interface LinkhubLink {
     id: string;
     title: string;
     url: string;
     isActive: boolean;
 }
 
-interface LinktreeSocials {
+interface LinkhubSocials {
     instagram?: string;
     linkedin?: string;
     github?: string;
@@ -50,26 +49,26 @@ interface LinktreeSocials {
     email?: string;
 }
 
-interface LinktreeData {
+interface LinkhubData {
     title: string;
     bio: string;
     avatarUrl: string;
-    links: LinktreeLink[];
-    socials: LinktreeSocials;
-    theme: LinktreeThemeId;
+    links: LinkhubLink[];
+    socials: LinkhubSocials;
+    theme: LinkhubThemeId;
     isPublished: boolean;
 }
 
 const generateId = () => Math.random().toString(36).substring(2, 15);
 
-export function LinktreeEditor() {
+export function LinkhubEditor() {
     const { user } = useUserStore();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [copied, setCopied] = useState(false);
     const [changed, setChanged] = useState(false);
 
-    const [data, setData] = useState<LinktreeData>({
+    const [data, setData] = useState<LinkhubData>({
         title: "",
         bio: "",
         avatarUrl: "",
@@ -79,7 +78,7 @@ export function LinktreeEditor() {
         isPublished: false,
     });
 
-    const [originalData, setOriginalData] = useState<LinktreeData>({
+    const [originalData, setOriginalData] = useState<LinkhubData>({
         title: "",
         bio: "",
         avatarUrl: "",
@@ -94,36 +93,36 @@ export function LinktreeEditor() {
     const profileUrl = user?.username ? `${config.PUBLIC_FRONTEND_URL}/t/${user.username}` : "";
 
     useEffect(() => {
-        fetchLinktree();
+        fetchLinkhub();
     }, []);
 
     useEffect(() => {
         setChanged(JSON.stringify(data) !== JSON.stringify(originalData));
     }, [data, originalData]);
 
-    const fetchLinktree = async () => {
+    const fetchLinkhub = async () => {
         try {
-            const response = await backend.get("/api/v1/linktree/me");
+            const response = await backend.get("/api/v1/linkhub/me");
             if (response.data.success) {
-                const linktree = response.data.data;
+                const linkhub = response.data.data;
                 setOriginalData({
-                    title: linktree.title || "",
-                    bio: linktree.bio || "",
-                    avatarUrl: linktree.avatarUrl || "",
-                    links: linktree.links || [],
-                    socials: linktree.socials || {},
-                    theme: linktree.theme || "midnight",
-                    isPublished: linktree.isPublished || false,
+                    title: linkhub.title || "",
+                    bio: linkhub.bio || "",
+                    avatarUrl: linkhub.avatarUrl || "",
+                    links: linkhub.links || [],
+                    socials: linkhub.socials || {},
+                    theme: linkhub.theme || "midnight",
+                    isPublished: linkhub.isPublished || false,
                 });
 
                 setData({
-                    title: linktree.title || "",
-                    bio: linktree.bio || "",
-                    avatarUrl: linktree.avatarUrl || "",
-                    links: linktree.links || [],
-                    socials: linktree.socials || {},
-                    theme: linktree.theme || "midnight",
-                    isPublished: linktree.isPublished || false,
+                    title: linkhub.title || "",
+                    bio: linkhub.bio || "",
+                    avatarUrl: linkhub.avatarUrl || "",
+                    links: linkhub.links || [],
+                    socials: linkhub.socials || {},
+                    theme: linkhub.theme || "midnight",
+                    isPublished: linkhub.isPublished || false,
                 });
             }
         } catch (error) {
@@ -134,7 +133,7 @@ export function LinktreeEditor() {
     };
 
     // TODO: validation
-    const saveLinktree = async () => {
+    const saveLinkhub = async () => {
         if (
             z
                 .array(
@@ -170,7 +169,7 @@ export function LinktreeEditor() {
 
         try {
             setSaving(true);
-            const response = await backend.put("/api/v1/linktree/me", data);
+            const response = await backend.put("/api/v1/linkhub/me", data);
             if (response.data.success) {
                 Toast.success("Profile saved successfully!");
             }
@@ -188,7 +187,7 @@ export function LinktreeEditor() {
         }));
     };
 
-    const updateLink = (id: string, field: keyof LinktreeLink, value: any) => {
+    const updateLink = (id: string, field: keyof LinkhubLink, value: any) => {
         setData((prev) => ({
             ...prev,
             links: prev.links.map((link) => (link.id === id ? { ...link, [field]: value } : link)),
@@ -264,7 +263,7 @@ export function LinktreeEditor() {
                             </a>
                         </Button>
                     )}
-                    <Button onClick={saveLinktree} disabled={!changed || saving} loading={saving}>
+                    <Button onClick={saveLinkhub} disabled={!changed || saving} loading={saving}>
                         <Save className="w-4 h-4 mr-2" />
                         Save Changes
                     </Button>
@@ -496,7 +495,7 @@ export function LinktreeEditor() {
                                                 placeholder={platform.placeholder}
                                                 value={
                                                     data.socials[
-                                                        platform.id as keyof LinktreeSocials
+                                                        platform.id as keyof LinkhubSocials
                                                     ] || ""
                                                 }
                                                 onChange={(e) =>
@@ -522,13 +521,13 @@ export function LinktreeEditor() {
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-1 gap-3">
-                                {Object.values(LINKTREE_THEMES).map((theme) => (
+                                {Object.values(LINKHUB_THEMES).map((theme) => (
                                     <button
                                         key={theme.id}
                                         onClick={() =>
                                             setData((prev) => ({
                                                 ...prev,
-                                                theme: theme.id as LinktreeThemeId,
+                                                theme: theme.id as LinkhubThemeId,
                                             }))
                                         }
                                         className={cn(
@@ -576,7 +575,7 @@ export function LinktreeEditor() {
                             <div
                                 className={cn(
                                     "rounded-xl p-6 min-h-[400px]",
-                                    LINKTREE_THEMES[data.theme].background
+                                    LINKHUB_THEMES[data.theme].background
                                 )}
                             >
                                 <div className="max-w-xs mx-auto">
@@ -596,13 +595,13 @@ export function LinktreeEditor() {
                                             <div
                                                 className={cn(
                                                     "w-16 h-16 rounded-full flex items-center justify-center border-2 border-white/20",
-                                                    LINKTREE_THEMES[data.theme].card
+                                                    LINKHUB_THEMES[data.theme].card
                                                 )}
                                             >
                                                 <span
                                                     className={cn(
                                                         "text-xl font-bold",
-                                                        LINKTREE_THEMES[data.theme].text
+                                                        LINKHUB_THEMES[data.theme].text
                                                     )}
                                                 >
                                                     {(data.title?.[0] || "U").toUpperCase()}
@@ -615,7 +614,7 @@ export function LinktreeEditor() {
                                     <h2
                                         className={cn(
                                             "text-lg font-bold text-center mb-1",
-                                            LINKTREE_THEMES[data.theme].text
+                                            LINKHUB_THEMES[data.theme].text
                                         )}
                                     >
                                         {data.title || "Your Name"}
@@ -625,7 +624,7 @@ export function LinktreeEditor() {
                                     <p
                                         className={cn(
                                             "text-center text-xs mb-3",
-                                            LINKTREE_THEMES[data.theme].textMuted
+                                            LINKHUB_THEMES[data.theme].textMuted
                                         )}
                                     >
                                         @{user?.username || "username"}
@@ -636,7 +635,7 @@ export function LinktreeEditor() {
                                         <p
                                             className={cn(
                                                 "text-center text-sm mb-4 line-clamp-2",
-                                                LINKTREE_THEMES[data.theme].textSecondary
+                                                LINKHUB_THEMES[data.theme].textSecondary
                                             )}
                                         >
                                             {data.bio}
@@ -647,7 +646,7 @@ export function LinktreeEditor() {
                                     {Object.values(data.socials).some((v) => v) && (
                                         <div className="flex justify-center gap-2 mb-4">
                                             {SOCIAL_PLATFORMS.filter(
-                                                (p) => data.socials[p.id as keyof LinktreeSocials]
+                                                (p) => data.socials[p.id as keyof LinkhubSocials]
                                             )
                                                 .slice(0, 5)
                                                 .map((platform) => {
@@ -657,7 +656,7 @@ export function LinktreeEditor() {
                                                             key={platform.id}
                                                             className={cn(
                                                                 "p-2 rounded-full",
-                                                                LINKTREE_THEMES[data.theme]
+                                                                LINKHUB_THEMES[data.theme]
                                                                     .socialButton
                                                             )}
                                                         >
@@ -678,8 +677,8 @@ export function LinktreeEditor() {
                                                     key={link.id}
                                                     className={cn(
                                                         "p-2 rounded-lg border text-center text-sm",
-                                                        LINKTREE_THEMES[data.theme].card,
-                                                        LINKTREE_THEMES[data.theme].text
+                                                        LINKHUB_THEMES[data.theme].card,
+                                                        LINKHUB_THEMES[data.theme].text
                                                     )}
                                                 >
                                                     {link.title}
@@ -690,7 +689,7 @@ export function LinktreeEditor() {
                                             <p
                                                 className={cn(
                                                     "text-center text-xs",
-                                                    LINKTREE_THEMES[data.theme].textMuted
+                                                    LINKHUB_THEMES[data.theme].textMuted
                                                 )}
                                             >
                                                 +

@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 import { sendResponse } from "@utils/sendResponse";
 import { logger } from "@utils/logger";
-import { Linktree, LINKTREE_THEMES } from "@/models/linktree";
+import { Linkhub, LINKHUB_THEMES } from "@/models/linkhub";
 import { User } from "@/models/user";
 
 const linkSchema = z.object({
@@ -24,27 +24,27 @@ const socialsSchema = z.object({
     email: z.email().max(320).optional().or(z.literal("")),
 });
 
-const updateLinktreeSchema = z.object({
+const updateLinkhubSchema = z.object({
     title: z.string().max(100).optional(),
     bio: z.string().max(500).optional(),
     avatarUrl: z.url().max(2048).optional().or(z.literal("")),
     links: z.array(linkSchema).max(20).optional(),
     socials: socialsSchema.optional(),
-    theme: z.enum(LINKTREE_THEMES).optional(),
+    theme: z.enum(LINKHUB_THEMES).optional(),
     isPublished: z.boolean().optional(),
 });
 
 export const controllers = {
-    getMyLinktree: async (req: Request, res: Response) => {
+    getMyLinkhub: async (req: Request, res: Response) => {
         try {
             const { userID } = res.locals;
 
-            let linktree = await Linktree.findOne({ userID });
+            let linkhub = await Linkhub.findOne({ userID });
 
-            if (!linktree) {
+            if (!linkhub) {
                 const user = await User.findById(userID).select("firstName lastName");
 
-                linktree = await Linktree.create({
+                linkhub = await Linkhub.create({
                     userID,
                     title: user ? `${user.firstName} ${user.lastName}` : "",
                     bio: "",
@@ -58,11 +58,11 @@ export const controllers = {
             return sendResponse(res, {
                 success: true,
                 statusCode: StatusCodes.OK,
-                message: "Linktree profile retrieved",
-                data: linktree,
+                message: "Linkhub profile retrieved",
+                data: linkhub,
             });
         } catch (error) {
-            logger.error("Error in getMyLinktree controller:");
+            logger.error("Error in getMyLinkhub controller:");
             logger.error(error);
 
             return sendResponse(res, {
@@ -73,11 +73,11 @@ export const controllers = {
         }
     },
 
-    updateMyLinktree: async (req: Request, res: Response) => {
+    updateMyLinkhub: async (req: Request, res: Response) => {
         try {
             const { userID } = res.locals;
 
-            const result = updateLinktreeSchema.safeParse(req.body);
+            const result = updateLinkhubSchema.safeParse(req.body);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -99,7 +99,7 @@ export const controllers = {
                 });
             }
 
-            const linktree = await Linktree.findOneAndUpdate(
+            const linkhub = await Linkhub.findOneAndUpdate(
                 { userID },
                 { $set: updateData },
                 { new: true, upsert: true, setDefaultsOnInsert: true }
@@ -108,11 +108,11 @@ export const controllers = {
             return sendResponse(res, {
                 success: true,
                 statusCode: StatusCodes.OK,
-                message: "Linktree profile updated",
-                data: linktree,
+                message: "Linkhub profile updated",
+                data: linkhub,
             });
         } catch (error) {
-            logger.error("Error in updateMyLinktree controller:");
+            logger.error("Error in updateMyLinkhub controller:");
             logger.error(error);
 
             return sendResponse(res, {
@@ -123,7 +123,7 @@ export const controllers = {
         }
     },
 
-    getPublicLinktree: async (req: Request, res: Response) => {
+    getPublicLinkhub: async (req: Request, res: Response) => {
         try {
             const { username } = req.params;
 
@@ -145,12 +145,12 @@ export const controllers = {
                 });
             }
 
-            const linktree = await Linktree.findOne({
+            const linkhub = await Linkhub.findOne({
                 userID: user._id,
                 isPublished: true,
             });
 
-            if (!linktree) {
+            if (!linkhub) {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
@@ -161,21 +161,21 @@ export const controllers = {
             return sendResponse(res, {
                 success: true,
                 statusCode: StatusCodes.OK,
-                message: "Linktree profile retrieved",
+                message: "Linkhub profile retrieved",
                 data: {
                     username: user.username,
                     firstName: user.firstName,
                     lastName: user.lastName,
-                    title: linktree.title,
-                    bio: linktree.bio,
-                    avatarUrl: linktree.avatarUrl,
-                    links: linktree.links.filter((link) => link.isActive),
-                    socials: linktree.socials,
-                    theme: linktree.theme,
+                    title: linkhub.title,
+                    bio: linkhub.bio,
+                    avatarUrl: linkhub.avatarUrl,
+                    links: linkhub.links.filter((link) => link.isActive),
+                    socials: linkhub.socials,
+                    theme: linkhub.theme,
                 },
             });
         } catch (error) {
-            logger.error("Error in getPublicLinktree controller:");
+            logger.error("Error in getPublicLinkhub controller:");
             logger.error(error);
 
             return sendResponse(res, {

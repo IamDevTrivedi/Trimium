@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
 
-export const LINKTREE_THEMES = ["midnight", "sunset", "forest", "ocean", "lavender"] as const;
+export const LINKHUB_THEMES = ["midnight", "sunset", "forest", "ocean", "lavender"] as const;
 
-export type LinktreeTheme = (typeof LINKTREE_THEMES)[number];
+export type LinkhubTheme = (typeof LINKHUB_THEMES)[number];
 
-export interface ILinktreeLink {
+export interface ILinkhubLink {
     id: string;
     title: string;
     url: string;
     isActive: boolean;
 }
 
-export interface ILinktreeSocials {
+export interface ILinkhubSocials {
     instagram?: string;
     linkedin?: string;
     github?: string;
@@ -22,21 +22,21 @@ export interface ILinktreeSocials {
     email?: string;
 }
 
-export interface ILinktree {
+export interface ILinkhub {
     _id: mongoose.Types.ObjectId;
     userID: mongoose.Types.ObjectId;
     title: string;
     bio: string;
     avatarUrl?: string;
-    links: ILinktreeLink[];
-    socials: ILinktreeSocials;
-    theme: LinktreeTheme;
+    links: ILinkhubLink[];
+    socials: ILinkhubSocials;
+    theme: LinkhubTheme;
     isPublished: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
 
-const linktreeLinkSchema = new mongoose.Schema(
+const linkhubLinkSchema = new mongoose.Schema(
     {
         id: {
             type: String,
@@ -62,7 +62,7 @@ const linktreeLinkSchema = new mongoose.Schema(
     { _id: false }
 );
 
-const linktreeSocialsSchema = new mongoose.Schema(
+const linkhubSocialsSchema = new mongoose.Schema(
     {
         instagram: { type: String, maxlength: 100, trim: true },
         linkedin: { type: String, maxlength: 100, trim: true },
@@ -76,7 +76,7 @@ const linktreeSocialsSchema = new mongoose.Schema(
     { _id: false }
 );
 
-const linktreeSchema = new mongoose.Schema(
+const linkhubSchema = new mongoose.Schema(
     {
         userID: {
             type: mongoose.Schema.Types.ObjectId,
@@ -102,20 +102,20 @@ const linktreeSchema = new mongoose.Schema(
             trim: true,
         },
         links: {
-            type: [linktreeLinkSchema],
+            type: [linkhubLinkSchema],
             default: [],
             validate: {
-                validator: (v: ILinktreeLink[]) => v.length <= 20,
+                validator: (v: ILinkhubLink[]) => v.length <= 20,
                 message: "Maximum 20 links allowed",
             },
         },
         socials: {
-            type: linktreeSocialsSchema,
+            type: linkhubSocialsSchema,
             default: {},
         },
         theme: {
             type: String,
-            enum: LINKTREE_THEMES,
+            enum: LINKHUB_THEMES,
             default: "midnight",
         },
         isPublished: {
@@ -126,6 +126,4 @@ const linktreeSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-linktreeSchema.index({ userID: 1 }, { unique: true });
-
-export const Linktree = mongoose.model<ILinktree>("Linktree", linktreeSchema);
+export const Linkhub = mongoose.model<ILinkhub>("Linkhub", linkhubSchema);

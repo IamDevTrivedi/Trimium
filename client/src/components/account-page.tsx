@@ -608,9 +608,9 @@ export function AccountPage() {
                         <CardContent>
                             <Button
                                 className="w-full md:w-auto"
-                                onClick={() => router.push("/account/linktree")}
+                                onClick={() => router.push("/linkhub")}
                             >
-                                Manage Link Profile
+                                Manage your LinkHub
                             </Button>
                         </CardContent>
                     </Card>

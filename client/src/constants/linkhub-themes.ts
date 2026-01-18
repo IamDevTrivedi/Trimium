@@ -1,4 +1,4 @@
-export const LINKTREE_THEMES = {
+export const LINKHUB_THEMES = {
     midnight: {
         id: "midnight",
         name: "Midnight",
@@ -71,9 +71,9 @@ export const LINKTREE_THEMES = {
     },
 } as const;
 
-export type LinktreeThemeId = keyof typeof LINKTREE_THEMES;
-export type LinktreeTheme = (typeof LINKTREE_THEMES)[LinktreeThemeId];
+export type LinkhubThemeId = keyof typeof LINKHUB_THEMES;
+export type LinkhubTheme = (typeof LINKHUB_THEMES)[LinkhubThemeId];
 
-export const getTheme = (themeId: string): LinktreeTheme => {
-    return LINKTREE_THEMES[themeId as LinktreeThemeId] || LINKTREE_THEMES.midnight;
+export const getTheme = (themeId: string): LinkhubTheme => {
+    return LINKHUB_THEMES[themeId as LinkhubThemeId] || LINKHUB_THEMES.midnight;
 };
