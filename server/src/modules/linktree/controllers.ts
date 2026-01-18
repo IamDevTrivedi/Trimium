@@ -42,7 +42,6 @@ export const controllers = {
             let linktree = await Linktree.findOne({ userID });
 
             if (!linktree) {
-
                 const user = await User.findById(userID).select("firstName lastName");
 
                 linktree = await Linktree.create({
@@ -91,7 +90,6 @@ export const controllers = {
 
             const updateData = result.data;
 
-
             if (updateData.socials) {
                 Object.keys(updateData.socials).forEach((key) => {
                     const socialKey = key as keyof typeof updateData.socials;
@@ -137,9 +135,7 @@ export const controllers = {
                 });
             }
 
-            const user = await User.findOne({ username }).select(
-                "_id firstName lastName username"
-            );
+            const user = await User.findOne({ username }).select("_id firstName lastName username");
 
             if (!user) {
                 return sendResponse(res, {

@@ -1,12 +1,6 @@
 import mongoose from "mongoose";
 
-export const LINKTREE_THEMES = [
-    "midnight",
-    "sunset",
-    "forest",
-    "ocean",
-    "lavender",
-] as const;
+export const LINKTREE_THEMES = ["midnight", "sunset", "forest", "ocean", "lavender"] as const;
 
 export type LinktreeTheme = (typeof LINKTREE_THEMES)[number];
 

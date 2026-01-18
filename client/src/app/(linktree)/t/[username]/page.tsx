@@ -56,9 +56,7 @@ export default function LinktreePage() {
                     setError(response.data.message || "Profile not found");
                 }
             } catch (err: any) {
-                setError(
-                    err.response?.data?.message || "Profile not found or not published"
-                );
+                setError(err.response?.data?.message || "Profile not found or not published");
             } finally {
                 setLoading(false);
             }
@@ -148,8 +146,7 @@ export default function LinktreePage() {
                 {activeSocials.length > 0 && (
                     <div className="flex justify-center gap-3 mb-8 flex-wrap">
                         {activeSocials.map((platform) => {
-                            const value =
-                                profile.socials[platform.id as keyof LinktreeSocials];
+                            const value = profile.socials[platform.id as keyof LinktreeSocials];
                             if (!value) return null;
 
                             const Icon = platform.icon;
@@ -187,9 +184,7 @@ export default function LinktreePage() {
                                 theme.card
                             )}
                         >
-                            <span className={cn("font-medium", theme.text)}>
-                                {link.title}
-                            </span>
+                            <span className={cn("font-medium", theme.text)}>{link.title}</span>
                             <ExternalLink
                                 className={cn(
                                     "inline-block w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity",
@@ -202,10 +197,7 @@ export default function LinktreePage() {
 
                 {/* Footer */}
                 <div className={cn("text-center mt-12 text-sm", theme.textMuted)}>
-                    <a
-                        href="/"
-                        className="hover:underline inline-flex items-center gap-1"
-                    >
+                    <a href="/" className="hover:underline inline-flex items-center gap-1">
                         Powered by Trimium
                     </a>
                 </div>

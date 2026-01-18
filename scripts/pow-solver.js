@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 /**
  * Proof of Work Solver
@@ -9,14 +9,14 @@ function solvePow(powToken, difficulty) {
     console.log(`Starting PoW with token: ${powToken}`);
     console.log(`Difficulty: ${difficulty} leading zeroes required\n`);
 
-    const targetPrefix = '0'.repeat(difficulty);
+    const targetPrefix = "0".repeat(difficulty);
     let nonce = 0;
-    let hash = '';
+    let hash = "";
     const startTime = Date.now();
 
     while (true) {
         const data = `${powToken}|${nonce}`;
-        hash = crypto.createHash('sha256').update(data).digest('hex');
+        hash = crypto.createHash("sha256").update(data).digest("hex");
 
         if (hash.startsWith(targetPrefix)) {
             const endTime = Date.now();
@@ -40,7 +40,7 @@ function solvePow(powToken, difficulty) {
 }
 
 // Example usage
-const powToken = process.argv[2] || 'example_token_123';
+const powToken = process.argv[2] || "example_token_123";
 const difficulty = 4;
 
 solvePow(powToken, difficulty);

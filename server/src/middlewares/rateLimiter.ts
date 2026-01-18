@@ -29,12 +29,9 @@ const issuePoWChallenge = (req: Request, res: Response) => {
     const expiry = Date.now() + 1 * 60 * 1000;
     const salt = Math.random().toString(36).substring(2, 15);
     const challenge = `${DIFFICULTY}|${expiry}|${salt}`;
-    const integrity = crypto
-        .createHmac("sha256", SECRET)
-        .update(challenge)
-        .digest("hex");
+    const integrity = crypto.createHmac("sha256", SECRET).update(challenge).digest("hex");
 
-    const PoW_token = Buffer.from(`${challenge}|${integrity}`).toString('base64');
+    const PoW_token = Buffer.from(`${challenge}|${integrity}`).toString("base64");
 
     return res.status(429).json({
         message: "Rate limit exceeded. Please solve the Proof of Work challenge.",
@@ -49,7 +46,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (typeof PoW_header !== "string") {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW header."
+            message: "Invalid PoW header.",
         });
     }
 
@@ -57,16 +54,18 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (!PoW_Token || !nonce) {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW header format."
+            message: "Invalid PoW header format.",
         });
     }
 
-    const [difficultyStr, expiryStr, salt, integrity] = Buffer.from(PoW_Token, 'base64').toString('utf-8').split("|");
+    const [difficultyStr, expiryStr, salt, integrity] = Buffer.from(PoW_Token, "base64")
+        .toString("utf-8")
+        .split("|");
 
     if (!difficultyStr || !expiryStr || !salt || !integrity) {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW token format."
+            message: "Invalid PoW token format.",
         });
     }
 
@@ -76,7 +75,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (Date.now() > expiry) {
         return res.status(400).json({
             success: false,
-            message: "PoW challenge has expired."
+            message: "PoW challenge has expired.",
         });
     }
 
@@ -88,14 +87,11 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (integrity !== expectedIntegrity) {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW token integrity."
+            message: "Invalid PoW token integrity.",
         });
     }
 
-    const hash = crypto
-        .createHash("sha256")
-        .update(`${PoW_Token}|${nonce}`)
-        .digest("hex");
+    const hash = crypto.createHash("sha256").update(`${PoW_Token}|${nonce}`).digest("hex");
 
     const leadingZeros = hash.match(/^0+/);
     const leadingZeroCount = leadingZeros ? leadingZeros[0].length : 0;
@@ -103,7 +99,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (leadingZeroCount < difficulty) {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW solution."
+            message: "Invalid PoW solution.",
         });
     }
 

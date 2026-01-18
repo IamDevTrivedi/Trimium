@@ -437,11 +437,11 @@ export default function FeaturesPage() {
                                 What is Trimium and how does it work?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Trimium is a comprehensive URL shortening and management
-                                platform. It transforms long URLs into short, memorable links while
-                                providing advanced analytics, QR code generation, and team
-                                collaboration features. Simply paste your long URL, customize your
-                                short link, and start tracking its performance immediately.
+                                Trimium is a comprehensive URL shortening and management platform.
+                                It transforms long URLs into short, memorable links while providing
+                                advanced analytics, QR code generation, and team collaboration
+                                features. Simply paste your long URL, customize your short link, and
+                                start tracking its performance immediately.
                             </AccordionContent>
                         </AccordionItem>
 
@@ -471,10 +471,10 @@ export default function FeaturesPage() {
                                 What kind of analytics does Trimium provide?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Trimium provides comprehensive analytics including click
-                                tracking, geographic distribution (country), device and browser
-                                breakdowns, click patterns by hour/day, unique vs returning
-                                visitors, and exportable reports in CSV format.
+                                Trimium provides comprehensive analytics including click tracking,
+                                geographic distribution (country), device and browser breakdowns,
+                                click patterns by hour/day, unique vs returning visitors, and
+                                exportable reports in CSV format.
                             </AccordionContent>
                         </AccordionItem>
 

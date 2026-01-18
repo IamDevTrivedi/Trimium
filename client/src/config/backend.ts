@@ -3,9 +3,9 @@ import config from "@/config/env";
 import crypto from "crypto";
 
 const solvePow = (powToken: string, difficulty: number): number => {
-    const targetPrefix = '0'.repeat(difficulty);
+    const targetPrefix = "0".repeat(difficulty);
     let nonce = 0;
-    let hash = '';
+    let hash = "";
 
     while (true) {
         const data = `${powToken}|${nonce}`;
@@ -60,8 +60,7 @@ backend.interceptors.response.use(
 
 backend.interceptors.request.use(
     (config) => {
-
-        if (config && '_retry' in config) {
+        if (config && "_retry" in config) {
             delete (config as any)._retry;
         }
         return config;

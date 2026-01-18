@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -97,16 +91,14 @@ export function LinktreeEditor() {
 
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-    const profileUrl = user?.username
-        ? `${config.PUBLIC_FRONTEND_URL}/t/${user.username}`
-        : "";
+    const profileUrl = user?.username ? `${config.PUBLIC_FRONTEND_URL}/t/${user.username}` : "";
 
     useEffect(() => {
         fetchLinktree();
     }, []);
 
     useEffect(() => {
-        setChanged(JSON.stringify(data) !== JSON.stringify(originalData))
+        setChanged(JSON.stringify(data) !== JSON.stringify(originalData));
     }, [data, originalData]);
 
     const fetchLinktree = async () => {
@@ -143,34 +135,38 @@ export function LinktreeEditor() {
 
     // TODO: validation
     const saveLinktree = async () => {
-
-        if (z.array(z.object({
-            title: z.string().min(1),
-            url: z.url()
-        })).safeParse(data.links).success === false) {
+        if (
+            z
+                .array(
+                    z.object({
+                        title: z.string().min(1),
+                        url: z.url(),
+                    })
+                )
+                .safeParse(data.links).success === false
+        ) {
             Toast.error("Invalid link entries detected", {
-                description: "Please ensure all links have a valid title and URL."
-            })
+                description: "Please ensure all links have a valid title and URL.",
+            });
 
             return;
         }
 
         if (data.socials.email && z.email().safeParse(data.socials.email).success === false) {
             Toast.error("Invalid email address", {
-                description: "Please enter a valid email format"
-            })
+                description: "Please enter a valid email format",
+            });
 
             return;
         }
 
         if (data.socials.portfolio && z.url().safeParse(data.socials.portfolio).success === false) {
             Toast.error("Invalid portfolio URL", {
-                description: "Please enter a valid URL format"
-            })
+                description: "Please enter a valid URL format",
+            });
 
             return;
         }
-
 
         try {
             setSaving(true);
@@ -188,19 +184,14 @@ export function LinktreeEditor() {
     const addLink = () => {
         setData((prev) => ({
             ...prev,
-            links: [
-                ...prev.links,
-                { id: generateId(), title: "", url: "", isActive: true },
-            ],
+            links: [...prev.links, { id: generateId(), title: "", url: "", isActive: true }],
         }));
     };
 
     const updateLink = (id: string, field: keyof LinktreeLink, value: any) => {
         setData((prev) => ({
             ...prev,
-            links: prev.links.map((link) =>
-                link.id === id ? { ...link, [field]: value } : link
-            ),
+            links: prev.links.map((link) => (link.id === id ? { ...link, [field]: value } : link)),
         }));
     };
 
@@ -247,7 +238,7 @@ export function LinktreeEditor() {
     };
 
     if (loading) {
-        return <LoadingPage />
+        return <LoadingPage />;
     }
 
     return (
@@ -261,8 +252,7 @@ export function LinktreeEditor() {
                 </div>
                 <div className="flex gap-2">
                     {user?.username && (
-                        <Button variant="outline"
-                        >
+                        <Button variant="outline">
                             <a
                                 className={"flex items-center justify-center"}
                                 href={`/t/${user.username}`}
@@ -274,11 +264,7 @@ export function LinktreeEditor() {
                             </a>
                         </Button>
                     )}
-                    <Button
-                        onClick={saveLinktree}
-                        disabled={!changed || saving}
-                        loading={saving}
-                    >
+                    <Button onClick={saveLinktree} disabled={!changed || saving} loading={saving}>
                         <Save className="w-4 h-4 mr-2" />
                         Save Changes
                     </Button>
@@ -288,9 +274,7 @@ export function LinktreeEditor() {
             {user?.username && (
                 <Card>
                     <CardHeader>
-                        <CardTitle>
-                            Your Profile URL
-                        </CardTitle>
+                        <CardTitle>Your Profile URL</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="flex items-center gap-2">
@@ -311,11 +295,7 @@ export function LinktreeEditor() {
                                 )}
                             </Button>
                             <Button variant="outline" size="sm" className="shrink-0">
-                                <a
-                                    href={profileUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
+                                <a href={profileUrl} target="_blank" rel="noopener noreferrer">
                                     <ExternalLink className="w-4 h-4" />
                                 </a>
                             </Button>
@@ -330,9 +310,7 @@ export function LinktreeEditor() {
                         <CardContent>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <Label className="text-base font-medium">
-                                        Publish Profile
-                                    </Label>
+                                    <Label className="text-base font-medium">Publish Profile</Label>
                                     <p className="text-sm text-muted-foreground">
                                         Make your profile visible to everyone
                                     </p>
@@ -350,9 +328,7 @@ export function LinktreeEditor() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Profile Information</CardTitle>
-                            <CardDescription>
-                                Set your display name and bio
-                            </CardDescription>
+                            <CardDescription>Set your display name and bio</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
@@ -369,9 +345,7 @@ export function LinktreeEditor() {
                                     }
                                     maxLength={100}
                                 />
-                                <p
-                                    className="text-sm text-muted-foreground"
-                                >
+                                <p className="text-sm text-muted-foreground">
                                     Your account name will be used as default
                                 </p>
                             </div>
@@ -415,9 +389,7 @@ export function LinktreeEditor() {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <CardTitle>Links</CardTitle>
-                                    <CardDescription>
-                                        Add up to 20 custom links
-                                    </CardDescription>
+                                    <CardDescription>Add up to 20 custom links</CardDescription>
                                 </div>
                                 <Button
                                     onClick={addLink}
@@ -484,11 +456,7 @@ export function LinktreeEditor() {
                                                     <Switch
                                                         checked={link.isActive}
                                                         onCheckedChange={(checked) =>
-                                                            updateLink(
-                                                                link.id,
-                                                                "isActive",
-                                                                checked
-                                                            )
+                                                            updateLink(link.id, "isActive", checked)
                                                         }
                                                     />
                                                     <Button
@@ -512,9 +480,7 @@ export function LinktreeEditor() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Social Profiles</CardTitle>
-                            <CardDescription>
-                                Add your social media handles
-                            </CardDescription>
+                            <CardDescription>Add your social media handles</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="grid sm:grid-cols-2 gap-4">
@@ -530,7 +496,7 @@ export function LinktreeEditor() {
                                                 placeholder={platform.placeholder}
                                                 value={
                                                     data.socials[
-                                                    platform.id as keyof LinktreeSocials
+                                                        platform.id as keyof LinktreeSocials
                                                     ] || ""
                                                 }
                                                 onChange={(e) =>
@@ -552,9 +518,7 @@ export function LinktreeEditor() {
                                 <Palette className="w-5 h-5" />
                                 Theme
                             </CardTitle>
-                            <CardDescription>
-                                Choose a theme for your profile page
-                            </CardDescription>
+                            <CardDescription>Choose a theme for your profile page</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-1 gap-3">
@@ -683,10 +647,7 @@ export function LinktreeEditor() {
                                     {Object.values(data.socials).some((v) => v) && (
                                         <div className="flex justify-center gap-2 mb-4">
                                             {SOCIAL_PLATFORMS.filter(
-                                                (p) =>
-                                                    data.socials[
-                                                    p.id as keyof LinktreeSocials
-                                                    ]
+                                                (p) => data.socials[p.id as keyof LinktreeSocials]
                                             )
                                                 .slice(0, 5)
                                                 .map((platform) => {
@@ -724,20 +685,20 @@ export function LinktreeEditor() {
                                                     {link.title}
                                                 </div>
                                             ))}
-                                        {data.links.filter((l) => l.isActive && l.title)
-                                            .length > 3 && (
-                                                <p
-                                                    className={cn(
-                                                        "text-center text-xs",
-                                                        LINKTREE_THEMES[data.theme].textMuted
-                                                    )}
-                                                >
-                                                    +
-                                                    {data.links.filter((l) => l.isActive && l.title)
-                                                        .length - 3}{" "}
-                                                    more links
-                                                </p>
-                                            )}
+                                        {data.links.filter((l) => l.isActive && l.title).length >
+                                            3 && (
+                                            <p
+                                                className={cn(
+                                                    "text-center text-xs",
+                                                    LINKTREE_THEMES[data.theme].textMuted
+                                                )}
+                                            >
+                                                +
+                                                {data.links.filter((l) => l.isActive && l.title)
+                                                    .length - 3}{" "}
+                                                more links
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>

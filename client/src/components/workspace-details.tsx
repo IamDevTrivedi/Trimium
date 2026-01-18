@@ -535,8 +535,8 @@ export function WorkspaceDetails() {
                 </Card>
 
                 {/* New Short Link Section */}
-                {
-                    permission !== "viewer" && <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
+                {permission !== "viewer" && (
+                    <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
                         <CardHeader className="flex items-center justify-between bg-muted/5">
                             <div className="space-y-1">
                                 <CardTitle className="text-xl">Create a New Short Link</CardTitle>
@@ -551,7 +551,7 @@ export function WorkspaceDetails() {
                             </div>
                         </CardHeader>
                     </Card>
-                }
+                )}
 
                 {/* Bulk Upload Section */}
                 {permission !== "viewer" && (

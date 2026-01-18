@@ -601,7 +601,8 @@ export function AccountPage() {
                                 Link Profile
                             </CardTitle>
                             <CardDescription>
-                                Create your personalized link-in-bio page to share all your important links
+                                Create your personalized link-in-bio page to share all your
+                                important links
                             </CardDescription>
                         </CardHeader>
                         <CardContent>

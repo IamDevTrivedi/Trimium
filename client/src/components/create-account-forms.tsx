@@ -194,8 +194,7 @@ export function CreateAccountVerify() {
         } catch (error: unknown) {
             toastError(error);
             setWrong((prev) => prev + 1);
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     };
@@ -238,12 +237,7 @@ export function CreateAccountVerify() {
             </FieldGroup>
 
             <div className="space-y-4">
-                <Button
-                    type="submit"
-                    className="w-full"
-                    size="lg"
-                    loading={loading}
-                >
+                <Button type="submit" className="w-full" size="lg" loading={loading}>
                     Verify Account
                 </Button>
                 <FieldDescription className="text-center">
