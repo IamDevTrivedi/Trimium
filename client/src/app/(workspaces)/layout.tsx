@@ -1,3 +1,5 @@
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
 import { ProtectPage } from "@/components/protect-page";
 
 export default function RootLayout({
@@ -7,7 +9,11 @@ export default function RootLayout({
 }>) {
     return (
         <div className="w-full block">
-            <ProtectPage>{children}</ProtectPage>
+            <ProtectPage>
+                <Navbar />
+                {children}
+                <Footer />
+            </ProtectPage>
         </div>
     );
 }

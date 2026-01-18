@@ -1,3 +1,5 @@
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,5 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function QRGeneratorLayout({ children }: { children: React.ReactNode }) {
-    return <>{children}</>;
+    return <>
+        <Navbar />
+        {children}
+        <Footer />
+    </>;
 }

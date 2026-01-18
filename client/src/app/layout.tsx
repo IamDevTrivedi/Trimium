@@ -85,9 +85,7 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <ServiceWorkerRegister />
-                    <Navbar />
                     {children}
-                    <Footer />
                     <Toaster />
                     {config.PUBLIC_isProduction && <Analytics />}
                 </ThemeProvider>
