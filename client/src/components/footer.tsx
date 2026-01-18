@@ -54,6 +54,12 @@ export function Footer() {
                                 Generate QR Code
                             </Link>
                             <Link
+                                href="/linkhub-editor"
+                                className="text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                LinkHub
+                            </Link>
+                            <Link
                                 href="/about"
                                 className="text-muted-foreground transition-colors hover:text-foreground"
                             >

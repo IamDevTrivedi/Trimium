@@ -14,6 +14,7 @@ import {
     Palette,
     ArrowRight,
     Mail,
+    Sparkles,
 } from "lucide-react";
 import { Metadata } from "next";
 
@@ -132,6 +133,34 @@ export default function HomePage() {
                             </CardContent>
                         </Card>
                     </div>
+
+                    {/* LinkHub Highlight */}
+                    <Card className="mt-6 border-2 border-primary/20 bg-linear-to-r from-primary/5 via-background to-primary/5">
+                        <CardContent className="p-6">
+                            <div className="flex flex-col md:flex-row md:items-center gap-4">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                                    <Sparkles className="h-6 w-6 text-primary" />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-lg font-semibold mb-1">
+                                        LinkHub - Your Link-in-Bio Page
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">
+                                        Create a personalized page with all your links and social profiles. 
+                                        Choose from 5 modern themes and share one link everywhere.
+                                    </p>
+                                </div>
+                                <Link href="/linkhub-editor">
+                                    <Button className="shrink-0">
+                                        <div className="flex items-center gap-2">
+                                            Create Your LinkHub
+                                            <ArrowRight className="h-4 w-4" />
+                                        </div>
+                                    </Button>
+                                </Link>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
             </section>
 
@@ -192,10 +221,10 @@ export default function HomePage() {
                                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
                                     <Globe className="h-6 w-6 text-primary" />
                                 </div>
-                                <h3 className="mb-2 text-lg font-semibold">Link-in-Bio Builder</h3>
+                                <h3 className="mb-2 text-lg font-semibold">LinkHub Pages</h3>
                                 <p className="text-sm text-muted-foreground leading-relaxed">
-                                    Create beautiful link-in-bio pages with drag-and-drop editor,
-                                    custom themes, and per-block analytics
+                                    Build your link-in-bio page with custom links, social icons, 
+                                    and 5 modern themes at /t/username
                                 </p>
                             </CardContent>
                         </Card>

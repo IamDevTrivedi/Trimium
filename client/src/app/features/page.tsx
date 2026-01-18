@@ -29,6 +29,8 @@ import {
     Link2,
     Eye,
     MousePointerClick,
+    Sparkles,
+    ArrowRight,
 } from "lucide-react";
 import { Metadata } from "next";
 
@@ -340,86 +342,99 @@ export default function FeaturesPage() {
                 </div>
             </section>
 
-            {/* Link-in-Bio */}
-            {/* <section className="w-full max-w-6xl mx-auto border-y border-border bg-muted/10 py-16">
+            {/* LinkHub - Link-in-Bio */}
+            <section className="w-full max-w-6xl mx-auto border-y border-border bg-linear-to-br from-primary/5 via-background to-primary/5 py-16">
                 <div className="container px-4">
                     <div className="mx-auto max-w-6xl">
-                        <div className="mb-12">
-                            <h2 className="mb-4 text-3xl font-bold">Link-in-Bio Builder</h2>
-                            <p className="text-lg text-muted-foreground leading-relaxed">
-                                Create stunning landing pages for your social media profiles
-                            </p>
+                        <div className="mb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                            <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Sparkles className="h-6 w-6 text-primary" />
+                                    <h2 className="text-3xl font-bold">LinkHub</h2>
+                                </div>
+                                <p className="text-lg text-muted-foreground leading-relaxed">
+                                    Your personal link-in-bio page at /t/username
+                                </p>
+                            </div>
+                            <Link
+                                href="/linkhub-editor"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                            >
+                                Create Your LinkHub
+                                <ArrowRight className="h-4 w-4" />
+                            </Link>
                         </div>
 
                         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            <Card>
-                                <CardHeader>
-                                    <Grid3x3 className="mb-2 h-8 w-8 text-primary" />
-                                    <CardTitle>Drag-and-Drop Editor</CardTitle>
-                                    <CardDescription>
-                                        Easily build pages with links, text, images, videos, and
-                                        embeds using intuitive interface
-                                    </CardDescription>
-                                </CardHeader>
-                            </Card>
-
-                            <Card>
+                            <Card className="border-primary/20">
                                 <CardHeader>
                                     <Palette className="mb-2 h-8 w-8 text-primary" />
-                                    <CardTitle>Pre-made Themes</CardTitle>
+                                    <CardTitle>5 Modern Themes</CardTitle>
                                     <CardDescription>
-                                        Choose from 5-10 beautiful themes with live preview and
-                                        custom color options
+                                        Choose from Midnight, Sunset, Forest, Ocean, or Lavender 
+                                        themes to match your style
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
 
-                            <Card>
+                            <Card className="border-primary/20">
                                 <CardHeader>
-                                    <Clock className="mb-2 h-8 w-8 text-primary" />
-                                    <CardTitle>Scheduled Blocks</CardTitle>
+                                    <Link2 className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Custom Links</CardTitle>
                                     <CardDescription>
-                                        Set blocks to appear or disappear based on date and time
-                                        schedules
+                                        Add up to 20 links with titles, toggle visibility, 
+                                        and drag to reorder them
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
 
-                            <Card>
+                            <Card className="border-primary/20">
                                 <CardHeader>
-                                    <MousePointerClick className="mb-2 h-8 w-8 text-primary" />
-                                    <CardTitle>Per-Block Analytics</CardTitle>
+                                    <Users className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Social Profiles</CardTitle>
                                     <CardDescription>
-                                        Track clicks and engagement for each individual button or
-                                        link block
+                                        Add Instagram, LinkedIn, GitHub, X, YouTube, TikTok, 
+                                        and more with one-click icons
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
 
-                            <Card>
-                                <CardHeader>
-                                    <Palette className="mb-2 h-8 w-8 text-primary" />
-                                    <CardTitle>Custom Styling</CardTitle>
-                                    <CardDescription>
-                                        Customize fonts, colors, and layouts to match your brand
-                                        perfectly
-                                    </CardDescription>
-                                </CardHeader>
-                            </Card>
-
-                            <Card>
+                            <Card className="border-primary/20">
                                 <CardHeader>
                                     <Eye className="mb-2 h-8 w-8 text-primary" />
                                     <CardTitle>Live Preview</CardTitle>
                                     <CardDescription>
-                                        See changes in real-time as you build your link-in-bio page
+                                        See your changes in real-time as you edit your 
+                                        LinkHub page
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card className="border-primary/20">
+                                <CardHeader>
+                                    <Globe className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Your Username URL</CardTitle>
+                                    <CardDescription>
+                                        Share your page at trimium.com/t/yourname — easy to 
+                                        remember and share
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card className="border-primary/20">
+                                <CardHeader>
+                                    <Shield className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Publish Control</CardTitle>
+                                    <CardDescription>
+                                        Keep your page private while editing, then publish 
+                                        when you&apos;re ready
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
                         </div>
                     </div>
                 </div>
-            </section> */}
+            </section>
 
             {/* FAQ Section */}
             <section className="w-full max-w-6xl mx-auto container px-4 py-16 md:py-24">
@@ -506,12 +521,13 @@ export default function FeaturesPage() {
 
                         <AccordionItem value="item-7">
                             <AccordionTrigger className="text-left">
-                                What is the link-in-bio builder feature?
+                                What is LinkHub?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                The link-in-bio builder lets you create beautiful landing pages
-                                perfect for social media profiles. Use our drag-and-drop editor to
-                                add links, text, images, videos, and embeds.
+                                LinkHub is your personal link-in-bio page at /t/yourname. 
+                                Add all your important links, connect your social profiles 
+                                (Instagram, LinkedIn, GitHub, X, and more), choose from 5 modern 
+                                themes, and share one simple link everywhere.
                             </AccordionContent>
                         </AccordionItem>
 

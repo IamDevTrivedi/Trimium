@@ -598,11 +598,10 @@ export function AccountPage() {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Link2 className="h-5 w-5" />
-                                Link Profile
+                                LinkHub
                             </CardTitle>
                             <CardDescription>
-                                Create your personalized link-in-bio page to share all your
-                                important links
+                                Your personal link-in-bio page to share all your important links
                             </CardDescription>
                         </CardHeader>
                         <CardContent>

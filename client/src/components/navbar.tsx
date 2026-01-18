@@ -4,7 +4,6 @@ import { FloatingNav } from "@/components/ui/floating-navbar";
 import { useUserStore } from "@/store/user-store";
 import {
     HomeIcon,
-    MessageCircleIcon,
     StarIcon,
     UserIcon,
     LogInIcon,
@@ -12,6 +11,7 @@ import {
     LogOutIcon,
     LayoutDashboardIcon,
     QrCodeIcon,
+    SparklesIcon,
 } from "lucide-react";
 
 export function Navbar() {
@@ -34,9 +34,9 @@ export function Navbar() {
             icon: <QrCodeIcon className="size-4" />,
         },
         {
-            name: "Contact",
-            link: "/contact-us",
-            icon: <MessageCircleIcon className="size-4" />,
+            name: "LinkHub",
+            link: "/linkhub-editor",
+            icon: <SparklesIcon className="size-4" />,
         },
         {
             name: "Account",
