@@ -7,6 +7,7 @@ import { backend } from "@/config/backend";
 import { getTheme } from "@/constants/linkhub-themes";
 import { SOCIAL_PLATFORMS, getSocialUrl } from "@/constants/socials";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface LinkhubLink {
     id: string;
@@ -197,9 +198,9 @@ export default function LinkhubPage() {
 
                 {/* Footer */}
                 <div className={cn("text-center mt-12 text-sm", theme.textMuted)}>
-                    <a href="/" className="hover:underline inline-flex items-center gap-1">
+                    <Link href="/" className="hover:underline inline-flex items-center gap-1">
                         Powered by Trimium
-                    </a>
+                    </Link>
                 </div>
             </div>
         </div>
