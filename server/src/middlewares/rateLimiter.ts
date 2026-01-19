@@ -7,7 +7,6 @@ import { config } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { redisClient } from "@/db/connectRedis";
 import { NextFunction, Request, Response } from "express";
-import { getClientIP } from "@middlewares/IP";
 
 declare module "express-serve-static-core" {
     interface Locals {
@@ -118,7 +117,7 @@ export const createRateLimiter = ({
             prefix,
         }),
         windowMs,
-        max: config.isDevelopment ? max : max,
+        max: config.isDevelopment ? Infinity : max,
         standardHeaders: true,
         legacyHeaders: false,
         skipFailedRequests: false,
@@ -143,7 +142,7 @@ export const createRateLimiter = ({
 
 export const globalRateLimiter = createRateLimiter({
     windowMs: 60 * 1000,
-    max: config.isDevelopment ? Infinity : 1000,
+    max: 1000,
     message: "Too many requests from this IP, please try again later.",
     prefix: "rl:global",
 });
