@@ -21,8 +21,8 @@ interface RateLimitOptions {
     prefix?: string;
 }
 
-const DIFFICULTY = 4;
-const SECRET = "some_secret_salt_value";
+const DIFFICULTY = config.PoW_DIFFICULTY;
+const SECRET = config.PoW_SECRET;
 
 const issuePoWChallenge = (req: Request, res: Response) => {
     const expiry = Date.now() + 1 * 60 * 1000;
