@@ -55,22 +55,29 @@ export const controllers = {
                 title: z.string().max(100).optional(),
                 bio: z.string().max(500).optional(),
                 avatarUrl: z.url().max(2048).optional().or(z.literal("")),
-                links: z.array(z.object({
-                    id: z.string().min(1).max(50),
-                    title: z.string().min(1).max(100),
-                    url: z.url().max(2048),
-                    isActive: z.boolean(),
-                })).max(20).optional(),
-                socials: z.object({
-                    instagram: z.string().max(100).optional().or(z.literal("")),
-                    linkedin: z.string().max(100).optional().or(z.literal("")),
-                    github: z.string().max(100).optional().or(z.literal("")),
-                    x: z.string().max(100).optional().or(z.literal("")),
-                    youtube: z.string().max(100).optional().or(z.literal("")),
-                    tiktok: z.string().max(100).optional().or(z.literal("")),
-                    portfolio: z.string().max(2048).optional().or(z.literal("")),
-                    email: z.email().max(320).optional().or(z.literal("")),
-                }).optional(),
+                links: z
+                    .array(
+                        z.object({
+                            id: z.string().min(1).max(50),
+                            title: z.string().min(1).max(100),
+                            url: z.url().max(2048),
+                            isActive: z.boolean(),
+                        })
+                    )
+                    .max(20)
+                    .optional(),
+                socials: z
+                    .object({
+                        instagram: z.string().max(100).optional().or(z.literal("")),
+                        linkedin: z.string().max(100).optional().or(z.literal("")),
+                        github: z.string().max(100).optional().or(z.literal("")),
+                        x: z.string().max(100).optional().or(z.literal("")),
+                        youtube: z.string().max(100).optional().or(z.literal("")),
+                        tiktok: z.string().max(100).optional().or(z.literal("")),
+                        portfolio: z.string().max(2048).optional().or(z.literal("")),
+                        email: z.email().max(320).optional().or(z.literal("")),
+                    })
+                    .optional(),
                 theme: z.enum(LINKHUB_THEMES).optional(),
                 isPublished: z.boolean().optional(),
             });

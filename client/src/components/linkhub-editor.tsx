@@ -433,7 +433,9 @@ export function LinkhubEditor() {
                                                 }}
                                             />
                                             <div className="flex-1">
-                                                <p className="text-sm font-medium">Avatar uploaded</p>
+                                                <p className="text-sm font-medium">
+                                                    Avatar uploaded
+                                                </p>
                                             </div>
                                             <Button
                                                 variant="outline"
@@ -597,7 +599,7 @@ export function LinkhubEditor() {
                                                 placeholder={platform.placeholder}
                                                 value={
                                                     data.socials[
-                                                    platform.id as keyof LinkhubSocials
+                                                        platform.id as keyof LinkhubSocials
                                                     ] || ""
                                                 }
                                                 onChange={(e) =>
@@ -788,18 +790,18 @@ export function LinkhubEditor() {
                                             ))}
                                         {data.links.filter((l) => l.isActive && l.title).length >
                                             3 && (
-                                                <p
-                                                    className={cn(
-                                                        "text-center text-xs",
-                                                        LINKHUB_THEMES[data.theme].textMuted
-                                                    )}
-                                                >
-                                                    +
-                                                    {data.links.filter((l) => l.isActive && l.title)
-                                                        .length - 3}{" "}
-                                                    more links
-                                                </p>
-                                            )}
+                                            <p
+                                                className={cn(
+                                                    "text-center text-xs",
+                                                    LINKHUB_THEMES[data.theme].textMuted
+                                                )}
+                                            >
+                                                +
+                                                {data.links.filter((l) => l.isActive && l.title)
+                                                    .length - 3}{" "}
+                                                more links
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
