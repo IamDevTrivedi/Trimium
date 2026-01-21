@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,8 @@ import {
     Check,
     Copy,
     Palette,
+    Upload,
+    Loader2,
 } from "lucide-react";
 import { backend } from "@/config/backend";
 import { toastError } from "@/lib/toast-error";
@@ -67,6 +69,8 @@ export function LinkhubEditor() {
     const [saving, setSaving] = useState(false);
     const [copied, setCopied] = useState(false);
     const [changed, setChanged] = useState(false);
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [data, setData] = useState<LinkhubData>({
         title: "",
@@ -102,7 +106,7 @@ export function LinkhubEditor() {
 
     const fetchLinkhub = async () => {
         try {
-            const response = await backend.get("/api/v1/linkhub/me");
+            const response = await backend.post("/api/v1/linkhub/get-my-profile");
             if (response.data.success) {
                 const linkhub = response.data.data;
                 setOriginalData({
@@ -169,7 +173,7 @@ export function LinkhubEditor() {
 
         try {
             setSaving(true);
-            const response = await backend.put("/api/v1/linkhub/me", data);
+            const response = await backend.post("/api/v1/linkhub/update-my-profile", data);
             if (response.data.success) {
                 Toast.success("Profile saved successfully!");
             }
@@ -234,6 +238,56 @@ export function LinkhubEditor() {
         await navigator.clipboard.writeText(profileUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith("image/")) {
+            Toast.error("Invalid file type", {
+                description: "Please upload an image file",
+            });
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            Toast.error("File too large", {
+                description: "Please upload an image smaller than 5MB",
+            });
+            return;
+        }
+
+        try {
+            setUploadingAvatar(true);
+
+            const formData = new FormData();
+            formData.append("avatar", file);
+
+            const response = await backend.post("/api/v1/linkhub/update-avatar", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            if (response.data.success) {
+                setData((prev) => ({
+                    ...prev,
+                    avatarUrl: response.data.data.url,
+                }));
+                Toast.success("Avatar uploaded successfully!");
+            }
+        } catch (error) {
+            toastError(error);
+        } finally {
+            setUploadingAvatar(false);
+            // Reset file input
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+        }
     };
 
     if (loading) {
@@ -365,19 +419,67 @@ export function LinkhubEditor() {
                                 </p>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="avatarUrl">Avatar URL</Label>
-                                <Input
-                                    id="avatarUrl"
-                                    type="url"
-                                    placeholder="https://example.com/avatar.jpg"
-                                    value={data.avatarUrl}
-                                    onChange={(e) =>
-                                        setData((prev) => ({
-                                            ...prev,
-                                            avatarUrl: e.target.value,
-                                        }))
-                                    }
-                                />
+                                <Label htmlFor="avatarUrl">Avatar</Label>
+                                <div className="space-y-3">
+                                    {data.avatarUrl && (
+                                        <div className="flex items-center gap-3">
+                                            <img
+                                                src={data.avatarUrl}
+                                                alt="Avatar preview"
+                                                className="w-16 h-16 rounded-full object-cover border-2 border-border"
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).style.display =
+                                                        "none";
+                                                }}
+                                            />
+                                            <div className="flex-1">
+                                                <p className="text-sm font-medium">Avatar uploaded</p>
+                                            </div>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() =>
+                                                    setData((prev) => ({
+                                                        ...prev,
+                                                        avatarUrl: "",
+                                                    }))
+                                                }
+                                            >
+                                                Remove
+                                            </Button>
+                                        </div>
+                                    )}
+                                    <div className="flex gap-2">
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => fileInputRef.current?.click()}
+                                            disabled={uploadingAvatar}
+                                            className="flex-1"
+                                        >
+                                            {uploadingAvatar ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                    Uploading...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Upload className="w-4 h-4 mr-2" />
+                                                    Upload Image
+                                                </>
+                                            )}
+                                        </Button>
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            onChange={handleAvatarUpload}
+                                        />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        JPG, PNG or GIF (max 5MB)
+                                    </p>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -495,7 +597,7 @@ export function LinkhubEditor() {
                                                 placeholder={platform.placeholder}
                                                 value={
                                                     data.socials[
-                                                        platform.id as keyof LinkhubSocials
+                                                    platform.id as keyof LinkhubSocials
                                                     ] || ""
                                                 }
                                                 onChange={(e) =>
@@ -686,18 +788,18 @@ export function LinkhubEditor() {
                                             ))}
                                         {data.links.filter((l) => l.isActive && l.title).length >
                                             3 && (
-                                            <p
-                                                className={cn(
-                                                    "text-center text-xs",
-                                                    LINKHUB_THEMES[data.theme].textMuted
-                                                )}
-                                            >
-                                                +
-                                                {data.links.filter((l) => l.isActive && l.title)
-                                                    .length - 3}{" "}
-                                                more links
-                                            </p>
-                                        )}
+                                                <p
+                                                    className={cn(
+                                                        "text-center text-xs",
+                                                        LINKHUB_THEMES[data.theme].textMuted
+                                                    )}
+                                                >
+                                                    +
+                                                    {data.links.filter((l) => l.isActive && l.title)
+                                                        .length - 3}{" "}
+                                                    more links
+                                                </p>
+                                            )}
                                     </div>
                                 </div>
                             </div>

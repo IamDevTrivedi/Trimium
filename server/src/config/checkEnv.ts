@@ -40,6 +40,10 @@ export const envSchema = z
         PoW_DIFFICULTY: z.number().min(1).max(6),
 
         ADMIN_EMAILS: z.array(z.email()).min(1),
+
+        CLOUDINARY_CLOUD_NAME: z.string().min(1),
+        CLOUDINARY_API_KEY: z.string().min(1),
+        CLOUDINARY_API_SECRET: z.string().min(1),
     })
     .strict();
 

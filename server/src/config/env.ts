@@ -65,4 +65,8 @@ export const config = {
     PoW_DIFFICULTY: Number(process.env.PoW_DIFFICULTY),
 
     ADMIN_EMAILS: (process.env.ADMIN_EMAILS as string).split("|").filter(Boolean),
+
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
 } as const;
