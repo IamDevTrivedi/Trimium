@@ -26,7 +26,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.UNAUTHORIZED,
-                message: "Unauthorized access, auth token missing",
+                message: "Unauthorized access, Please login again",
             });
         }
 
@@ -43,7 +43,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.UNAUTHORIZED,
-                message: "Unauthorized access, token version mismatch",
+                message: "Unauthorized access, Please login again",
             });
         }
 
@@ -52,7 +52,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.UNAUTHORIZED,
-                message: "Unauthorized access, login history token version mismatch",
+                message: "Unauthorized access, Please login again",
             });
         }
 
