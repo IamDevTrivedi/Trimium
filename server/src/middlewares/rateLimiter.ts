@@ -19,13 +19,43 @@ interface RateLimitOptions {
     prefix?: string;
 }
 
-const DIFFICULTY = config.PoW_DIFFICULTY;
+const BASE_DIFFICULTY = config.PoW_DIFFICULTY;
 const SECRET = config.PoW_SECRET;
 
-const issuePoWChallenge = (req: Request, res: Response) => {
+/**
+ * Calculate adaptive difficulty based on rate limit settings: Based on the Sensitivity of the endpoint
+ */
+const calculateAdaptiveDifficulty = (options: { windowMs: number; max: number }): number => {
+    const { windowMs, max } = options;
+    const requestsPerMinute = (max / windowMs) * 60 * 1000;
+    let add = 0;
+
+    if (requestsPerMinute <= 5) {
+        add += 3;
+    } else if (requestsPerMinute <= 20) {
+        add += 2;
+    } else if (requestsPerMinute <= 100) {
+        add += 1;
+    }
+
+    if (windowMs <= 30 * 1000) {
+        add += 1;
+    } else if (windowMs <= 60 * 1000) {
+        add += 0;
+    }
+
+    return Math.min(BASE_DIFFICULTY + 3, Math.max(BASE_DIFFICULTY, BASE_DIFFICULTY + add));
+};
+
+const issuePoWChallenge = (
+    req: Request,
+    res: Response,
+    options: { windowMs: number; max: number }
+) => {
+    const difficulty = calculateAdaptiveDifficulty(options);
     const expiry = Date.now() + 1 * 60 * 1000;
     const salt = Math.random().toString(36).substring(2, 15);
-    const challenge = `${DIFFICULTY}|${expiry}|${salt}`;
+    const challenge = `${difficulty}|${expiry}|${salt}`;
     const integrity = crypto.createHmac("sha256", SECRET).update(challenge).digest("hex");
 
     const PoW_token = Buffer.from(`${challenge}|${integrity}`).toString("base64");
@@ -33,7 +63,7 @@ const issuePoWChallenge = (req: Request, res: Response) => {
     return res.status(429).json({
         message: "Rate limit exceeded. Please solve the Proof of Work challenge.",
         PoW_token,
-        difficulty: DIFFICULTY,
+        difficulty,
         code: "rate_limit_pow_challenge",
     });
 };
@@ -120,13 +150,13 @@ export const createRateLimiter = ({ windowMs, max, prefix = "rl" }: RateLimitOpt
             return res.locals.visitorID;
         },
 
-        handler: (req, res, next, options) => {
+        handler: (req, res, next) => {
             logger.warn(`Rate limit exceeded for IP: ${res.locals.visitorID}, prefix: ${prefix})`);
-            logger.info(`WindowMs: ${options.windowMs}, Limit: ${options.limit}`);
+            logger.info(`windowMs: ${windowMs}, max: ${max}, prefix: ${prefix}`);
 
             const PoW = req.headers["x-pow"];
             if (typeof PoW === "undefined") {
-                return issuePoWChallenge(req, res);
+                return issuePoWChallenge(req, res, { windowMs, max });
             }
 
             return verifyPoWAndRespond(req, res, next);
