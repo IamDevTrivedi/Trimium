@@ -7,7 +7,6 @@ const router = Router();
 const healthLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 120,
-    message: "Too many health check requests. Please slow down.",
     prefix: "rl:health",
 });
 

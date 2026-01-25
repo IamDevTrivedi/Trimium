@@ -9,14 +9,12 @@ const router = Router();
 const linkhubUpdateLimiter = createRateLimiter({
     windowMs: 1 * 60 * 1000,
     max: 30,
-    message: "Too many linkhub update requests. Please try again later.",
     prefix: "rl:linkhub:update",
 });
 
 const linkhubPublicLimiter = createRateLimiter({
     windowMs: 1 * 60 * 1000,
     max: 60,
-    message: "Too many requests. Please try again later.",
     prefix: "rl:linkhub:public",
 });
 

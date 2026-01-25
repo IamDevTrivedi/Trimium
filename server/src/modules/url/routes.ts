@@ -8,28 +8,24 @@ const router = Router();
 const shortcodeCheckLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 30,
-    message: "Too many shortcode check requests. Please slow down.",
     prefix: "rl:url:check",
 });
 
 const shortcodeCreateLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 500,
-    message: "Too many shortcode creation requests. Please slow down.",
     prefix: "rl:url:create",
 });
 
 const urlGeneralLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 60,
-    message: "Too many requests. Please slow down.",
     prefix: "rl:url:general",
 });
 
 const redirectLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 100,
-    message: "Too many redirect requests. Please slow down.",
     prefix: "rl:url:redirect",
 });
 

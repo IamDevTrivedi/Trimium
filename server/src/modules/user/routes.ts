@@ -8,14 +8,12 @@ const router = Router();
 const profileChangeLimiter = createRateLimiter({
     windowMs: 5 * 60 * 1000,
     max: 10,
-    message: "Too many profile update requests. Please try again later.",
     prefix: "rl:user:profile",
 });
 
 const passwordChangeLimiter = createRateLimiter({
     windowMs: 15 * 60 * 1000,
     max: 5,
-    message: "Too many password change requests. Please try again later.",
     prefix: "rl:user:password",
 });
 

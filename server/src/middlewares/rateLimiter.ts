@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import RedisStore from "rate-limit-redis";
 import rateLimit from "express-rate-limit";
 import crypto from "crypto";
@@ -17,7 +16,6 @@ declare module "express-serve-static-core" {
 interface RateLimitOptions {
     windowMs: number;
     max: number;
-    message?: string;
     prefix?: string;
 }
 
@@ -105,12 +103,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     return next();
 };
 
-export const createRateLimiter = ({
-    windowMs,
-    max,
-    message = "Too many requests, please try again later.",
-    prefix = "rl",
-}: RateLimitOptions) => {
+export const createRateLimiter = ({ windowMs, max, prefix = "rl" }: RateLimitOptions) => {
     return rateLimit({
         store: new RedisStore({
             sendCommand: (...args: string[]) => redisClient.sendCommand(args),
@@ -127,15 +120,16 @@ export const createRateLimiter = ({
             return res.locals.visitorID;
         },
 
-        handler: (req, res, _next, options) => {
+        handler: (req, res, next, options) => {
             logger.warn(`Rate limit exceeded for IP: ${res.locals.visitorID}, prefix: ${prefix})`);
+            logger.info(`WindowMs: ${options.windowMs}, Limit: ${options.limit}`);
 
             const PoW = req.headers["x-pow"];
             if (typeof PoW === "undefined") {
                 return issuePoWChallenge(req, res);
             }
 
-            return verifyPoWAndRespond(req, res, _next);
+            return verifyPoWAndRespond(req, res, next);
         },
     });
 };
@@ -143,6 +137,5 @@ export const createRateLimiter = ({
 export const globalRateLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 1000,
-    message: "Too many requests from this IP, please try again later.",
     prefix: "rl:global",
 });

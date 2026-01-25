@@ -8,35 +8,30 @@ const router = Router();
 const workspaceCreateLimiter = createRateLimiter({
     windowMs: 5 * 60 * 1000,
     max: 10,
-    message: "Too many workspace creation requests. Please try again later.",
     prefix: "rl:workspace:create",
 });
 
 const workspaceMutationLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 30,
-    message: "Too many workspace update requests. Please slow down.",
     prefix: "rl:workspace:mutation",
 });
 
 const workspaceReadLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 60,
-    message: "Too many requests. Please slow down.",
     prefix: "rl:workspace:read",
 });
 
 const invitationLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 20,
-    message: "Too many invitation requests. Please slow down.",
     prefix: "rl:workspace:invitation",
 });
 
 const tagLimiter = createRateLimiter({
     windowMs: 60 * 1000,
     max: 40,
-    message: "Too many tag requests. Please slow down.",
     prefix: "rl:workspace:tag",
 });
 

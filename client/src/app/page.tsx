@@ -51,8 +51,9 @@ export default function HomePage() {
                             </span>
                         </h1>
                         <p className="mb-10 max-w-2xl text-pretty text-base text-muted-foreground sm:text-lg md:text-xl">
-                            Create powerful short URLs, generate custom QR codes, and gain deep insights
-                            with advanced analytics. Perfect for businesses, marketers, and teams.
+                            Create powerful short URLs, generate custom QR codes, and gain deep
+                            insights with advanced analytics. Perfect for businesses, marketers, and
+                            teams.
                         </p>
                         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4">
                             <Link href="/create-account" className="w-full sm:w-auto">
@@ -62,7 +63,11 @@ export default function HomePage() {
                                 </Button>
                             </Link>
                             <Link href="/features" className="w-full sm:w-auto">
-                                <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto">
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="w-full gap-2 sm:w-auto"
+                                >
                                     Explore Features
                                     <ArrowRight className="h-4 w-4 ml-2" />
                                 </Button>
@@ -93,7 +98,10 @@ export default function HomePage() {
                                                 seconds
                                             </p>
                                             <Link href="/w" className="inline-block">
-                                                <Button variant="link" className="h-auto gap-2 p-0 text-primary">
+                                                <Button
+                                                    variant="link"
+                                                    className="h-auto gap-2 p-0 text-primary"
+                                                >
                                                     Go to Workspace
                                                     <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5" />
                                                 </Button>
@@ -118,7 +126,10 @@ export default function HomePage() {
                                                 sizes, and your logo
                                             </p>
                                             <Link href="/qr-generator" className="inline-block">
-                                                <Button variant="link" className="h-auto gap-2 p-0 text-primary">
+                                                <Button
+                                                    variant="link"
+                                                    className="h-auto gap-2 p-0 text-primary"
+                                                >
                                                     Create QR Code
                                                     <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5" />
                                                 </Button>
@@ -141,9 +152,9 @@ export default function HomePage() {
                                             LinkHub - Your Link-in-Bio Page
                                         </h3>
                                         <p className="text-sm text-muted-foreground">
-                                            Create a personalized page with all your links and social
-                                            profiles. Choose from 5 modern themes and share one link
-                                            everywhere.
+                                            Create a personalized page with all your links and
+                                            social profiles. Choose from 5 modern themes and share
+                                            one link everywhere.
                                         </p>
                                     </div>
                                     <Link href="/linkhub-editor" className="w-full sm:w-auto">
@@ -176,10 +187,12 @@ export default function HomePage() {
                                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/15">
                                         <BarChart3 className="h-5 w-5 text-primary" />
                                     </div>
-                                    <h3 className="mb-2 font-semibold text-foreground">Advanced Analytics</h3>
+                                    <h3 className="mb-2 font-semibold text-foreground">
+                                        Advanced Analytics
+                                    </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Track clicks, locations, devices, and referrers with real-time
-                                        analytics and exportable reports
+                                        Track clicks, locations, devices, and referrers with
+                                        real-time analytics and exportable reports
                                     </p>
                                 </CardContent>
                             </Card>
@@ -189,10 +202,12 @@ export default function HomePage() {
                                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/15">
                                         <Users className="h-5 w-5 text-primary" />
                                     </div>
-                                    <h3 className="mb-2 font-semibold text-foreground">Team Collaboration</h3>
+                                    <h3 className="mb-2 font-semibold text-foreground">
+                                        Team Collaboration
+                                    </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Create workspaces, add team members, and manage permissions with
-                                        role-based access control
+                                        Create workspaces, add team members, and manage permissions
+                                        with role-based access control
                                     </p>
                                 </CardContent>
                             </Card>
@@ -202,10 +217,12 @@ export default function HomePage() {
                                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/15">
                                         <Lock className="h-5 w-5 text-primary" />
                                     </div>
-                                    <h3 className="mb-2 font-semibold text-foreground">Password Protection</h3>
+                                    <h3 className="mb-2 font-semibold text-foreground">
+                                        Password Protection
+                                    </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Secure your links with password protection and set auto-expire
-                                        dates for time-sensitive content
+                                        Secure your links with password protection and set
+                                        auto-expire dates for time-sensitive content
                                     </p>
                                 </CardContent>
                             </Card>
@@ -215,10 +232,12 @@ export default function HomePage() {
                                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/15">
                                         <Globe className="h-5 w-5 text-primary" />
                                     </div>
-                                    <h3 className="mb-2 font-semibold text-foreground">LinkHub Pages</h3>
+                                    <h3 className="mb-2 font-semibold text-foreground">
+                                        LinkHub Pages
+                                    </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Build your link-in-bio page with custom links, social icons, and
-                                        5 modern themes at /t/username
+                                        Build your link-in-bio page with custom links, social icons,
+                                        and 5 modern themes at /t/username
                                     </p>
                                 </CardContent>
                             </Card>
@@ -228,7 +247,9 @@ export default function HomePage() {
                                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/15">
                                         <Palette className="h-5 w-5 text-primary" />
                                     </div>
-                                    <h3 className="mb-2 font-semibold text-foreground">Custom QR Codes</h3>
+                                    <h3 className="mb-2 font-semibold text-foreground">
+                                        Custom QR Codes
+                                    </h3>
                                     <p className="text-sm text-muted-foreground">
                                         Design branded QR codes with custom colors and download in
                                         multiple formats (SVG, PNG, PDF)
@@ -241,10 +262,12 @@ export default function HomePage() {
                                     <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 transition-colors group-hover:bg-primary/15">
                                         <Zap className="h-5 w-5 text-primary" />
                                     </div>
-                                    <h3 className="mb-2 font-semibold text-foreground">Bulk Operations</h3>
+                                    <h3 className="mb-2 font-semibold text-foreground">
+                                        Bulk Operations
+                                    </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Generate multiple URLs at once with CSV upload, complete with
-                                        error handling and validation
+                                        Generate multiple URLs at once with CSV upload, complete
+                                        with error handling and validation
                                     </p>
                                 </CardContent>
                             </Card>
@@ -279,7 +302,11 @@ export default function HomePage() {
                                 </Button>
                             </Link>
                             <Link href="/contact-us" className="w-full sm:w-auto">
-                                <Button size="lg" variant="outline" className="w-full gap-2 sm:w-auto">
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="w-full gap-2 sm:w-auto"
+                                >
                                     Contact Sales
                                     <Mail className="h-4 w-4 ml-2" />
                                 </Button>
