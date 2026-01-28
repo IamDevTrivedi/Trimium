@@ -12,7 +12,7 @@
         "clean:all": "node ./scripts/clean-all.js",
         "reset:all": "node ./scripts/reset-all.js",
         "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"pnpm --filter client dev\" \"pnpm --filter server dev\"",
-        "download:geoip": "node ./scripts/update-geolite2.js && sh ./scripts/transfer-geofile.sh"
+        "download:geoip": "node ./scripts/update-geolite2.js"
     },
     "keywords": [],
     "author": "",
@@ -24,6 +24,7 @@
     "devDependencies": {
         "@eslint/js": "^9.39.2",
         "concurrently": "^9.2.1",
+        "dotenv": "^16.6.1",
         "eslint": "^9.39.2",
         "globals": "^16.5.0",
         "jiti": "^2.6.1",

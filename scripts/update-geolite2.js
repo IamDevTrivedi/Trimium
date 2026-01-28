@@ -1,19 +1,31 @@
+// Not a StandAlone Script: Requires tar and dotenv packages at the root level
+
 import fs from "fs";
 import path from "path";
 import https from "https";
 import * as tar from "tar";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+dotenv.config({
+    path: path.resolve(__dirname, "..", ".env"),
+});
+
 const LICENSE_KEY = process.env.MAXMIND_LICENSE_KEY;
 const EDITION_ID = "GeoLite2-City";
 const DOWNLOAD_URL = `https://download.maxmind.com/app/geoip_download?edition_id=${EDITION_ID}&license_key=${LICENSE_KEY}&suffix=tar.gz`;
+
 const TEMP_DIR = path.join(__dirname, "..", "temp");
 const TEMP_FILE = path.join(TEMP_DIR, "GeoLite2-City.tar.gz");
+
 const TARGET_DIR = path.join(__dirname, "..", "server", "src", "constants");
 const TARGET_FILE = path.join(TARGET_DIR, "GeoLite2-City.mmdb");
+
+const BUILD_TARGET_DIR = path.join(__dirname, "..", "server", "build", "constants");
+const BUILD_TARGET_FILE = path.join(BUILD_TARGET_DIR, "GeoLite2-City.mmdb");
 
 function downloadFile(url, destination) {
     return new Promise((resolve, reject) => {
@@ -50,12 +62,12 @@ function downloadFile(url, destination) {
                 });
             })
             .on("error", (err) => {
-                fs.unlink(destination, () => {});
+                fs.unlink(destination, () => { });
                 reject(err);
             });
 
         file.on("error", (err) => {
-            fs.unlink(destination, () => {});
+            fs.unlink(destination, () => { });
             reject(err);
         });
     });
@@ -132,6 +144,13 @@ async function main() {
 
         console.log("Installing new database...");
         fs.copyFileSync(mmdbPath, TARGET_FILE);
+
+        if (!fs.existsSync(BUILD_TARGET_DIR)) {
+            fs.mkdirSync(BUILD_TARGET_DIR, { recursive: true });
+        }
+
+        console.log("Copying to build directory...");
+        fs.copyFileSync(TARGET_FILE, BUILD_TARGET_FILE);
 
         const stats = fs.statSync(TARGET_FILE);
         const fileSizeMB = (stats.size / (1024 * 1024)).toFixed(2);
