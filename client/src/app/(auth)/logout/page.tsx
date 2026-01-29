@@ -32,11 +32,12 @@ export default function page() {
                     r3();
                     r4();
                     r5();
-
-                    router.replace("/");
                 }
             } catch (error) {
                 toastError(error);
+            }
+            finally {
+                router.replace("/");
             }
         };
         fetcher();
