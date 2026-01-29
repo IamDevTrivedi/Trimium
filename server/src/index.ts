@@ -31,7 +31,22 @@ const init = async () => {
     app.use(express.urlencoded({ extended: true }));
     app.use(
         cors({
-            origin: config.FRONTEND_URL,
+            origin: (origin, callback) => {
+                if (!origin) {
+                    return callback(null, true);
+                }
+
+                if (origin === config.FRONTEND_URL) {
+                    return callback(null, true);
+                }
+
+                const previewURL = /^https:\/\/trimium(-[a-z0-9]+)?(-[a-z0-9-]+)?\.vercel\.app$/;
+                if (previewURL.test(origin)) {
+                    return callback(null, true);
+                }
+
+                callback(new Error("Not allowed by CORS"));
+            },
             methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
             credentials: true,
         })
