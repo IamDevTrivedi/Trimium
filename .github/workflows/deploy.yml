@@ -1,0 +1,35 @@
+name: Deploy Server to EC2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'server/**'
+      - 'package.json'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            source ~/.nvm/nvm.sh            
+            cd /home/${{ secrets.EC2_USER }}/my-projects/Trimium
+            git pull origin main
+            pnpm install
+            cd server 
+            pnpm install
+            NODE_OPTIONS="--max-old-space-size=1024" pnpm run build
+            cd ..
+            pnpm run download:geoip
+            pm2 restart trimium-server
+            pm2 save
+            pm2 status trimium-server
+            echo "Deployment completed."
