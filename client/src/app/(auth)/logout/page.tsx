@@ -35,8 +35,7 @@ export default function page() {
                 }
             } catch (error) {
                 toastError(error);
-            }
-            finally {
+            } finally {
                 router.replace("/");
             }
         };
