@@ -40,7 +40,7 @@ const init = async () => {
                     return callback(null, true);
                 }
 
-                const previewURL = /^https:\/\/trimium(-[a-z0-9]+)?(-[a-z0-9-]+)?\.vercel\.app$/;
+                const previewURL = /^https:\/\/trimium(-[a-z0-9-]+)?\.vercel\.app$/;
                 if (previewURL.test(origin)) {
                     return callback(null, true);
                 }
