@@ -25,17 +25,15 @@ export default function page() {
         const fetcher = async () => {
             try {
                 const { data: resData } = await backend.post("/api/v1/auth/logout-my-device");
-
-                if (handleResponse(resData)) {
-                    r1();
-                    r2();
-                    r3();
-                    r4();
-                    r5();
-                }
+                handleResponse(resData);
             } catch (error) {
                 toastError(error);
             } finally {
+                r1();
+                r2();
+                r3();
+                r4();
+                r5();
                 router.replace("/");
             }
         };
