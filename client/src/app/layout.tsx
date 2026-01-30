@@ -20,7 +20,7 @@ const siteUrl = config.PUBLIC_FRONTEND_URL;
 
 export const metadata: Metadata = {
     title: {
-        default: "CHANGED - Professional URL Shortener & Link Management",
+        default: "Trimium - Professional URL Shortener & Link Management",
         template: "%s | Trimium",
     },
     description:
