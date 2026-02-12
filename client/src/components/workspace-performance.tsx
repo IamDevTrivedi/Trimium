@@ -16,6 +16,10 @@ import {
     Loader2,
     X,
     ChevronDown,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -29,6 +33,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -106,6 +117,10 @@ export function WorkspacePerformance({
         key: "title" | "shortCode" | "totalClicks" | "lands" | "uniqueVisitors";
         direction: "asc" | "desc";
     } | null>(null);
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [pageSize, setPageSize] = React.useState(10);
 
     // Tag filtering state
     const [workspaceTags, setWorkspaceTags] = React.useState<{ tag: string; tagID: number }[]>([]);
@@ -233,6 +248,17 @@ export function WorkspacePerformance({
         return result;
     }, [workspacePerformance.allURLsWithTitle, searchQuery, activeOnly, sortConfig, selectedTags]);
 
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [searchQuery, activeOnly, selectedTags, sortConfig]);
+
+    const totalItems = filteredAndSortedURLs.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+    const paginatedURLs = React.useMemo(() => {
+        const start = (currentPage - 1) * pageSize;
+        return filteredAndSortedURLs.slice(start, start + pageSize);
+    }, [filteredAndSortedURLs, currentPage, pageSize]);
+
     type SortKey = "title" | "shortCode" | "totalClicks" | "lands" | "uniqueVisitors";
 
     const toggleSort = (key: SortKey) => {
@@ -278,7 +304,7 @@ export function WorkspacePerformance({
                             {Math.round(
                                 (workspacePerformance.totalActiveURLs /
                                     workspacePerformance.totalURLS) *
-                                    100
+                                100
                             )}
                             %)
                         </p>
@@ -663,8 +689,8 @@ export function WorkspacePerformance({
                             </TableRow>
                         </TableHeader>
                         <TableBody className="bg-background">
-                            {filteredAndSortedURLs.length > 0 ? (
-                                filteredAndSortedURLs.map((url) => (
+                            {paginatedURLs.length > 0 ? (
+                                paginatedURLs.map((url) => (
                                     <TableRow
                                         key={url._id}
                                         className="hover:bg-muted/50 transition-colors"
@@ -705,7 +731,7 @@ export function WorkspacePerformance({
                                                         );
                                                         const tagStyle = tagData
                                                             ? getTagById(tagData.tagID) ||
-                                                              DEFAULT_TAG
+                                                            DEFAULT_TAG
                                                             : DEFAULT_TAG;
                                                         return (
                                                             <Badge
@@ -772,6 +798,77 @@ export function WorkspacePerformance({
                             )}
                         </TableBody>
                     </Table>
+
+                    {/* Pagination Controls */}
+                    <div className="flex items-center justify-between py-4">
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <span>Rows per page</span>
+                            <Select
+                                value={String(pageSize)}
+                                onValueChange={(value) => {
+                                    setPageSize(Number(value));
+                                    setCurrentPage(1);
+                                }}
+                            >
+                                <SelectTrigger className="h-8 w-[70px]">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {[5, 10, 20, 50].map((size) => (
+                                        <SelectItem key={size} value={String(size)}>
+                                            {size}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <span className="ml-2">
+                                {totalItems > 0
+                                    ? `${(currentPage - 1) * pageSize + 1}-${Math.min(currentPage * pageSize, totalItems)} of ${totalItems}`
+                                    : "0 results"}
+                            </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => setCurrentPage(1)}
+                                disabled={currentPage === 1}
+                            >
+                                <ChevronsLeft className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                            </Button>
+                            <span className="text-sm px-2 min-w-[80px] text-center">
+                                Page {currentPage} of {totalPages}
+                            </span>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => setCurrentPage(totalPages)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <ChevronsRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
         </div>
