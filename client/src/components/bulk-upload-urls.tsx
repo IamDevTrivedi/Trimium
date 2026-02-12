@@ -392,7 +392,12 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
 
             if (data?.success && data?.data?.results) {
                 const results: UploadResult[] = data.data.results.map(
-                    (r: { rowNumber: number; status: string; shortCode?: string; message: string }) => ({
+                    (r: {
+                        rowNumber: number;
+                        status: string;
+                        shortCode?: string;
+                        message: string;
+                    }) => ({
                         rowNumber: r.rowNumber,
                         status: r.status as "success" | "failed" | "skipped",
                         shortCode: r.shortCode,
@@ -404,9 +409,11 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
 
                 const { successCount, failedCount, skippedCount } = data.data.summary;
 
-                if (successCount > 0) Toast.success(`Successfully created ${successCount} short URLs`);
+                if (successCount > 0)
+                    Toast.success(`Successfully created ${successCount} short URLs`);
                 if (failedCount > 0) Toast.error(`Failed to create ${failedCount} short URLs`);
-                if (skippedCount > 0) Toast.info(`Skipped ${skippedCount} short URLs (short codes unavailable)`);
+                if (skippedCount > 0)
+                    Toast.info(`Skipped ${skippedCount} short URLs (short codes unavailable)`);
             } else {
                 Toast.error(data?.message || "Bulk upload failed");
             }

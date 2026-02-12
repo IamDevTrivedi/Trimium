@@ -989,17 +989,11 @@ export const controllers = {
         try {
             const rowSchema = z.object({
                 rowNumber: z.number(),
-                shortCode: z
-                    .string()
-                    .regex(SHORTCODE, { error: SHORTCODE_NOTICE })
-                    .optional(),
+                shortCode: z.string().regex(SHORTCODE, { error: SHORTCODE_NOTICE }).optional(),
                 originalURL: z.url(),
                 title: z.string().min(1).max(255),
                 description: z.string().max(1024).optional(),
-                password: z
-                    .string()
-                    .regex(PASSWORD, { error: PASSWORD_NOTICE })
-                    .optional(),
+                password: z.string().regex(PASSWORD, { error: PASSWORD_NOTICE }).optional(),
                 maxTransfers: z.int().nonnegative().optional(),
                 schedule: z
                     .object({
@@ -1060,11 +1054,12 @@ export const controllers = {
                 .map((r) => r.shortCode)
                 .filter((sc): sc is string => !!sc);
 
-            const existingURLs = customShortCodes.length > 0
-                ? await URL.find({ shortCode: { $in: customShortCodes } })
-                    .select("shortCode")
-                    .lean()
-                : [];
+            const existingURLs =
+                customShortCodes.length > 0
+                    ? await URL.find({ shortCode: { $in: customShortCodes } })
+                          .select("shortCode")
+                          .lean()
+                    : [];
 
             const takenShortCodes = new Set(existingURLs.map((u) => u.shortCode));
 
@@ -1085,7 +1080,10 @@ export const controllers = {
                 try {
                     let shortCode = row.shortCode;
 
-                    if (shortCode && (takenShortCodes.has(shortCode) || usedInBatch.has(shortCode))) {
+                    if (
+                        shortCode &&
+                        (takenShortCodes.has(shortCode) || usedInBatch.has(shortCode))
+                    ) {
                         results.push({
                             rowNumber: row.rowNumber,
                             status: "skipped",
@@ -1097,10 +1095,7 @@ export const controllers = {
                     if (!shortCode) {
                         shortCode = generateShortcode();
                         let attempts = 0;
-                        while (
-                            takenShortCodes.has(shortCode) ||
-                            usedInBatch.has(shortCode)
-                        ) {
+                        while (takenShortCodes.has(shortCode) || usedInBatch.has(shortCode)) {
                             shortCode = generateShortcode();
                             attempts++;
                             if (attempts > 10) {
@@ -1159,9 +1154,7 @@ export const controllers = {
                         })
                     );
 
-                    analyticsDocs.push(
-                        new Analytics({ shortCode, workspaceID })
-                    );
+                    analyticsDocs.push(new Analytics({ shortCode, workspaceID }));
 
                     usedInBatch.add(shortCode);
 

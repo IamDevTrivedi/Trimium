@@ -156,8 +156,7 @@ export function AccountPage() {
             }
         } catch (error) {
             toastError(error);
-        }
-        finally {
+        } finally {
             setLoading((prev) => ({ ...prev, name: false }));
         }
     };
@@ -600,13 +599,13 @@ export function AccountPage() {
                             >
                                 Check Login Activity
                             </Button>
-                            <AlertDialog open={logoutAllDialogOpen} onOpenChange={setLogoutAllDialogOpen}>
+                            <AlertDialog
+                                open={logoutAllDialogOpen}
+                                onOpenChange={setLogoutAllDialogOpen}
+                            >
                                 <AlertDialogTrigger
                                     render={
-                                        <Button
-                                            variant="destructive"
-                                            loading={loading.logoutAll}
-                                        />
+                                        <Button variant="destructive" loading={loading.logoutAll} />
                                     }
                                 >
                                     Logout all Devices
@@ -618,8 +617,8 @@ export function AccountPage() {
                                         </AlertDialogTitle>
                                         <AlertDialogDescription>
                                             This will log you out from all other devices. You will
-                                            remain logged in on this device. You may need to sign
-                                            in again on your other devices.
+                                            remain logged in on this device. You may need to sign in
+                                            again on your other devices.
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>

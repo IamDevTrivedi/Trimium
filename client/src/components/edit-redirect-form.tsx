@@ -177,7 +177,7 @@ export function EditRedirectForm() {
 
             password:
                 updateShortCodeInfo?.passwordProtect.isEnabled &&
-                    shortCodeInfo?.passwordProtect.isEnabled === false
+                shortCodeInfo?.passwordProtect.isEnabled === false
                     ? password
                     : undefined,
             maxTransfers: updateShortCodeInfo?.transfer.isEnabled

@@ -241,14 +241,12 @@ export function LoginHistory() {
                                 {refreshing ? "Refreshing..." : "Refresh"}
                             </Button>
                             {otherActiveSessions.length > 0 && (
-                                <AlertDialog open={logoutAllDialogOpen} onOpenChange={setLogoutAllDialogOpen}>
+                                <AlertDialog
+                                    open={logoutAllDialogOpen}
+                                    onOpenChange={setLogoutAllDialogOpen}
+                                >
                                     <AlertDialogTrigger
-                                        render={
-                                            <Button
-                                                variant="destructive"
-                                                className="gap-2"
-                                            />
-                                        }
+                                        render={<Button variant="destructive" className="gap-2" />}
                                     >
                                         <LogOut className="w-4 h-4" />
                                         Logout All Other Devices
@@ -259,9 +257,9 @@ export function LoginHistory() {
                                                 Logout from all other devices?
                                             </AlertDialogTitle>
                                             <AlertDialogDescription>
-                                                This will log you out from all other devices.
-                                                You will remain logged in on this device. You
-                                                may need to sign in again on your other devices.
+                                                This will log you out from all other devices. You
+                                                will remain logged in on this device. You may need
+                                                to sign in again on your other devices.
                                             </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>

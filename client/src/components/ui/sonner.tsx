@@ -39,9 +39,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
                     toast: "cn-toast !shadow-lg !border !px-4 !py-3 !gap-3 !items-start",
                     title: "!font-semibold !text-[13.5px] !leading-snug",
                     description: "!text-[12.5px] !opacity-75 !leading-relaxed",
-                    actionButton: "!bg-primary !text-primary-foreground !rounded-md !text-xs !font-medium !px-3 !py-1.5",
-                    cancelButton: "!bg-muted !text-muted-foreground !rounded-md !text-xs !font-medium !px-3 !py-1.5",
-                    closeButton: "!border-none !bg-transparent !text-foreground/50 hover:!text-foreground !transition-colors",
+                    actionButton:
+                        "!bg-primary !text-primary-foreground !rounded-md !text-xs !font-medium !px-3 !py-1.5",
+                    cancelButton:
+                        "!bg-muted !text-muted-foreground !rounded-md !text-xs !font-medium !px-3 !py-1.5",
+                    closeButton:
+                        "!border-none !bg-transparent !text-foreground/50 hover:!text-foreground !transition-colors",
                     icon: "!mt-0.5",
                 },
             }}

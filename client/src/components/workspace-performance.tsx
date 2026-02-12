@@ -304,7 +304,7 @@ export function WorkspacePerformance({
                             {Math.round(
                                 (workspacePerformance.totalActiveURLs /
                                     workspacePerformance.totalURLS) *
-                                100
+                                    100
                             )}
                             %)
                         </p>
@@ -731,7 +731,7 @@ export function WorkspacePerformance({
                                                         );
                                                         const tagStyle = tagData
                                                             ? getTagById(tagData.tagID) ||
-                                                            DEFAULT_TAG
+                                                              DEFAULT_TAG
                                                             : DEFAULT_TAG;
                                                         return (
                                                             <Badge
