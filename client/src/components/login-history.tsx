@@ -38,6 +38,17 @@ import { handleResponse } from "@/lib/handle-response";
 import { useRouter } from "next/navigation";
 import TopBackButton from "./top-back-button";
 import { format } from "timeago.js";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export interface LoginSession {
     parsedUA: {
@@ -125,6 +136,7 @@ export function LoginHistory() {
     const [refreshing, setRefreshing] = React.useState(false);
     const [history, setHistory] = React.useState<LoginSession[]>([]);
     const [loggingOut, setLoggingOut] = React.useState<string | null>(null);
+    const [logoutAllDialogOpen, setLogoutAllDialogOpen] = React.useState(false);
 
     const router = useRouter();
 
@@ -186,6 +198,8 @@ export function LoginHistory() {
             }
         } catch (error) {
             toastError(error);
+        } finally {
+            setLogoutAllDialogOpen(false);
         }
     };
 
@@ -227,14 +241,40 @@ export function LoginHistory() {
                                 {refreshing ? "Refreshing..." : "Refresh"}
                             </Button>
                             {otherActiveSessions.length > 0 && (
-                                <Button
-                                    variant="destructive"
-                                    onClick={handleLogoutAllOthers}
-                                    className="gap-2"
-                                >
-                                    <LogOut className="w-4 h-4" />
-                                    Logout All Other Devices
-                                </Button>
+                                <AlertDialog open={logoutAllDialogOpen} onOpenChange={setLogoutAllDialogOpen}>
+                                    <AlertDialogTrigger
+                                        render={
+                                            <Button
+                                                variant="destructive"
+                                                className="gap-2"
+                                            />
+                                        }
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        Logout All Other Devices
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                                Logout from all other devices?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                This will log you out from all other devices.
+                                                You will remain logged in on this device. You
+                                                may need to sign in again on your other devices.
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction
+                                                variant="destructive"
+                                                onClick={handleLogoutAllOthers}
+                                            >
+                                                Logout All
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             )}
                         </div>
                     </div>

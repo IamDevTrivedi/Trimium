@@ -14,6 +14,17 @@ import { handleResponse } from "@/lib/handle-response";
 import { useRouter } from "next/navigation";
 import { LoadingPage } from "./loading";
 import TopBackButton from "./top-back-button";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface FormErrors {
     firstName?: string;
@@ -79,6 +90,7 @@ export function AccountPage() {
         password: false,
         logoutAll: false,
     });
+    const [logoutAllDialogOpen, setLogoutAllDialogOpen] = useState(false);
 
     const nameChanged = useMemo(
         () => nameState.firstName !== user?.firstName || nameState.lastName !== user?.lastName,
@@ -275,6 +287,7 @@ export function AccountPage() {
             toastError(error);
         } finally {
             setLoading((prev) => ({ ...prev, logoutAll: false }));
+            setLogoutAllDialogOpen(false);
         }
     };
 
@@ -584,13 +597,39 @@ export function AccountPage() {
                             >
                                 Check Login Activity
                             </Button>
-                            <Button
-                                variant="destructive"
-                                onClick={handleLogoutAllDevices}
-                                loading={loading.logoutAll}
-                            >
-                                Logout all Devices
-                            </Button>
+                            <AlertDialog open={logoutAllDialogOpen} onOpenChange={setLogoutAllDialogOpen}>
+                                <AlertDialogTrigger
+                                    render={
+                                        <Button
+                                            variant="destructive"
+                                            loading={loading.logoutAll}
+                                        />
+                                    }
+                                >
+                                    Logout all Devices
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>
+                                            Logout from all devices?
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This will log you out from all other devices. You will
+                                            remain logged in on this device. You may need to sign
+                                            in again on your other devices.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            variant="destructive"
+                                            onClick={handleLogoutAllDevices}
+                                        >
+                                            Logout All
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </CardContent>
                     </Card>
 
