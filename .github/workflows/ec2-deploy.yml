@@ -23,9 +23,9 @@ jobs:
             source ~/.nvm/nvm.sh            
             cd /home/${{ secrets.EC2_USER }}/my-projects/Trimium
             git pull origin main
-            pnpm install
+            pnpm install --frozen-lockfile
             cd server 
-            pnpm install
+            pnpm install --frozen-lockfile
             NODE_OPTIONS="--max-old-space-size=1024" pnpm run build
             cd ..
             pnpm run download:geoip
