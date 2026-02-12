@@ -11,6 +11,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: vars.DEPLOY_TO_EC2 == 'true'
 
     steps:
       - name: Deploy to EC2
