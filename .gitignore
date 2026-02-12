@@ -38,8 +38,8 @@ build/
 # Testing
 coverage/
 /coverage
-tests/
-**/tests/
+experiment/
+**/experiment/
 
 # TypeScript
 *.tsbuildinfo
@@ -57,11 +57,6 @@ Thumbs.db
 !.vscode/extensions.json
 .idea/
 *.swp
-
-# Lock files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
 
 # Misc
 *.tgz
