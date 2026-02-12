@@ -345,88 +345,6 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
         }
     }, []);
 
-    const checkShortCodeAvailability = async (shortCode: string): Promise<boolean> => {
-        if (!shortCode) return true;
-
-        try {
-            const { data } = await backend.post("/api/v1/url/is-shortcode-available", {
-                shortCode,
-            });
-            return data?.available === true;
-        } catch {
-            return false;
-        }
-    };
-
-    const uploadRow = async (row: CSVRow): Promise<UploadResult> => {
-        if (row.shortCode) {
-            const isAvailable = await checkShortCodeAvailability(row.shortCode);
-            if (!isAvailable) {
-                return {
-                    rowNumber: row.rowNumber,
-                    status: "skipped",
-                    message: `Short code "${row.shortCode}" is not available`,
-                };
-            }
-        }
-
-        const payload: any = {
-            workspaceID,
-            title: row.title,
-            originalURL: row.originalURL,
-        };
-
-        if (row.description) {
-            payload.description = row.description;
-        }
-
-        if (row.shortCode) {
-            payload.shortCode = row.shortCode;
-        }
-
-        if (row.password) {
-            payload.password = row.password;
-        }
-
-        if (row.maxTransfers) {
-            payload.maxTransfers = parseInt(row.maxTransfers, 10);
-        }
-
-        if (row.scheduleStart && row.scheduleEnd) {
-            payload.schedule = {
-                startAt: new Date(row.scheduleStart).getTime(),
-                endAt: new Date(row.scheduleEnd).getTime(),
-                countdownEnabled: true,
-                messageToDisplay: row.scheduleMessage || "This link is not yet active.",
-            };
-        }
-
-        try {
-            const { data } = await backend.post("/api/v1/url/create-shortcode", payload);
-
-            if (data?.success) {
-                return {
-                    rowNumber: row.rowNumber,
-                    status: "success",
-                    shortCode: data.data?.shortCode,
-                    message: `Created successfully: ${data.data?.shortCode}`,
-                };
-            } else {
-                return {
-                    rowNumber: row.rowNumber,
-                    status: "failed",
-                    message: data?.message || "Unknown error",
-                };
-            }
-        } catch (error: any) {
-            return {
-                rowNumber: row.rowNumber,
-                status: "failed",
-                message: error?.response?.data?.message || "Failed to create short URL",
-            };
-        }
-    };
-
     const handleBulkUpload = async () => {
         const validRows = validationResults.filter((r) => r.isValid).map((r) => r.data);
 
@@ -439,32 +357,64 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
         setUploadProgress(0);
         setUploadResults([]);
 
-        const results: UploadResult[] = [];
+        const payloadRows = validRows.map((row) => {
+            const entry: Record<string, unknown> = {
+                rowNumber: row.rowNumber,
+                title: row.title,
+                originalURL: row.originalURL,
+            };
 
-        for (let i = 0; i < validRows.length; i++) {
-            const result = await uploadRow(validRows[i]);
-            results.push(result);
-            setUploadResults([...results]);
-            setUploadProgress(Math.round(((i + 1) / validRows.length) * 100));
+            if (row.description) entry.description = row.description;
+            if (row.shortCode) entry.shortCode = row.shortCode;
+            if (row.password) entry.password = row.password;
+            if (row.maxTransfers) entry.maxTransfers = parseInt(row.maxTransfers, 10);
 
-            await new Promise((resolve) => setTimeout(resolve, 200));
+            if (row.scheduleStart && row.scheduleEnd) {
+                entry.schedule = {
+                    startAt: new Date(row.scheduleStart).getTime(),
+                    endAt: new Date(row.scheduleEnd).getTime(),
+                    countdownEnabled: true,
+                    messageToDisplay: row.scheduleMessage || "This link is not yet active.",
+                };
+            }
+
+            return entry;
+        });
+
+        try {
+            setUploadProgress(50);
+            const { data } = await backend.post("/api/v1/url/bulk-create-shortcodes", {
+                workspaceID,
+                rows: payloadRows,
+            });
+
+            setUploadProgress(100);
+
+            if (data?.success && data?.data?.results) {
+                const results: UploadResult[] = data.data.results.map(
+                    (r: { rowNumber: number; status: string; shortCode?: string; message: string }) => ({
+                        rowNumber: r.rowNumber,
+                        status: r.status as "success" | "failed" | "skipped",
+                        shortCode: r.shortCode,
+                        message: r.message,
+                    })
+                );
+
+                setUploadResults(results);
+
+                const { successCount, failedCount, skippedCount } = data.data.summary;
+
+                if (successCount > 0) Toast.success(`Successfully created ${successCount} short URLs`);
+                if (failedCount > 0) Toast.error(`Failed to create ${failedCount} short URLs`);
+                if (skippedCount > 0) Toast.info(`Skipped ${skippedCount} short URLs (short codes unavailable)`);
+            } else {
+                Toast.error(data?.message || "Bulk upload failed");
+            }
+        } catch (error: any) {
+            Toast.error(error?.response?.data?.message || "Bulk upload failed");
+        } finally {
+            setIsUploading(false);
         }
-
-        const successCount = results.filter((r) => r.status === "success").length;
-        const failedCount = results.filter((r) => r.status === "failed").length;
-        const skippedCount = results.filter((r) => r.status === "skipped").length;
-
-        if (successCount > 0) {
-            Toast.success(`Successfully created ${successCount} short URLs`);
-        }
-        if (failedCount > 0) {
-            Toast.error(`Failed to create ${failedCount} short URLs`);
-        }
-        if (skippedCount > 0) {
-            Toast.info(`Skipped ${skippedCount} short URLs (short codes unavailable)`);
-        }
-
-        setIsUploading(false);
     };
 
     const handleReset = () => {

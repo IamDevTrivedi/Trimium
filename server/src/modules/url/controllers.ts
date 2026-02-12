@@ -984,4 +984,231 @@ export const controllers = {
             });
         }
     },
+
+    bulkCreateShortCodes: async (req: Request, res: Response) => {
+        try {
+            const rowSchema = z.object({
+                rowNumber: z.number(),
+                shortCode: z
+                    .string()
+                    .regex(SHORTCODE, { error: SHORTCODE_NOTICE })
+                    .optional(),
+                originalURL: z.url(),
+                title: z.string().min(1).max(255),
+                description: z.string().max(1024).optional(),
+                password: z
+                    .string()
+                    .regex(PASSWORD, { error: PASSWORD_NOTICE })
+                    .optional(),
+                maxTransfers: z.int().nonnegative().optional(),
+                schedule: z
+                    .object({
+                        startAt: z.int(),
+                        endAt: z.int(),
+                        countdownEnabled: z.boolean(),
+                        messageToDisplay: z
+                            .string()
+                            .max(512)
+                            .optional()
+                            .default("This link is not yet active."),
+                    })
+                    .refine((data) => {
+                        const now = Date.now();
+                        if (data.startAt < now || data.endAt < now) return false;
+                        return data.startAt < data.endAt;
+                    })
+                    .optional(),
+            });
+
+            const schema = z.object({
+                workspaceID: z.string().length(24),
+                rows: z.array(rowSchema).min(1).max(500),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    success: false,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(result.error),
+                });
+            }
+
+            const { workspaceID, rows } = result.data;
+            const { userID } = res.locals;
+
+            const existingWorkspace = await Workspace.findById(workspaceID)
+                .select("members")
+                .lean();
+
+            const permission = existingWorkspace?.members.find(
+                (m) => m.userID.toString() === userID
+            )?.permission;
+
+            if (!permission || permission === "viewer") {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.FORBIDDEN,
+                    success: false,
+                    message:
+                        "You are not a member or do not have permission to add URLs to this workspace",
+                });
+            }
+
+            const customShortCodes = rows
+                .map((r) => r.shortCode)
+                .filter((sc): sc is string => !!sc);
+
+            const existingURLs = customShortCodes.length > 0
+                ? await URL.find({ shortCode: { $in: customShortCodes } })
+                    .select("shortCode")
+                    .lean()
+                : [];
+
+            const takenShortCodes = new Set(existingURLs.map((u) => u.shortCode));
+
+            type BulkResult = {
+                rowNumber: number;
+                status: "success" | "failed" | "skipped";
+                shortCode?: string;
+                message: string;
+            };
+
+            const results: BulkResult[] = [];
+            const urlDocs: InstanceType<typeof URL>[] = [];
+            const analyticsDocs: InstanceType<typeof Analytics>[] = [];
+
+            const usedInBatch = new Set<string>();
+
+            for (const row of rows) {
+                try {
+                    let shortCode = row.shortCode;
+
+                    if (shortCode && (takenShortCodes.has(shortCode) || usedInBatch.has(shortCode))) {
+                        results.push({
+                            rowNumber: row.rowNumber,
+                            status: "skipped",
+                            message: `Short code "${shortCode}" is not available`,
+                        });
+                        continue;
+                    }
+
+                    if (!shortCode) {
+                        shortCode = generateShortcode();
+                        let attempts = 0;
+                        while (
+                            takenShortCodes.has(shortCode) ||
+                            usedInBatch.has(shortCode)
+                        ) {
+                            shortCode = generateShortcode();
+                            attempts++;
+                            if (attempts > 10) {
+                                const exists = await URL.findOne({ shortCode })
+                                    .select("_id")
+                                    .lean();
+                                if (!exists) break;
+                                shortCode = generateShortcode();
+                            }
+                        }
+                    }
+
+                    type PasswordProtect = { isEnabled: boolean; passwordHash: string };
+                    type Transfer = { isEnabled: boolean; maxTransfers: number };
+                    type Schedule = {
+                        isEnabled: boolean;
+                        startAt: number;
+                        endAt: number;
+                        countdownEnabled: boolean;
+                        messageToDisplay: string;
+                    };
+
+                    let passwordProtect: PasswordProtect | undefined;
+                    let transfer: Transfer | undefined;
+                    let scheduleObj: Schedule | undefined;
+
+                    if (typeof row.password === "string") {
+                        const passwordHash = await argon2.hash(row.password, HASH_OPTIONS);
+                        passwordProtect = { isEnabled: true, passwordHash };
+                    }
+
+                    if (typeof row.maxTransfers === "number") {
+                        transfer = { isEnabled: true, maxTransfers: row.maxTransfers };
+                    }
+
+                    if (typeof row.schedule === "object") {
+                        scheduleObj = {
+                            isEnabled: true,
+                            startAt: row.schedule.startAt,
+                            endAt: row.schedule.endAt,
+                            countdownEnabled: row.schedule.countdownEnabled,
+                            messageToDisplay: row.schedule.messageToDisplay,
+                        };
+                    }
+
+                    urlDocs.push(
+                        new URL({
+                            shortCode,
+                            title: row.title,
+                            description: row.description,
+                            originalURL: row.originalURL,
+                            workspaceID,
+                            passwordProtect,
+                            transfer,
+                            schedule: scheduleObj,
+                        })
+                    );
+
+                    analyticsDocs.push(
+                        new Analytics({ shortCode, workspaceID })
+                    );
+
+                    usedInBatch.add(shortCode);
+
+                    results.push({
+                        rowNumber: row.rowNumber,
+                        status: "success",
+                        shortCode,
+                        message: `Created successfully: ${shortCode}`,
+                    });
+                } catch (rowError) {
+                    logger.error(`Error processing row ${row.rowNumber}:`);
+                    logger.error(rowError);
+                    results.push({
+                        rowNumber: row.rowNumber,
+                        status: "failed",
+                        message: "Failed to process row",
+                    });
+                }
+            }
+
+            if (urlDocs.length > 0) {
+                await URL.insertMany(urlDocs, { ordered: false });
+                await Analytics.insertMany(analyticsDocs, { ordered: false });
+            }
+
+            const successCount = results.filter((r) => r.status === "success").length;
+            const failedCount = results.filter((r) => r.status === "failed").length;
+            const skippedCount = results.filter((r) => r.status === "skipped").length;
+
+            return sendResponse(res, {
+                statusCode: StatusCodes.CREATED,
+                success: true,
+                message: `Bulk upload complete: ${successCount} created, ${failedCount} failed, ${skippedCount} skipped`,
+                data: {
+                    results,
+                    summary: { successCount, failedCount, skippedCount },
+                },
+            });
+        } catch (error) {
+            logger.error("Error in bulk create shortcodes:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                success: false,
+                message: "Internal Server Error",
+            });
+        }
+    },
 };

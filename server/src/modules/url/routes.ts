@@ -13,8 +13,14 @@ const shortcodeCheckLimiter = createRateLimiter({
 
 const shortcodeCreateLimiter = createRateLimiter({
     windowMs: 60 * 1000,
-    max: 500,
+    max: 20,
     prefix: "rl:url:create",
+});
+
+const bulkCreateLimiter = createRateLimiter({
+    windowMs: 60 * 1000,
+    max: 10,
+    prefix: "rl:url:bulk-create",
 });
 
 const urlGeneralLimiter = createRateLimiter({
@@ -31,6 +37,7 @@ const redirectLimiter = createRateLimiter({
 
 router.post("/is-shortcode-available", shortcodeCheckLimiter, controllers.isShortcodeAvailable);
 router.post("/create-shortcode", protectRoute, shortcodeCreateLimiter, controllers.createShortCode);
+router.post("/bulk-create-shortcodes", protectRoute, bulkCreateLimiter, controllers.bulkCreateShortCodes);
 router.post("/get-shortcode-info", protectRoute, urlGeneralLimiter, controllers.getShortCodeInfo);
 router.post("/edit-shortcode", protectRoute, urlGeneralLimiter, controllers.editShortCode);
 router.post(
