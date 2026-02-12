@@ -4,11 +4,8 @@ import fs from "fs";
 import path from "path";
 
 const itemsToDelete = [
-    { path: "./pnpm-lock.yaml", type: "file" },
     { path: "./node_modules", type: "dir" },
-    { path: "./server/pnpm-lock.yaml", type: "file" },
     { path: "./server/node_modules", type: "dir" },
-    { path: "./client/pnpm-lock.yaml", type: "file" },
     { path: "./client/node_modules", type: "dir" },
 
     { path: "./server/build", type: "dir" },
