@@ -19,7 +19,6 @@ import config from "@/config/env";
 import { z } from "zod";
 import { PASSWORD, PASSWORD_NOTICE } from "@/constants/regex";
 import TopBackButton from "./top-back-button";
-import { numberToDatetimeLocal } from "@/lib/date";
 
 interface FormErrors {
     title?: string;
@@ -146,18 +145,6 @@ export function EditRedirectForm() {
             }
         }
 
-        if (up.schedule.isEnabled) {
-            const now = Date.now();
-
-            if (now > up.schedule.startAt) {
-                errors.startAt = "Start time must be in the future.";
-            } else if (now > up.schedule.endAt) {
-                errors.endAt = "End time must be in the future.";
-            } else if (up.schedule.startAt >= up.schedule.endAt) {
-                errors.endAt = "End time must be after Start time.";
-            }
-        }
-
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
     };
@@ -190,30 +177,13 @@ export function EditRedirectForm() {
 
             password:
                 updateShortCodeInfo?.passwordProtect.isEnabled &&
-                shortCodeInfo?.passwordProtect.isEnabled === false
+                    shortCodeInfo?.passwordProtect.isEnabled === false
                     ? password
                     : undefined,
             maxTransfers: updateShortCodeInfo?.transfer.isEnabled
                 ? updateShortCodeInfo.transfer.maxTransfers
                 : undefined,
 
-            schedule:
-                updateShortCodeInfo?.schedule.isEnabled &&
-                (shortCodeInfo?.schedule.startAt !== updateShortCodeInfo?.schedule.startAt ||
-                    shortCodeInfo?.schedule.endAt !== updateShortCodeInfo?.schedule.endAt ||
-                    shortCodeInfo?.schedule.countdownEnabled !==
-                        updateShortCodeInfo?.schedule.countdownEnabled ||
-                    shortCodeInfo?.schedule.messageToDisplay !==
-                        updateShortCodeInfo?.schedule.messageToDisplay)
-                    ? {
-                          startAt: updateShortCodeInfo?.schedule.startAt,
-                          endAt: updateShortCodeInfo?.schedule.endAt,
-                          countdownEnabled: updateShortCodeInfo?.schedule.countdownEnabled,
-                          messageToDisplay: updateShortCodeInfo?.schedule.messageToDisplay,
-                      }
-                    : undefined,
-
-            rmSchedule: !updateShortCodeInfo?.schedule.isEnabled,
             rmPassword: !updateShortCodeInfo?.passwordProtect.isEnabled,
             rmTransferLimit: !updateShortCodeInfo?.transfer.isEnabled,
         };
@@ -466,167 +436,6 @@ export function EditRedirectForm() {
                                     publicly accessible
                                 </span>
                                 .
-                            </p>
-                        </div>
-                    </div>
-
-                    <Separator />
-
-                    {/* Section: Schedule a Life */}
-                    <div className="space-y-6">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-tight">
-                                <Calendar className="h-4 w-4" />
-                                Scheduling
-                            </div>
-                            <Switch
-                                id="schedule-toggle"
-                                checked={updateShortCodeInfo?.schedule.isEnabled}
-                                onCheckedChange={(e) => {
-                                    setUpdateShortCodeInfo({
-                                        ...updateShortCodeInfo!,
-                                        schedule: {
-                                            ...updateShortCodeInfo!.schedule,
-                                            isEnabled: e as boolean,
-                                        },
-                                    });
-                                }}
-                            />
-                        </div>
-
-                        <div className="grid sm:grid-cols-2 gap-4 pl-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="start-at">Start At</Label>
-                                <div className="relative">
-                                    <Input
-                                        id="start-at"
-                                        type="datetime-local"
-                                        className="pl-9"
-                                        disabled={!updateShortCodeInfo?.schedule.isEnabled}
-                                        value={numberToDatetimeLocal(
-                                            updateShortCodeInfo?.schedule.startAt
-                                        )}
-                                        onChange={(e) => {
-                                            const target = e.target.value;
-                                            setUpdateShortCodeInfo({
-                                                ...updateShortCodeInfo!,
-                                                schedule: {
-                                                    ...updateShortCodeInfo!.schedule,
-                                                    startAt: new Date(target).getTime(),
-                                                },
-                                            });
-                                        }}
-                                    />
-                                    {formErrors.startAt && (
-                                        <p className="text-xs text-destructive">
-                                            {formErrors.startAt}
-                                        </p>
-                                    )}
-                                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                </div>
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="end-at">End At</Label>
-                                <div className="relative">
-                                    <Input
-                                        id="end-at"
-                                        type="datetime-local"
-                                        className="pl-9"
-                                        disabled={!updateShortCodeInfo?.schedule.isEnabled}
-                                        value={numberToDatetimeLocal(
-                                            updateShortCodeInfo?.schedule.endAt
-                                        )}
-                                        onChange={(e) => {
-                                            const target = e.target.value;
-
-                                            setUpdateShortCodeInfo({
-                                                ...updateShortCodeInfo!,
-                                                schedule: {
-                                                    ...updateShortCodeInfo!.schedule,
-                                                    endAt: new Date(target).getTime(),
-                                                },
-                                            });
-                                        }}
-                                    />
-                                    {formErrors.endAt && (
-                                        <p className="text-xs text-destructive">
-                                            {formErrors.endAt}
-                                        </p>
-                                    )}
-                                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <p className="text-xs text-muted-foreground pl-6 -mt-2">
-                            Links are active{" "}
-                            <span className="font-medium text-foreground">
-                                immediately and indefinitely
-                            </span>{" "}
-                            unless a start or end date is specified.
-                        </p>
-
-                        <div className="space-y-3 pl-6">
-                            <Label className="text-sm font-medium">
-                                Show countdown timer before link activation?
-                            </Label>
-                            <RadioGroup
-                                defaultValue="no"
-                                className="flex gap-4"
-                                disabled={!updateShortCodeInfo?.schedule.isEnabled}
-                                value={
-                                    updateShortCodeInfo?.schedule.countdownEnabled ? "yes" : "no"
-                                }
-                                onValueChange={(value) => {
-                                    setUpdateShortCodeInfo({
-                                        ...updateShortCodeInfo!,
-                                        schedule: {
-                                            ...updateShortCodeInfo!.schedule,
-                                            countdownEnabled: value === "yes",
-                                        },
-                                    });
-                                }}
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="yes" id="timer-yes" />
-                                    <Label htmlFor="timer-yes" className="font-normal">
-                                        Yes
-                                    </Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="no" id="timer-no" />
-                                    <Label htmlFor="timer-no" className="font-normal">
-                                        No
-                                    </Label>
-                                </div>
-                            </RadioGroup>
-                        </div>
-
-                        <div className="space-y-3 pl-6">
-                            <Label className="text-sm font-medium">
-                                Message to display when link is not yet active
-                            </Label>
-                            <Textarea
-                                placeholder="This link is not yet active."
-                                disabled={!updateShortCodeInfo?.schedule.isEnabled}
-                                value={
-                                    updateShortCodeInfo?.schedule.isEnabled
-                                        ? updateShortCodeInfo.schedule.messageToDisplay
-                                        : ""
-                                }
-                                onChange={(e) => {
-                                    setUpdateShortCodeInfo({
-                                        ...updateShortCodeInfo!,
-                                        schedule: {
-                                            ...updateShortCodeInfo!.schedule,
-                                            messageToDisplay: e.target.value,
-                                        },
-                                    });
-                                }}
-                            />
-                            <p className="text-xs text-muted-foreground">
-                                Customize the message shown to users who visit the link before it
-                                becomes active.
                             </p>
                         </div>
                     </div>
