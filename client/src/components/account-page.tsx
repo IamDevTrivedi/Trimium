@@ -157,6 +157,9 @@ export function AccountPage() {
         } catch (error) {
             toastError(error);
         }
+        finally {
+            setLoading((prev) => ({ ...prev, name: false }));
+        }
     };
 
     const handleCancelName = () => {

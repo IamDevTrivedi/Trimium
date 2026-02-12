@@ -49,7 +49,7 @@ export const Toast = {
             richColors: true,
             dismissible: true,
             closeButton: true,
-            duration: options?.duration ?? 5000,
+            duration: options?.duration ?? 4000,
         });
     },
 
@@ -58,8 +58,9 @@ export const Toast = {
         toast.error(title, {
             description: options?.description,
             richColors: true,
-            dismissible: false,
-            duration: options?.duration ?? 7000,
+            dismissible: true,
+            closeButton: true,
+            duration: options?.duration ?? 5000,
         });
     },
 
