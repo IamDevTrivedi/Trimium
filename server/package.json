@@ -6,7 +6,7 @@
     "scripts": {
         "build": "tsc && tsc-alias",
         "start": "cross-env NODE_ENV=production node build/index.js",
-        "dev": "cross-env NODE_ENV=development tsx watch --clear-screen=true src/index.ts"
+        "dev": "cross-env NODE_ENV=development tsx watch --clear-screen=true src src/index.ts"
     },
     "keywords": [],
     "author": "",
