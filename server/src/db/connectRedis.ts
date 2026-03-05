@@ -1,21 +1,15 @@
 import { config } from "@/config/env";
 import { logger } from "@/utils/logger";
-import { createClient, RedisClientType } from "redis";
+import { createClient } from "redis";
 
-let client: RedisClientType;
-
-if (config.LOCAL_REDIS) {
-    client = createClient();
-} else {
-    client = createClient({
-        username: config.REDIS_USERNAME,
-        password: config.REDIS_PASSWORD,
-        socket: {
-            host: config.REDIS_HOST,
-            port: config.REDIS_PORT,
-        },
-    });
-}
+const client = createClient({
+    username: config.REDIS_USERNAME,
+    password: config.REDIS_PASSWORD,
+    socket: {
+        host: config.REDIS_HOST,
+        port: config.REDIS_PORT,
+    },
+});
 
 client.on("error", (error: Error) => {
     logger.error("Redis Client Error");
@@ -24,7 +18,7 @@ client.on("error", (error: Error) => {
 });
 
 client.on("connect", () => {
-    logger.info(`Redis Client Connected: ${config.LOCAL_REDIS ? "Local" : "Remote"} Instance`);
+    logger.info(`Redis Client Connected: ${config.REDIS_HOST}`);
 });
 
 const connectRedis = async (): Promise<void> => {

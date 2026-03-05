@@ -50,12 +50,7 @@ export const config = {
     REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
     REDIS_HOST: process.env.REDIS_HOST as string,
     REDIS_PORT: Number(process.env.REDIS_PORT),
-    LOCAL_REDIS: Number(process.env.LOCAL_REDIS),
 
-    EMAIL_HOST: process.env.EMAIL_HOST as string,
-    EMAIL_PORT: Number(process.env.EMAIL_PORT),
-    SMTP_USER: process.env.SMTP_USER as string,
-    SMTP_PASSWORD: process.env.SMTP_PASSWORD as string,
     SENDER_EMAIL: process.env.SENDER_EMAIL as string,
     BREVO_API_KEY: process.env.BREVO_API_KEY as string,
 
@@ -63,8 +58,6 @@ export const config = {
 
     PoW_SECRET: process.env.PoW_SECRET as string,
     PoW_DIFFICULTY: Number(process.env.PoW_DIFFICULTY),
-
-    ADMIN_EMAILS: (process.env.ADMIN_EMAILS as string).split("|").filter(Boolean),
 
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,

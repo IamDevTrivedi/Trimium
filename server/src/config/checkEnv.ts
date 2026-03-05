@@ -25,12 +25,7 @@ export const envSchema = z
         REDIS_PASSWORD: z.string().min(1),
         REDIS_HOST: z.string().min(1),
         REDIS_PORT: z.number().min(1).max(65535),
-        LOCAL_REDIS: z.union([z.literal(0), z.literal(1)]),
 
-        EMAIL_HOST: z.string().min(1),
-        EMAIL_PORT: z.number().min(1).max(65535),
-        SMTP_USER: z.string().min(1),
-        SMTP_PASSWORD: z.string().min(1),
         SENDER_EMAIL: z.email(),
         BREVO_API_KEY: z.string().min(1),
 
@@ -38,8 +33,6 @@ export const envSchema = z
 
         PoW_SECRET: z.string().min(32),
         PoW_DIFFICULTY: z.number().min(1).max(6),
-
-        ADMIN_EMAILS: z.array(z.email()).min(1),
 
         CLOUDINARY_CLOUD_NAME: z.string().min(1),
         CLOUDINARY_API_KEY: z.string().min(1),
