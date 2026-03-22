@@ -1,3 +1,4 @@
+import { NextFunction, Request, Response } from "express";
 import RedisStore from "rate-limit-redis";
 import rateLimit from "express-rate-limit";
 import crypto from "crypto";
@@ -5,7 +6,6 @@ import crypto from "crypto";
 import { config } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { redisClient } from "@/db/connectRedis";
-import { NextFunction, Request, Response } from "express";
 
 declare module "express-serve-static-core" {
     interface Locals {
@@ -19,12 +19,6 @@ interface RateLimitOptions {
     prefix?: string;
 }
 
-const BASE_DIFFICULTY = config.PoW_DIFFICULTY;
-const SECRET = config.PoW_SECRET;
-
-/**
- * Calculate adaptive difficulty based on rate limit settings: Based on the Sensitivity of the endpoint
- */
 const calculateAdaptiveDifficulty = (options: { windowMs: number; max: number }): number => {
     const { windowMs, max } = options;
     const requestsPerMinute = (max / windowMs) * 60 * 1000;
@@ -44,7 +38,7 @@ const calculateAdaptiveDifficulty = (options: { windowMs: number; max: number })
         add += 0;
     }
 
-    return Math.min(BASE_DIFFICULTY + 3, Math.max(BASE_DIFFICULTY, BASE_DIFFICULTY + add));
+    return Math.min(config.PoW_DIFFICULTY + 3, Math.max(config.PoW_DIFFICULTY, config.PoW_DIFFICULTY + add));
 };
 
 const issuePoWChallenge = (
@@ -54,9 +48,9 @@ const issuePoWChallenge = (
 ) => {
     const difficulty = calculateAdaptiveDifficulty(options);
     const expiry = Date.now() + 1 * 60 * 1000;
-    const salt = Math.random().toString(36).substring(2, 15);
+    const salt = crypto.randomBytes(16).toString("hex");
     const challenge = `${difficulty}|${expiry}|${salt}`;
-    const integrity = crypto.createHmac("sha256", SECRET).update(challenge).digest("hex");
+    const integrity = crypto.createHmac("sha256", config.PoW_SECRET).update(challenge).digest("hex");
 
     const PoW_token = Buffer.from(`${challenge}|${integrity}`).toString("base64");
 
@@ -107,7 +101,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     }
 
     const expectedIntegrity = crypto
-        .createHmac("sha256", SECRET)
+        .createHmac("sha256", config.PoW_SECRET)
         .update(`${difficulty}|${expiry}|${salt}`)
         .digest("hex");
 
