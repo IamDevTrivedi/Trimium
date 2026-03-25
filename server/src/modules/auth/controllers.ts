@@ -723,10 +723,13 @@ export const controllers = {
             const revokePayload = {
                 loginHistoryID: newLogin._id.toString(),
                 expiresAt: Date.now() + REVOKE_TOKEN_EXPIRATION_TIME,
-            }
+            };
 
             const payloadB64 = Buffer.from(JSON.stringify(revokePayload)).toString("base64url");
-            const signature = crypto.createHmac("sha256", config.EMAIL_LOGOUT_SIGNING_KEY).update(payloadB64).digest("base64url");
+            const signature = crypto
+                .createHmac("sha256", config.EMAIL_LOGOUT_SIGNING_KEY)
+                .update(payloadB64)
+                .digest("base64url");
             const revokeToken = `${payloadB64}.${signature}`;
 
             await emailQueue.add(QueueNames.SEND_EMAIL, {
@@ -1137,8 +1140,14 @@ export const controllers = {
             const { revokeToken } = result.data;
 
             const [payloadB64, signature] = revokeToken.split(".");
-            const expectedSignature = crypto.createHmac("sha256", config.EMAIL_LOGOUT_SIGNING_KEY).update(payloadB64).digest("base64url");
-            const match = crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
+            const expectedSignature = crypto
+                .createHmac("sha256", config.EMAIL_LOGOUT_SIGNING_KEY)
+                .update(payloadB64)
+                .digest("base64url");
+            const match = crypto.timingSafeEqual(
+                Buffer.from(signature),
+                Buffer.from(expectedSignature)
+            );
 
             if (!match) {
                 return sendResponse(res, {
@@ -1156,12 +1165,15 @@ export const controllers = {
             if (Date.now() > payload.expiresAt) {
                 return sendResponse(res, {
                     success: false,
-                    message: "Revoke Token has expired. You can still logout device from your account. Please login to your account and go to security settings to logout the device",
+                    message:
+                        "Revoke Token has expired. You can still logout device from your account. Please login to your account and go to security settings to logout the device",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
 
-            const existingLogin = await LoginHistory.findById(payload.loginHistoryID).select("tokenVersion accountID");
+            const existingLogin = await LoginHistory.findById(payload.loginHistoryID).select(
+                "tokenVersion accountID"
+            );
             if (!existingLogin) {
                 return sendResponse(res, {
                     success: false,
@@ -1170,7 +1182,9 @@ export const controllers = {
                 });
             }
 
-            const existingUser = await User.findById(existingLogin.accountID).select("tokenVersion");
+            const existingUser = await User.findById(existingLogin.accountID).select(
+                "tokenVersion"
+            );
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
@@ -1215,5 +1229,5 @@ export const controllers = {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
-    }
+    },
 };

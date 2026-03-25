@@ -6,4 +6,4 @@ export const redisConfig: ConnectionOptions = {
     username: config.REDIS_USERNAME,
     password: config.REDIS_PASSWORD,
     host: config.REDIS_HOST,
-}
+};

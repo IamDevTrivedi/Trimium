@@ -49,7 +49,7 @@ export const emailTemplates = {
         UAinfo,
         locationData,
         IPAddress,
-        emailLogoutLink
+        emailLogoutLink,
     }: {
         UAinfo: ParsedUA;
         locationData: LocationData;

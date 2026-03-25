@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'server/**'
-      - 'package.json'
+      - "server/**"
+      - "package.json"
 
 jobs:
   deploy:

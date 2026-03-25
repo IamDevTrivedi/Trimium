@@ -38,7 +38,10 @@ const calculateAdaptiveDifficulty = (options: { windowMs: number; max: number })
         add += 0;
     }
 
-    return Math.min(config.PoW_DIFFICULTY + 3, Math.max(config.PoW_DIFFICULTY, config.PoW_DIFFICULTY + add));
+    return Math.min(
+        config.PoW_DIFFICULTY + 3,
+        Math.max(config.PoW_DIFFICULTY, config.PoW_DIFFICULTY + add)
+    );
 };
 
 const issuePoWChallenge = (
@@ -50,7 +53,10 @@ const issuePoWChallenge = (
     const expiry = Date.now() + 1 * 60 * 1000;
     const salt = crypto.randomBytes(16).toString("hex");
     const challenge = `${difficulty}|${expiry}|${salt}`;
-    const integrity = crypto.createHmac("sha256", config.PoW_SECRET).update(challenge).digest("hex");
+    const integrity = crypto
+        .createHmac("sha256", config.PoW_SECRET)
+        .update(challenge)
+        .digest("hex");
 
     const PoW_token = Buffer.from(`${challenge}|${integrity}`).toString("base64");
 
