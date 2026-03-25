@@ -49,10 +49,12 @@ export const emailTemplates = {
         UAinfo,
         locationData,
         IPAddress,
+        emailLogoutLink
     }: {
         UAinfo: ParsedUA;
         locationData: LocationData;
         IPAddress: string;
+        emailLogoutLink: string;
     }) => {
         return `
         <div>
@@ -72,8 +74,12 @@ export const emailTemplates = {
             <p>
                 If you did not authorize this login, please secure your account immediately by changing your password and reviewing your account activity.
             </p>
+            <a href="${emailLogoutLink}"
+                style="display:inline-block;margin-top:10px;padding:10px 20px;background-color:#dc2626;color:#ffffff;font-weight:600;text-decoration:none;border-radius:6px;font-size:14px;border:none;">
+                Revoke This Session
+            </a>
         </div>
-        `;
+    `;
     },
 
     workspaceInvitationTemplate: ({

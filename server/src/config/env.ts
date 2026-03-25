@@ -62,4 +62,6 @@ export const config = {
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
+
+    EMAIL_LOGOUT_SIGNING_KEY: process.env.EMAIL_LOGOUT_SIGNING_KEY as string,
 } as const;

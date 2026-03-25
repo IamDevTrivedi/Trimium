@@ -56,6 +56,7 @@ router.post(
     authGeneralLimiter,
     controllers.logoutParticularDevice
 );
+router.post("/email-logout", authGeneralLimiter, controllers.emailLogout);
 
 router.post("/me", protectRoute, authGeneralLimiter, controllers.me);
 

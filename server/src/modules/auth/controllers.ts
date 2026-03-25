@@ -1,5 +1,6 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { StatusCodes } from "http-status-codes";
 import { UAParser } from "ua-parser-js";
 import { Request, Response } from "express";
@@ -21,6 +22,7 @@ import {
     clearFailedAttempts,
     loginThrottleConfig,
 } from "@utils/loginThrottle";
+import { REVOKE_TOKEN_EXPIRATION_TIME } from "@/constants/app";
 
 const getCookieOptions = (clear = false) => {
     return {
@@ -718,6 +720,15 @@ export const controllers = {
 
             res.cookie(`authToken`, authToken, cookieOptions);
 
+            const revokePayload = {
+                loginHistoryID: newLogin._id.toString(),
+                expiresAt: Date.now() + REVOKE_TOKEN_EXPIRATION_TIME,
+            }
+
+            const payloadB64 = Buffer.from(JSON.stringify(revokePayload)).toString("base64url");
+            const signature = crypto.createHmac("sha256", config.EMAIL_LOGOUT_SIGNING_KEY).update(payloadB64).digest("base64url");
+            const revokeToken = `${payloadB64}.${signature}`;
+
             await emailQueue.add(QueueNames.SEND_EMAIL, {
                 from: config.SENDER_EMAIL,
                 to: existingUser.email,
@@ -726,6 +737,7 @@ export const controllers = {
                     UAinfo: res.locals.ua,
                     IPAddress: res.locals.clientIP,
                     locationData: res.locals.location,
+                    emailLogoutLink: `${config.FRONTEND_URL}/email-logout?revokeToken=${revokeToken}`,
                 }),
             });
 
@@ -1104,4 +1116,104 @@ export const controllers = {
             });
         }
     },
+
+    emailLogout: async (req: Request, res: Response) => {
+        try {
+            const schema = z.object({
+                revokeToken: z.string(),
+            });
+
+            const result = schema.safeParse(req.body);
+
+            if (!result.success) {
+                return sendResponse(res, {
+                    success: false,
+                    message: "Invalid request",
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    error: z.treeifyError(result.error),
+                });
+            }
+
+            const { revokeToken } = result.data;
+
+            const [payloadB64, signature] = revokeToken.split(".");
+            const expectedSignature = crypto.createHmac("sha256", config.EMAIL_LOGOUT_SIGNING_KEY).update(payloadB64).digest("base64url");
+            const match = crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
+
+            if (!match) {
+                return sendResponse(res, {
+                    success: false,
+                    message: "Invalid revoke Token",
+                    statusCode: StatusCodes.BAD_REQUEST,
+                });
+            }
+
+            const payload = JSON.parse(Buffer.from(payloadB64, "base64url").toString()) as {
+                loginHistoryID: string;
+                expiresAt: number;
+            };
+
+            if (Date.now() > payload.expiresAt) {
+                return sendResponse(res, {
+                    success: false,
+                    message: "Revoke Token has expired. You can still logout device from your account. Please login to your account and go to security settings to logout the device",
+                    statusCode: StatusCodes.BAD_REQUEST,
+                });
+            }
+
+            const existingLogin = await LoginHistory.findById(payload.loginHistoryID).select("tokenVersion accountID");
+            if (!existingLogin) {
+                return sendResponse(res, {
+                    success: false,
+                    message: "No active session found for the given revoke Token",
+                    statusCode: StatusCodes.NOT_FOUND,
+                });
+            }
+
+            const existingUser = await User.findById(existingLogin.accountID).select("tokenVersion");
+            if (!existingUser) {
+                return sendResponse(res, {
+                    success: false,
+                    message: "User not found for the given revoke Token",
+                    statusCode: StatusCodes.NOT_FOUND,
+                });
+            }
+
+            if (existingUser.tokenVersion > existingLogin.tokenVersion) {
+                return sendResponse(res, {
+                    success: true,
+                    message: "Session already revoked",
+                    statusCode: StatusCodes.OK,
+                });
+            }
+
+            existingLogin.tokenVersion -= 1;
+            await existingLogin.save();
+
+            await redisClient.set(
+                `loginHistoryID:${payload.loginHistoryID}`,
+                existingLogin.tokenVersion,
+                {
+                    expiration: {
+                        type: "EX",
+                        value: 1 * 60 * 60,
+                    },
+                }
+            );
+
+            return sendResponse(res, {
+                success: true,
+                message: "Session logged out successfully",
+            });
+        } catch (error) {
+            logger.error("Error in email logout");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                message: "Error in email logout",
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+            });
+        }
+    }
 };
