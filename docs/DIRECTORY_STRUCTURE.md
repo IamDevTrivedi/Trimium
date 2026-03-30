@@ -2,21 +2,21 @@
 
 ```
 .
-├── LICENSE
-├── README.md
 ├── client
 │   ├── components.json
-│   ├── next-env.d.ts
 │   ├── next.config.ts
 │   ├── package.json
+│   ├── pnpm-lock.yaml
 │   ├── postcss.config.mjs
 │   ├── public
 │   │   ├── brand.png
 │   │   ├── favicon.png
+│   │   ├── offline.html
 │   │   ├── og-about.png
 │   │   ├── og-features.png
 │   │   ├── og-home.png
-│   │   └── og-qr-generator.png
+│   │   ├── og-qr-generator.png
+│   │   └── sw.js
 │   ├── resources
 │   │   ├── about.mdx
 │   │   ├── privacy.mdx
@@ -38,6 +38,10 @@
 │   │   │   │   │   │   └── page.tsx
 │   │   │   │   │   └── verify
 │   │   │   │   │       └── page.tsx
+│   │   │   │   ├── email-logout
+│   │   │   │   │   ├── layout.tsx
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── layout.tsx
 │   │   │   │   ├── login
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── logout
@@ -48,49 +52,58 @@
 │   │   │   │       │   └── page.tsx
 │   │   │   │       └── verify
 │   │   │   │           └── page.tsx
+│   │   │   ├── favicon.ico
+│   │   │   ├── features
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── globals.css
+│   │   │   ├── layout.tsx
 │   │   │   ├── (legal)
 │   │   │   │   ├── about
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── contact-us
 │   │   │   │   │   └── page.tsx
+│   │   │   │   ├── layout.tsx
 │   │   │   │   ├── privacy-policy
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── terms-of-service
 │   │   │   │       └── page.tsx
-│   │   │   ├── (redirecting)
-│   │   │   │   └── r
-│   │   │   │       └── [shortCode]
-│   │   │   │           ├── layout.tsx
+│   │   │   ├── (linkhub)
+│   │   │   │   ├── linkhub-editor
+│   │   │   │   │   ├── layout.tsx
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── t
+│   │   │   │       └── [username]
 │   │   │   │           └── page.tsx
-│   │   │   ├── (tools)
-│   │   │   │   └── qr-generator
-│   │   │   │       ├── layout.tsx
-│   │   │   │       └── page.tsx
-│   │   │   ├── (workspaces)
-│   │   │   │   ├── layout.tsx
-│   │   │   │   └── w
-│   │   │   │       ├── [workspaceID]
-│   │   │   │       │   ├── [shortCode]
-│   │   │   │       │   │   ├── edit
-│   │   │   │       │   │   │   └── page.tsx
-│   │   │   │       │   │   └── page.tsx
-│   │   │   │       │   ├── bulk-upload
-│   │   │   │       │   │   └── page.tsx
-│   │   │   │       │   ├── create-url
-│   │   │   │       │   │   └── page.tsx
-│   │   │   │       │   ├── layout.tsx
-│   │   │   │       │   └── page.tsx
-│   │   │   │       ├── new
-│   │   │   │       │   └── page.tsx
-│   │   │   │       └── page.tsx
-│   │   │   ├── favicon.ico
-│   │   │   ├── features
-│   │   │   │   └── page.tsx
-│   │   │   ├── globals.css
-│   │   │   ├── layout.tsx
 │   │   │   ├── loading.tsx
 │   │   │   ├── not-found.tsx
-│   │   │   └── page.tsx
+│   │   │   ├── page.tsx
+│   │   │   ├── (redirecting)
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── r
+│   │   │   │       └── [shortCode]
+│   │   │   │           └── page.tsx
+│   │   │   ├── (tools)
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── qr-generator
+│   │   │   │       └── page.tsx
+│   │   │   └── (workspaces)
+│   │   │       ├── layout.tsx
+│   │   │       └── w
+│   │   │           ├── new
+│   │   │           │   └── page.tsx
+│   │   │           ├── page.tsx
+│   │   │           └── [workspaceID]
+│   │   │               ├── bulk-upload
+│   │   │               │   └── page.tsx
+│   │   │               ├── create-url
+│   │   │               │   └── page.tsx
+│   │   │               ├── layout.tsx
+│   │   │               ├── page.tsx
+│   │   │               └── [shortCode]
+│   │   │                   ├── edit
+│   │   │                   │   └── page.tsx
+│   │   │                   └── page.tsx
 │   │   ├── components
 │   │   │   ├── account-page.tsx
 │   │   │   ├── bulk-upload-urls.tsx
@@ -103,6 +116,7 @@
 │   │   │   ├── custom-qr-generator.tsx
 │   │   │   ├── edit-redirect-form.tsx
 │   │   │   ├── footer.tsx
+│   │   │   ├── linkhub-editor.tsx
 │   │   │   ├── loading.tsx
 │   │   │   ├── login-forms.tsx
 │   │   │   ├── login-history.tsx
@@ -114,6 +128,7 @@
 │   │   │   ├── protect-workspace.tsx
 │   │   │   ├── qr-code-generator.tsx
 │   │   │   ├── reset-password-forms.tsx
+│   │   │   ├── service-worker-register.tsx
 │   │   │   ├── shortcode-performance.tsx
 │   │   │   ├── shortcode-tags.tsx
 │   │   │   ├── theme-provider.tsx
@@ -152,7 +167,6 @@
 │   │   │   │   ├── kbd.tsx
 │   │   │   │   ├── label.tsx
 │   │   │   │   ├── menubar.tsx
-│   │   │   │   ├── navigation-menu.tsx
 │   │   │   │   ├── pagination.tsx
 │   │   │   │   ├── popover.tsx
 │   │   │   │   ├── progress.tsx
@@ -182,7 +196,9 @@
 │   │   │   ├── backend.ts
 │   │   │   └── env.ts
 │   │   ├── constants
+│   │   │   ├── linkhub-themes.ts
 │   │   │   ├── regex.ts
+│   │   │   ├── socials.tsx
 │   │   │   └── tags.ts
 │   │   ├── hooks
 │   │   │   └── use-mobile.tsx
@@ -204,98 +220,100 @@
 │   ├── DIRECTORY_STRUCTURE.md
 │   └── SETUP.md
 ├── eslint.config.ts
+├── LICENSE
 ├── package.json
+├── pnpm-lock.yaml
 ├── public
 │   └── preview.png
+├── README.md
 ├── scripts
 │   ├── clean-all.js
 │   ├── install-all.js
 │   ├── reset-all.js
 │   └── update-geolite2.js
-├── server
-│   ├── logs
-│   │   ├── app-development.log
-│   │   ├── app-production.log
-│   │   ├── error-development.log
-│   │   ├── error-production.log
-│   │   ├── pm2-error.log
-│   │   └── pm2-out.log
-│   ├── package.json
-│   ├── src
-│   │   ├── config
-│   │   │   ├── checkEnv.ts
-│   │   │   ├── env.ts
-│   │   │   └── mailer.ts
-│   │   ├── constants
-│   │   │   ├── GeoLite2-City.mmdb
-│   │   │   ├── GeoLite2-City.mmdb.backup
-│   │   │   ├── regex.ts
-│   │   │   └── tags.ts
-│   │   ├── db
-│   │   │   ├── connectMongo.ts
-│   │   │   └── connectRedis.ts
-│   │   ├── index.ts
-│   │   ├── middlewares
-│   │   │   ├── IP.ts
-│   │   │   ├── UAParser.ts
-│   │   │   ├── httpLogger.ts
-│   │   │   ├── location.ts
-│   │   │   ├── protectRoute.ts
-│   │   │   └── rateLimiter.ts
-│   │   ├── models
-│   │   │   ├── analytics.ts
-│   │   │   ├── contactFormSubmissions.ts
-│   │   │   ├── invitation.ts
-│   │   │   ├── loginHistory.ts
-│   │   │   ├── url.ts
-│   │   │   ├── user.ts
-│   │   │   └── workspace.ts
-│   │   ├── modules
-│   │   │   ├── auth
-│   │   │   │   ├── controllers.ts
-│   │   │   │   └── routes.ts
-│   │   │   ├── contact
-│   │   │   │   ├── controller.ts
-│   │   │   │   └── routes.ts
-│   │   │   ├── health
-│   │   │   │   ├── controllers.ts
-│   │   │   │   └── routes.ts
-│   │   │   ├── queue
-│   │   │   │   ├── index.ts
-│   │   │   │   ├── processors
-│   │   │   │   │   └── sendEmail.ts
-│   │   │   │   ├── queues.ts
-│   │   │   │   ├── redisConfig.ts
-│   │   │   │   └── workers.ts
-│   │   │   ├── root
-│   │   │   │   ├── controllers.ts
-│   │   │   │   └── routes.ts
-│   │   │   ├── url
-│   │   │   │   ├── controllers.ts
-│   │   │   │   └── routes.ts
-│   │   │   ├── user
-│   │   │   │   ├── controllers.ts
-│   │   │   │   └── routes.ts
-│   │   │   └── workspace
-│   │   │       ├── controllers.ts
-│   │   │       └── routes.ts
-│   │   └── utils
-│   │       ├── date.ts
-│   │       ├── emailTemplates.ts
-│   │       ├── generateOTP.ts
-│   │       ├── generateShortCode.ts
-│   │       ├── getWorkspacePerformance.ts
-│   │       ├── logger.ts
-│   │       ├── normalizeEmail.ts
-│   │       ├── sendResponse.ts
-│   │       ├── hash.ts
-│   │       └── tags.ts
-│   └── tsconfig.json
-└── tests
-    ├── Dockerfile
-    └── docker-compose.yml
+└── server
+    ├── package.json
+    ├── pnpm-lock.yaml
+    ├── src
+    │   ├── config
+    │   │   ├── checkEnv.ts
+    │   │   ├── cloudinary.ts
+    │   │   ├── env.ts
+    │   │   └── mailer.ts
+    │   ├── constants
+    │   │   ├── app.ts
+    │   │   ├── hash.ts
+    │   │   ├── regex.ts
+    │   │   └── tags.ts
+    │   ├── db
+    │   │   ├── connectMongo.ts
+    │   │   └── connectRedis.ts
+    │   ├── index.ts
+    │   ├── middlewares
+    │   │   ├── httpLogger.ts
+    │   │   ├── IP.ts
+    │   │   ├── location.ts
+    │   │   ├── protectRoute.ts
+    │   │   ├── rateLimiter.ts
+    │   │   ├── UAParser.ts
+    │   │   └── upload.ts
+    │   ├── models
+    │   │   ├── analytics.ts
+    │   │   ├── contactFormSubmissions.ts
+    │   │   ├── invitation.ts
+    │   │   ├── linkhub.ts
+    │   │   ├── loginHistory.ts
+    │   │   ├── url.ts
+    │   │   ├── user.ts
+    │   │   └── workspace.ts
+    │   ├── modules
+    │   │   ├── auth
+    │   │   │   ├── controllers.ts
+    │   │   │   └── routes.ts
+    │   │   ├── contact
+    │   │   │   ├── controller.ts
+    │   │   │   └── routes.ts
+    │   │   ├── health
+    │   │   │   ├── controllers.ts
+    │   │   │   └── routes.ts
+    │   │   ├── linkhub
+    │   │   │   ├── controllers.ts
+    │   │   │   └── routes.ts
+    │   │   ├── queue
+    │   │   │   ├── index.ts
+    │   │   │   ├── processors
+    │   │   │   │   ├── sendEmail.ts
+    │   │   │   │   └── updateLastActivity.ts
+    │   │   │   ├── queues.ts
+    │   │   │   ├── redisConfig.ts
+    │   │   │   └── workers.ts
+    │   │   ├── root
+    │   │   │   ├── controllers.ts
+    │   │   │   └── routes.ts
+    │   │   ├── url
+    │   │   │   ├── controllers.ts
+    │   │   │   └── routes.ts
+    │   │   ├── user
+    │   │   │   ├── controllers.ts
+    │   │   │   └── routes.ts
+    │   │   └── workspace
+    │   │       ├── controllers.ts
+    │   │       └── routes.ts
+    │   └── utils
+    │       ├── date.ts
+    │       ├── emailTemplates.ts
+    │       ├── generateOTP.ts
+    │       ├── generateShortCode.ts
+    │       ├── getWorkspacePerformance.ts
+    │       ├── hash.ts
+    │       ├── logger.ts
+    │       ├── loginThrottle.ts
+    │       ├── normalizeEmail.ts
+    │       ├── sendResponse.ts
+    │       └── tags.ts
+    └── tsconfig.json
 
-68 directories, 226 files
+72 directories, 240 files
 ```
 
 ## Overview
