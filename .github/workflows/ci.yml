@@ -1,12 +1,9 @@
-name: Deploy Server to EC2
+name: CI/CD
 
-on:
-  push:
+on: 
+  push: 
     branches:
       - main
-    paths:
-      - "server/**"
-      - "package.json"
 
 jobs:
   lint:
@@ -33,7 +30,6 @@ jobs:
 
   prettier:
     runs-on: ubuntu-latest
-    needs: lint
 
     steps:
       - name: Checkout repository
@@ -54,33 +50,67 @@ jobs:
       - name: Run Prettier formatting check
         run: pnpm run format:check
 
-  typecheck:
+  detect-changes:
     runs-on: ubuntu-latest
-    needs: prettier
+    needs: [lint, prettier]
+
+    outputs:
+      client: ${{ steps.changes.outputs.client }}
+      server: ${{ steps.changes.outputs.server }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect changed paths
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            client:
+              - 'client/**'
+            server:
+              - 'server/**'
+              - 'package.json'
+
+  deploy-client:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.client == 'true'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
 
-      - name: Install server dependencies
-        run: pnpm --dir server install --frozen-lockfile
+      - name: Install Vercel CLI
+        run: npm install -g vercel
 
-      - name: Run TypeScript type check
-        run: pnpm --dir server exec tsc --noEmit
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-  deploy:
+      - name: Build
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Deploy
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+  deploy-server:
     runs-on: ubuntu-latest
-    needs: typecheck
-    if: vars.DEPLOY_TO_EC2 == 'true'
+    needs: detect-changes
+    if: needs.detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_EC2 == 'true'
 
     steps:
       - name: Deploy to EC2
@@ -101,5 +131,5 @@ jobs:
             pnpm run download:geoip
             pm2 restart trimium-server
             pm2 save
-            pm2 status trimium-server
+            pm2 status trimium-server | grep -q "online"
             echo "Deployment completed."
