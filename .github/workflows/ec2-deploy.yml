@@ -9,8 +9,83 @@ on:
       - "package.json"
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install root dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run lint check
+        run: pnpm run lint
+
+  prettier:
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install root dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Prettier formatting check
+        run: pnpm run format:check
+
+  typecheck:
+    runs-on: ubuntu-latest
+    needs: prettier
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install server dependencies
+        run: pnpm --dir server install --frozen-lockfile
+
+      - name: Run TypeScript type check
+        run: pnpm --dir server exec tsc --noEmit
+
   deploy:
     runs-on: ubuntu-latest
+    needs: typecheck
     if: vars.DEPLOY_TO_EC2 == 'true'
 
     steps:
