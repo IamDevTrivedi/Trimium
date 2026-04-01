@@ -1165,6 +1165,7 @@ export const controllers = {
             if (Date.now() > payload.expiresAt) {
                 return sendResponse(res, {
                     success: false,
+                    expired: true,
                     message:
                         "Revoke Token has expired. You can still logout device from your account. Please login to your account and go to security settings to logout the device",
                     statusCode: StatusCodes.BAD_REQUEST,

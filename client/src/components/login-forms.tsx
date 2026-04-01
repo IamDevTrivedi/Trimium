@@ -12,16 +12,16 @@ import Link from "next/link";
 import { toastError } from "@/lib/toast-error";
 import { backend } from "@/config/backend";
 import { handleResponse } from "@/lib/handle-response";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUserStore } from "@/store/user-store";
 import React from "react";
-import { Toast } from "./toast";
 
 export function LoginFormEmail() {
     const { setEmail, setPassword } = useLoginStore();
     const { setUser, user } = useUserStore();
 
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const schema = z.object({
         identity: z
@@ -55,8 +55,14 @@ export function LoginFormEmail() {
             });
 
             if (handleResponse(resData)) {
-                router.replace("/");
                 setUser(resData.data);
+                const flow = searchParams.get("flow");
+                console.log(flow);
+                if (flow === "email-logout") {
+                    router.replace("/account/login-activity");
+                } else {
+                    router.replace("/");
+                }
             }
         } catch (error: unknown) {
             toastError(error);
@@ -64,7 +70,13 @@ export function LoginFormEmail() {
     };
 
     React.useEffect(() => {
-        if (user) {
+        if (!user) {
+            return;
+        }
+
+        if (searchParams.get("flow") === "email-logout") {
+            router.replace("/account/login-activity");
+        } else {
             router.replace("/");
         }
     }, [user, router]);
