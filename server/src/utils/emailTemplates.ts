@@ -44,7 +44,7 @@ const escapeHtml = (value: string): string => {
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
+        .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
 };
 
@@ -134,7 +134,14 @@ const bulletList = (items: string[]): string => {
     `;
 };
 
-const createEmailShell = ({ badge, title, intro, content, action, outro }: EmailShellOptions): string => {
+const createEmailShell = ({
+    badge,
+    title,
+    intro,
+    content,
+    action,
+    outro,
+}: EmailShellOptions): string => {
     return `
 <!doctype html>
 <html lang="en">

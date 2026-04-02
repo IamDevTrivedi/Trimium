@@ -529,7 +529,9 @@ export function CreateAccountPassword() {
         },
     ];
 
-    const metRequirementCount = passwordRequirements.filter((requirement) => requirement.met).length;
+    const metRequirementCount = passwordRequirements.filter(
+        (requirement) => requirement.met
+    ).length;
     const isStrongPassword = PASSWORD.test(passwordValue);
 
     const onSubmit = async (data: z.infer<typeof schema>) => {
@@ -570,9 +572,16 @@ export function CreateAccountPassword() {
                         className={`${errors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
                         {...register("password")}
                         aria-invalid={!!errors.password}
-                        aria-describedby={errors.password ? "password-requirements password-error" : "password-requirements"}
+                        aria-describedby={
+                            errors.password
+                                ? "password-requirements password-error"
+                                : "password-requirements"
+                        }
                     />
-                    <div id="password-requirements" className="mt-3 space-y-3 rounded-md border bg-muted/30 p-3">
+                    <div
+                        id="password-requirements"
+                        className="mt-3 space-y-3 rounded-md border bg-muted/30 p-3"
+                    >
                         <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">Password strength</p>
                             <p
@@ -597,7 +606,9 @@ export function CreateAccountPassword() {
                                 className={`h-full transition-all duration-300 ${
                                     isStrongPassword ? "bg-green-600" : "bg-amber-500"
                                 }`}
-                                style={{ width: `${(metRequirementCount / passwordRequirements.length) * 100}%` }}
+                                style={{
+                                    width: `${(metRequirementCount / passwordRequirements.length) * 100}%`,
+                                }}
                             />
                         </div>
 
@@ -609,7 +620,9 @@ export function CreateAccountPassword() {
                                         requirement.met ? "text-green-600" : "text-muted-foreground"
                                     }`}
                                 >
-                                    <span className="mr-2 font-mono">{requirement.met ? "[x]" : "[ ]"}</span>
+                                    <span className="mr-2 font-mono">
+                                        {requirement.met ? "[x]" : "[ ]"}
+                                    </span>
                                     {requirement.label}
                                 </p>
                             ))}
