@@ -493,11 +493,44 @@ export function CreateAccountPassword() {
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors, isSubmitting },
     } = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
         mode: "onSubmit",
     });
+
+    const passwordValue = watch("password", "");
+
+    const passwordRequirements = [
+        {
+            label: "At least 8 characters",
+            met: passwordValue.length >= 8,
+        },
+        {
+            label: "At least one uppercase letter",
+            met: /[A-Z]/.test(passwordValue),
+        },
+        {
+            label: "At least one lowercase letter",
+            met: /[a-z]/.test(passwordValue),
+        },
+        {
+            label: "At least one number",
+            met: /\d/.test(passwordValue),
+        },
+        {
+            label: "At least one special character (@$!%*?&#^()_+=-)",
+            met: /[@$!%*?&#^()_+=-]/.test(passwordValue),
+        },
+        {
+            label: "No spaces",
+            met: /^\S*$/.test(passwordValue),
+        },
+    ];
+
+    const metRequirementCount = passwordRequirements.filter((requirement) => requirement.met).length;
+    const isStrongPassword = PASSWORD.test(passwordValue);
 
     const onSubmit = async (data: z.infer<typeof schema>) => {
         try {
@@ -537,8 +570,51 @@ export function CreateAccountPassword() {
                         className={`${errors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
                         {...register("password")}
                         aria-invalid={!!errors.password}
-                        aria-describedby={errors.password ? "password-error" : undefined}
+                        aria-describedby={errors.password ? "password-requirements password-error" : "password-requirements"}
                     />
+                    <div id="password-requirements" className="mt-3 space-y-3 rounded-md border bg-muted/30 p-3">
+                        <div className="flex items-center justify-between">
+                            <p className="text-xs text-muted-foreground">Password strength</p>
+                            <p
+                                className={`text-xs font-medium ${
+                                    isStrongPassword
+                                        ? "text-green-600"
+                                        : passwordValue.length > 0
+                                          ? "text-amber-600"
+                                          : "text-muted-foreground"
+                                }`}
+                            >
+                                {isStrongPassword
+                                    ? "Strong"
+                                    : passwordValue.length > 0
+                                      ? "Needs improvement"
+                                      : "Not set"}
+                            </p>
+                        </div>
+
+                        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                            <div
+                                className={`h-full transition-all duration-300 ${
+                                    isStrongPassword ? "bg-green-600" : "bg-amber-500"
+                                }`}
+                                style={{ width: `${(metRequirementCount / passwordRequirements.length) * 100}%` }}
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            {passwordRequirements.map((requirement) => (
+                                <p
+                                    key={requirement.label}
+                                    className={`text-xs ${
+                                        requirement.met ? "text-green-600" : "text-muted-foreground"
+                                    }`}
+                                >
+                                    <span className="mr-2 font-mono">{requirement.met ? "[x]" : "[ ]"}</span>
+                                    {requirement.label}
+                                </p>
+                            ))}
+                        </div>
+                    </div>
                     {errors.password && (
                         <p id="password-error" className="text-sm text-destructive">
                             {errors.password.message}
