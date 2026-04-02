@@ -6,7 +6,7 @@ import {
     USERNAME,
     USERNAME_NOTICE,
 } from "@/constants/regex";
-import { HASH_OPTIONS } from "@/constants/hash";
+import { HASH_OPTIONS } from "@config/argon2";
 import { User } from "@/models/user";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";

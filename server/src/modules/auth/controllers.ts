@@ -12,7 +12,7 @@ import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
 import { z } from "zod";
 import { NAME, OTP as OTP_REGEX, PASSWORD, USERNAME } from "@constants/regex";
-import { HASH_OPTIONS } from "@constants/hash";
+import { HASH_OPTIONS } from "@config/argon2";
 import { LoginHistory } from "@models/loginHistory";
 import { emailTemplates } from "@utils/emailTemplates";
 import { emailQueue, QueueNames } from "@modules/queue";

@@ -1,5 +1,5 @@
 import { PASSWORD, PASSWORD_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
-import { HASH_OPTIONS } from "@/constants/hash";
+import { HASH_OPTIONS } from "@config/argon2";
 import { URL } from "@/models/url";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
