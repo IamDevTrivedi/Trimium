@@ -216,6 +216,9 @@
 │   │       ├── reset-password-store.ts
 │   │       └── user-store.ts
 │   └── tsconfig.json
+├── .husky
+│   ├── _
+│   └── pre-push
 ├── docs
 │   ├── DIRECTORY_STRUCTURE.md
 │   └── SETUP.md
@@ -326,6 +329,15 @@ This document outlines the directory structure of the Trimium project, a full-st
 - **client/**: Frontend Next.js application
 - **server/**: Backend Node.js/Express API
 - **scripts/**: Utility scripts for project management
+- **.husky/**: Git hooks (pre-push quality gate)
+- **package.json**: Root workspace scripts (`lint`, `format:check`, `check`, `prepare`)
+
+## Git Hooks & Quality Gate
+
+- **Hook file**: `.husky/pre-push`
+- **Command run before push**: `pnpm run check`
+- **Current check pipeline**: `pnpm run lint && pnpm run format:check`
+- **Behavior**: Push is blocked locally if linting or format checks fail
 
 ## Client Structure
 

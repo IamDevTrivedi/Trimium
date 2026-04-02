@@ -8,6 +8,8 @@
         "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css}\"",
         "lint": "eslint . --ext .js,.ts,.tsx",
         "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
+        "check": "pnpm lint && pnpm format:check",
+        "prepare": "husky",
         "install:all": "node ./scripts/install-all.js",
         "clean:all": "node ./scripts/clean-all.js",
         "reset:all": "node ./scripts/reset-all.js",
@@ -27,6 +29,7 @@
         "dotenv": "^16.6.1",
         "eslint": "^9.39.2",
         "globals": "^16.5.0",
+        "husky": "^9.1.7",
         "jiti": "^2.6.1",
         "tar": "^7.5.2",
         "typescript-eslint": "^8.50.0"

@@ -11,7 +11,8 @@ Before you begin, ensure you have the following installed:
 | Requirement | Version | Notes |
 |-------------|---------|-------|
 | Node.js | v18+ | Required |
-| pnpm / npm / yarn | Latest | pnpm recommended |
+| pnpm | Latest | Required for workspace scripts |
+| Git | Latest | Required for Husky pre-push hooks |
 | MongoDB | Latest | Local or cloud (e.g., MongoDB Atlas) |
 | Redis | Latest | Local or cloud (e.g., Redis Cloud) |
 | MaxMind GeoLite2 | Latest | Optional, enhances location services |
@@ -32,15 +33,13 @@ cd Trimium
 From the root directory of the project, run:
 
 ```bash
-# Using pnpm (recommended)
+# Using pnpm
 pnpm run install:all
-
-# Using yarn
-yarn run install:all
-
-# Using npm
-npm run install:all
 ```
+
+> This installs dependencies for root, client, and server workspaces.
+
+> The root `prepare` script also initializes Husky hooks automatically.
 
 ---
 
@@ -138,6 +137,62 @@ npm run dev
 
 ---
 
+## 6. Pre-Push Quality Gate (Lint + Format Check)
+
+Trimium uses Husky to block pushes that fail quality checks.
+
+### What runs before push
+
+The pre-push hook at `.husky/pre-push` runs:
+
+```bash
+pnpm run check
+```
+
+The `check` script runs both:
+
+```bash
+pnpm run lint && pnpm run format:check
+```
+
+If either command fails, push is rejected locally.
+
+### Verify hook setup
+
+```bash
+git config --get core.hooksPath
+```
+
+Expected output:
+
+```text
+.husky/_
+```
+
+### Useful local commands
+
+```bash
+# Run all pre-push checks manually
+pnpm run check
+
+# Lint only
+pnpm run lint
+
+# Check formatting only
+pnpm run format:check
+
+# Auto-format files
+pnpm run format
+```
+
+### If hooks are missing
+
+```bash
+pnpm run prepare
+```
+
+---
+
 ## Troubleshooting
 
 | Issue | Solution |
@@ -146,5 +201,7 @@ npm run dev
 | MongoDB connection failed | Verify MongoDB is running and the connection string is correct |
 | Redis connection failed | Verify Redis is running and the connection details are correct |
 | GeoLite2 not working | Ensure the `.mmdb` file is in the correct location |
+| Push blocked by pre-push hook | Run `pnpm run lint` and `pnpm run format:check`, fix issues, then push again |
+| Husky hook not triggering | Run `pnpm run prepare` and verify `git config --get core.hooksPath` returns `.husky/_` |
 
 > **Note:** The server follows a fail-fast principle and will not start if environment variables are missing or misconfigured.
