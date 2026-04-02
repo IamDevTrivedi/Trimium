@@ -332,6 +332,17 @@ This document outlines the directory structure of the Trimium project, a full-st
 - **.husky/**: Git hooks (pre-push quality gate)
 - **package.json**: Root workspace scripts (`lint`, `format:check`, `check`, `prepare`)
 
+## Local Environment Files
+
+These files are local-only and ignored by Git:
+
+- **`./.env`**: Root script variables (currently `MAXMIND_LICENSE_KEY` for GeoLite auto-download)
+- **`server/.env.development`**: Backend development environment variables
+- **`server/.env.production`**: Backend production environment variables
+- **`client/.env`**: Frontend public environment variables (`NEXT_PUBLIC_*`)
+
+For complete variable-by-variable guidance, see `docs/SETUP.md`.
+
 ## Git Hooks & Quality Gate
 
 - **Hook file**: `.husky/pre-push`
