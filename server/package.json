@@ -1,7 +1,7 @@
 {
-    "name": "server",
-    "version": "0.0.1",
-    "description": "",
+    "name": "trimium-server",
+    "version": "0.1.0",
+    "description": "Express and TypeScript backend for Trimium authentication, URL routing, analytics, and team workspaces.",
     "main": "index.js",
     "scripts": {
         "build": "tsc && tsc-alias",
@@ -9,7 +9,14 @@
         "dev": "cross-env NODE_ENV=development tsx watch --clear-screen=true src src/index.ts"
     },
     "keywords": [],
-    "author": "",
+    "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
+    "github": "https://github.com/IamDevTrivedi/Trimium",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/IamDevTrivedi/Trimium.git",
+        "directory": "server"
+    },
+    "homepage": "https://github.com/IamDevTrivedi/Trimium/tree/main/server",
     "license": "ISC",
     "packageManager": "pnpm@10.28.0",
     "devDependencies": {
