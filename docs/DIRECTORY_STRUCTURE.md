@@ -220,6 +220,9 @@
 │   ├── _
 │   └── pre-push
 ├── docs
+│   ├── architecture
+│   │   ├── AUTHENTICATION_AND_SESSION_MANAGEMENT_ARCHITECTURE.md
+│   │   └── RATE_LIMITER_ARCHITECTURE.md
 │   ├── DIRECTORY_STRUCTURE.md
 │   └── SETUP.md
 ├── eslint.config.ts
