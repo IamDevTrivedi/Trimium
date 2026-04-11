@@ -3,10 +3,13 @@
 import config from "@/config/env";
 import React from "react";
 import Script from "next/script";
+import { cn } from "@/lib/utils";
 
 interface TurnstileWidgetProps {
     onTokenChange: (token: string) => void;
     className?: string;
+    label?: string;
+    description?: string;
 }
 
 interface TurnstileApi {
@@ -33,7 +36,12 @@ declare global {
 
 const turnstileScriptURL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
-export function AuthTurnstile({ onTokenChange, className }: TurnstileWidgetProps) {
+export function AuthTurnstile({
+    onTokenChange,
+    className,
+    label = "Let\'s confirm you\'re human",
+    description = "Complete this step to continue securely.",
+}: TurnstileWidgetProps) {
     const widgetRef = React.useRef<HTMLDivElement | null>(null);
     const widgetIDRef = React.useRef<string | null>(null);
     const [renderError, setRenderError] = React.useState<string | null>(null);
@@ -111,7 +119,11 @@ export function AuthTurnstile({ onTokenChange, className }: TurnstileWidgetProps
     }
 
     return (
-        <div className={className}>
+        <div className={cn("space-y-2", className)}>
+            <div className="flex items-center justify-between">
+                <p className="text-sm font-medium">{label}</p>
+                <span className="text-xs text-muted-foreground">Required</span>
+            </div>
             <Script
                 id="cloudflare-turnstile"
                 src={turnstileScriptURL}
@@ -120,8 +132,17 @@ export function AuthTurnstile({ onTokenChange, className }: TurnstileWidgetProps
                     renderWidget();
                 }}
             />
-            <div ref={widgetRef} className="flex min-h-[65px] justify-center" />
-            {renderError ? <p className="text-sm text-destructive">{renderError}</p> : null}
+            <div className="rounded-lg border bg-muted/20 p-2">
+                <div
+                    ref={widgetRef}
+                    className="flex min-h-[65px] items-center justify-center overflow-hidden"
+                />
+            </div>
+            {renderError ? (
+                <p className="text-sm text-destructive">{renderError}</p>
+            ) : (
+                <p className="text-xs text-muted-foreground">{description}</p>
+            )}
         </div>
     );
 }

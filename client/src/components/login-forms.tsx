@@ -147,7 +147,11 @@ export function LoginFormEmail() {
                 </Field>
             </FieldGroup>
             <div className="space-y-4">
-                <AuthTurnstile key={turnstileWidgetKey} onTokenChange={setTurnstileToken} />
+                <AuthTurnstile
+                    key={turnstileWidgetKey}
+                    onTokenChange={setTurnstileToken}
+                    description="Complete the challenge before logging in."
+                />
                 <Button
                     type="submit"
                     className="w-full"

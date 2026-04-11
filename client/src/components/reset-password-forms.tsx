@@ -112,7 +112,11 @@ export function ResetPasswordEmail() {
                 </Field>
             </FieldGroup>
 
-            <AuthTurnstile key={turnstileWidgetKey} onTokenChange={setTurnstileToken} />
+            <AuthTurnstile
+                key={turnstileWidgetKey}
+                onTokenChange={setTurnstileToken}
+                description="Complete the challenge before we send your reset code."
+            />
 
             <Button
                 type="submit"

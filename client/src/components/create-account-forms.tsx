@@ -111,7 +111,11 @@ export function CreateAccountEmail() {
                 </Field>
             </FieldGroup>
 
-            <AuthTurnstile key={turnstileWidgetKey} onTokenChange={setTurnstileToken} />
+            <AuthTurnstile
+                key={turnstileWidgetKey}
+                onTokenChange={setTurnstileToken}
+                description="Complete the challenge before we send your verification code."
+            />
 
             <Button
                 type="submit"
