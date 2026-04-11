@@ -30,6 +30,7 @@ export const envSchema = z
         BREVO_API_KEY: z.string().min(1),
 
         JWT_KEY: z.string().min(32),
+        TURNSTILE_SECRET_KEY: z.string().min(1),
 
         PoW_SECRET: z.string().min(32),
         PoW_DIFFICULTY: z.number().min(1).max(6),

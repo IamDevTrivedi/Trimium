@@ -15,10 +15,14 @@ import { handleResponse } from "@/lib/handle-response";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUserStore } from "@/store/user-store";
 import React from "react";
+import { AuthTurnstile } from "./auth-turnstile";
+import { Toast } from "./toast";
 
 export function LoginFormEmail() {
     const { setEmail, setPassword } = useLoginStore();
     const { setUser, user } = useUserStore();
+    const [turnstileToken, setTurnstileToken] = React.useState("");
+    const [turnstileWidgetKey, setTurnstileWidgetKey] = React.useState(0);
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -45,6 +49,11 @@ export function LoginFormEmail() {
     });
 
     const onSubmit = async (data: z.infer<typeof schema>) => {
+        if (!turnstileToken) {
+            Toast.error("Please complete the security challenge before continuing.");
+            return;
+        }
+
         try {
             setEmail(data.identity);
             setPassword(data.password);
@@ -52,6 +61,7 @@ export function LoginFormEmail() {
             const { data: resData } = await backend.post("/api/v1/auth/login", {
                 identity: data.identity,
                 password: data.password,
+                turnstileToken,
             });
 
             if (handleResponse(resData)) {
@@ -66,6 +76,9 @@ export function LoginFormEmail() {
             }
         } catch (error: unknown) {
             toastError(error);
+        } finally {
+            setTurnstileToken("");
+            setTurnstileWidgetKey((prev) => prev + 1);
         }
     };
 
@@ -135,12 +148,13 @@ export function LoginFormEmail() {
                 </Field>
             </FieldGroup>
             <div className="space-y-4">
+                <AuthTurnstile key={turnstileWidgetKey} onTokenChange={setTurnstileToken} />
                 <Button
                     type="submit"
                     className="w-full"
                     size="lg"
                     loading={isSubmitting}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !turnstileToken}
                 >
                     Login to my account
                 </Button>

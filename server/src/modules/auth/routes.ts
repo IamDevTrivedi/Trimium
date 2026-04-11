@@ -2,6 +2,7 @@ import { Router } from "express";
 import { controllers } from "@modules/auth/controllers";
 import { protectRoute } from "@/middlewares/protectRoute";
 import { createRateLimiter } from "@/middlewares/rateLimiter";
+import { verifyTurnstileToken } from "@/middlewares/verifyTurnstile";
 
 const router = Router();
 
@@ -29,11 +30,21 @@ const usernameCheckLimiter = createRateLimiter({
     prefix: "rl:auth:username",
 });
 
-router.post("/send-otp-for-create-account", otpLimiter, controllers.sendOTPForCreateAccount);
+router.post(
+    "/send-otp-for-create-account",
+    otpLimiter,
+    verifyTurnstileToken,
+    controllers.sendOTPForCreateAccount
+);
 router.post("/verify-otp-for-create-account", otpLimiter, controllers.verifyOTPForCreateAccount);
 router.post("/create-account", otpLimiter, controllers.createAccount);
 
-router.post("/reset-password/send-otp", otpLimiter, controllers.sendOTPForResetPassword);
+router.post(
+    "/reset-password/send-otp",
+    otpLimiter,
+    verifyTurnstileToken,
+    controllers.sendOTPForResetPassword
+);
 router.post("/reset-password/verify-otp", otpLimiter, controllers.verifyOTPForResetPassword);
 router.post(
     "/reset-password/set-new-password",
@@ -41,7 +52,7 @@ router.post(
     controllers.setNewPasswordForResetPassword
 );
 
-router.post("/login", loginLimiter, controllers.login);
+router.post("/login", loginLimiter, verifyTurnstileToken, controllers.login);
 
 router.post("/logout-my-device", protectRoute, authGeneralLimiter, controllers.logoutMyDevice);
 router.post(

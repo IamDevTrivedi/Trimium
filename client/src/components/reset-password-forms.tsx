@@ -17,10 +17,13 @@ import { useRouter } from "next/navigation";
 import { toastError } from "@/lib/toast-error";
 import { useUserStore } from "@/store/user-store";
 import { Toast } from "./toast";
+import { AuthTurnstile } from "./auth-turnstile";
 
 export function ResetPasswordEmail() {
     const { setIdentity, reset } = useResetPasswordStore();
     const { user } = useUserStore();
+    const [turnstileToken, setTurnstileToken] = React.useState("");
+    const [turnstileWidgetKey, setTurnstileWidgetKey] = React.useState(0);
 
     const router = useRouter();
 
@@ -52,11 +55,17 @@ export function ResetPasswordEmail() {
     }, [user, router]);
 
     const onSubmit = async (data: z.infer<typeof schema>) => {
+        if (!turnstileToken) {
+            Toast.error("Please complete the security challenge before continuing.");
+            return;
+        }
+
         try {
             setIdentity(data.identity);
 
             const { data: resData } = await backend.post("/api/v1/auth/reset-password/send-otp", {
                 identity: data.identity,
+                turnstileToken,
             });
 
             if (handleResponse(resData)) {
@@ -64,6 +73,9 @@ export function ResetPasswordEmail() {
             }
         } catch (error: unknown) {
             toastError(error);
+        } finally {
+            setTurnstileToken("");
+            setTurnstileWidgetKey((prev) => prev + 1);
         }
     };
 
@@ -100,11 +112,13 @@ export function ResetPasswordEmail() {
                 </Field>
             </FieldGroup>
 
+            <AuthTurnstile key={turnstileWidgetKey} onTokenChange={setTurnstileToken} />
+
             <Button
                 type="submit"
                 className="w-full"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
                 loading={isSubmitting}
             >
                 Send Verification Code

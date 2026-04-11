@@ -91,6 +91,7 @@ Create both files using `server/.env.example`, then set environment-specific val
 | `SENDER_EMAIL` | Yes | Email sender address | Verified sender email in your email provider/Brevo |
 | `BREVO_API_KEY` | Yes | Brevo API key for email delivery | Brevo SMTP/API settings |
 | `JWT_KEY` | Yes | JWT signing secret (minimum 32 chars) | Generate securely (`openssl rand -hex 32`) |
+| `TURNSTILE_SECRET_KEY` | Yes | Cloudflare Turnstile secret key for server-side challenge verification | Cloudflare dashboard > Turnstile widget settings |
 | `PoW_SECRET` | Yes | Proof-of-Work secret (minimum 32 chars) | Generate securely (`openssl rand -hex 32`) |
 | `PoW_DIFFICULTY` | Yes | Proof-of-Work difficulty (1 to 6) | Application setting (recommended `3` for dev) |
 | `CLOUDINARY_CLOUD_NAME` | Yes | Cloudinary cloud identifier | Cloudinary dashboard |
@@ -110,6 +111,7 @@ Use `client/.env.example` as reference.
 | `NEXT_PUBLIC_BACKEND_URL_PROD` | Yes | Prod API URL used by client in production | Deployed backend URL |
 | `NEXT_PUBLIC_FRONTEND_URL_DEV` | Yes | Dev frontend URL | Local frontend URL |
 | `NEXT_PUBLIC_FRONTEND_URL_PROD` | Yes | Prod frontend URL | Deployed frontend URL |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Yes | Cloudflare Turnstile site key used by browser challenge widget | Cloudflare dashboard > Turnstile widget settings |
 
 ### 3.5 Recommended Setup Steps
 

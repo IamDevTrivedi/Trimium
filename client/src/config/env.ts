@@ -17,6 +17,8 @@ const config = {
         process.env.NODE_ENV === "production"
             ? (process.env.NEXT_PUBLIC_FRONTEND_URL_PROD as string)
             : (process.env.NEXT_PUBLIC_FRONTEND_URL_DEV as string),
+
+    PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY as string,
 } as const;
 
 export default config;

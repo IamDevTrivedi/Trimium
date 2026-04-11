@@ -17,10 +17,13 @@ import { useRouter } from "next/navigation";
 import { toastError } from "@/lib/toast-error";
 import { handleResponse } from "@/lib/handle-response";
 import { useUserStore } from "@/store/user-store";
+import { AuthTurnstile } from "./auth-turnstile";
 
 export function CreateAccountEmail() {
     const { setEmail, reset } = useCreateAccountStore();
     const { user } = useUserStore();
+    const [turnstileToken, setTurnstileToken] = React.useState("");
+    const [turnstileWidgetKey, setTurnstileWidgetKey] = React.useState(0);
 
     const router = useRouter();
 
@@ -41,12 +44,18 @@ export function CreateAccountEmail() {
     });
 
     const onSubmit = async (data: z.infer<typeof schema>) => {
+        if (!turnstileToken) {
+            Toast.error("Please complete the security challenge before continuing.");
+            return;
+        }
+
         try {
             setEmail(data.email);
             const { data: resData } = await backend.post(
                 "/api/v1/auth/send-otp-for-create-account",
                 {
                     email: data.email,
+                    turnstileToken,
                 }
             );
             if (handleResponse(resData)) {
@@ -55,6 +64,9 @@ export function CreateAccountEmail() {
             return;
         } catch (error: unknown) {
             toastError(error);
+        } finally {
+            setTurnstileToken("");
+            setTurnstileWidgetKey((prev) => prev + 1);
         }
     };
 
@@ -99,11 +111,13 @@ export function CreateAccountEmail() {
                 </Field>
             </FieldGroup>
 
+            <AuthTurnstile key={turnstileWidgetKey} onTokenChange={setTurnstileToken} />
+
             <Button
                 type="submit"
                 className="w-full"
                 size="lg"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !turnstileToken}
                 loading={isSubmitting}
             >
                 Continue with Email

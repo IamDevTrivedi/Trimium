@@ -55,6 +55,7 @@ export const config = {
     BREVO_API_KEY: process.env.BREVO_API_KEY as string,
 
     JWT_KEY: process.env.JWT_KEY as string,
+    TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY as string,
 
     PoW_SECRET: process.env.PoW_SECRET as string,
     PoW_DIFFICULTY: Number(process.env.PoW_DIFFICULTY),
