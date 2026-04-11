@@ -56,8 +56,7 @@ export const verifyTurnstileToken = async (req: Request, res: Response, next: Ne
             });
         }
 
-        const verification =
-            (await turnstileResponse.json()) as TurnstileVerificationResponse;
+        const verification = (await turnstileResponse.json()) as TurnstileVerificationResponse;
 
         if (!verification.success) {
             return sendResponse(res, {
