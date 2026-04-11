@@ -67,7 +67,6 @@ export function LoginFormEmail() {
             if (handleResponse(resData)) {
                 setUser(resData.data);
                 const flow = searchParams.get("flow");
-                console.log(flow);
                 if (flow === "email-logout") {
                     router.replace("/account/login-activity");
                 } else {
