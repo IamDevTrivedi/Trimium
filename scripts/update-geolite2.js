@@ -62,12 +62,12 @@ function downloadFile(url, destination) {
                 });
             })
             .on("error", (err) => {
-                fs.unlink(destination, () => { });
+                fs.unlink(destination, () => {});
                 reject(err);
             });
 
         file.on("error", (err) => {
-            fs.unlink(destination, () => { });
+            fs.unlink(destination, () => {});
             reject(err);
         });
     });
