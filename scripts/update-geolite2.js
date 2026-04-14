@@ -24,7 +24,7 @@ const TEMP_FILE = path.join(TEMP_DIR, "GeoLite2-City.tar.gz");
 const TARGET_DIR = path.join(__dirname, "..", "server", "src", "constants");
 const TARGET_FILE = path.join(TARGET_DIR, "GeoLite2-City.mmdb");
 
-const BUILD_TARGET_DIR = path.join(__dirname, "..", "server", "build", "constants");
+const BUILD_TARGET_DIR = path.join(__dirname, "..", "server", "dist", "constants");
 const BUILD_TARGET_FILE = path.join(BUILD_TARGET_DIR, "GeoLite2-City.mmdb");
 
 function downloadFile(url, destination) {
@@ -62,12 +62,12 @@ function downloadFile(url, destination) {
                 });
             })
             .on("error", (err) => {
-                fs.unlink(destination, () => {});
+                fs.unlink(destination, () => { });
                 reject(err);
             });
 
         file.on("error", (err) => {
-            fs.unlink(destination, () => {});
+            fs.unlink(destination, () => { });
             reject(err);
         });
     });
