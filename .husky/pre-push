@@ -1,4 +1,10 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+printf '%s\n' '[husky][pre-push] Starting quality checks...'
+printf '%s\n' '[husky][pre-push] Running: pnpm check'
 
-pnpm check
+if pnpm check; then
+	printf '%s\n' '[husky][pre-push] All checks passed. Push allowed.'
+else
+	status=$?
+	printf '%s\n' "[husky][pre-push] Checks failed (exit code: $status). Push blocked."
+	exit "$status"
+fi
