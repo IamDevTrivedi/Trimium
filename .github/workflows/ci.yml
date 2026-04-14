@@ -124,7 +124,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            source ~/.nvm/nvm.sh        
+            source ~/.nvm/nvm.sh
 
             echo "Pulling latest code..." 
             cd /home/${{ secrets.EC2_USER }}/my-projects/Trimium
@@ -139,13 +139,13 @@ jobs:
 
             echo "Building server..."
             NODE_OPTIONS="--max-old-space-size=1024" pnpm run build
-            
+
             echo "Downloading GeoIP database"
             cd ..
             pnpm run download:geoip
 
             CURRENT_HASH=$(git rev-parse HEAD)
-            cd ./server/release/
+            cd ./server/releases/
             PREVIOUS_HASH=$(find . -mindepth 1 -maxdepth 1 -type d -printf '%T@ %f\n' | sort -nr | head -n 1 | cut -d' ' -f2)
 
             NEW_RELEASE_DIR="$(pwd)/$CURRENT_HASH"
@@ -168,12 +168,13 @@ jobs:
             HEALTH_CHECK_PASSED=false
 
             for i in {1..10}; do
-              if curl -s "$HEALTH_ENDPOINT" | grep -q "OK"; then
-                HEALTH_CHECK_PASSED=true
-                break
-              fi
-              echo "Health check failed. Retrying in 5 seconds..."
-              sleep 5
+                status_code=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_ENDPOINT")
+                if [ "$status_code" -eq 200 ]; then
+                    HEALTH_CHECK_PASSED=true
+                    break
+                fi
+                echo "Health check failed (status: $status_code). Retrying in 5 seconds..."
+                sleep 5
             done
 
 
