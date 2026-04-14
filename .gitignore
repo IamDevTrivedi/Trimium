@@ -67,6 +67,6 @@ Thumbs.db
 *.mmdb.*
 
 # Release Folder, Current release folder and shared folder for releases
-release/
+releases/
 current-release/
 shared/
