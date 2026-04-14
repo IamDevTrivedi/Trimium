@@ -26,7 +26,7 @@ export const logger = pino(
                 target: "pino/file",
                 level: "info",
                 options: {
-                    destination: path.join(logDir, `app-${config.NODE_ENV}.log`),
+                    destination: path.join(logDir, `app.log`),
                     mkdir: true,
                 },
             },
@@ -35,7 +35,7 @@ export const logger = pino(
                 target: "pino/file",
                 level: "error",
                 options: {
-                    destination: path.join(logDir, `error-${config.NODE_ENV}.log`),
+                    destination: path.join(logDir, `error.log`),
                     mkdir: true,
                 },
             },
