@@ -2,10 +2,10 @@
     "name": "trimium-server",
     "version": "0.1.0",
     "description": "Express and TypeScript backend for Trimium authentication, URL routing, analytics, and team workspaces.",
-    "main": "index.js",
+    "main": "dist/index.js",
     "scripts": {
         "build": "tsc && tsc-alias",
-        "start": "cross-env NODE_ENV=production node build/index.js",
+        "start": "cross-env NODE_ENV=production node dist/index.js",
         "dev": "cross-env NODE_ENV=development tsx watch --clear-screen=true src src/index.ts"
     },
     "keywords": [],
