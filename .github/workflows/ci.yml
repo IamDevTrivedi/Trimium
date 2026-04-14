@@ -124,16 +124,66 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            source ~/.nvm/nvm.sh            
+            source ~/.nvm/nvm.sh        
+
+            echo "Pulling latest code..." 
             cd /home/${{ secrets.EC2_USER }}/my-projects/Trimium
             git pull origin main
+
+            echo "Installing dependencies at root level"
             pnpm install --frozen-lockfile
+
+            echo "Installing dependencies at server level..."
             cd server 
             pnpm install --frozen-lockfile
+
+            echo "Building server..."
             NODE_OPTIONS="--max-old-space-size=1024" pnpm run build
+            
+            echo "Downloading GeoIP database"
             cd ..
             pnpm run download:geoip
+
+            CURRENT_HASH=$(git rev-parse HEAD)
+            cd ./server/release/
+            PREVIOUS_HASH=$(find . -mindepth 1 -maxdepth 1 -type d -printf '%T@ %f\n' | sort -nr | head -n 1 | cut -d' ' -f2)
+
+            NEW_RELEASE_DIR="$(pwd)/$CURRENT_HASH"
+            PREVIOUS_RELEASE_DIR="$(pwd)/$PREVIOUS_HASH"
+            mkdir -p "$NEW_RELEASE_DIR"
+            cd ..
+            cp -r ./dist "$NEW_RELEASE_DIR/"
+            rm -rf dist
+
+            ln -sfn "$(pwd)/shared/.env.production" "$NEW_RELEASE_DIR"
+            ln -sfn "$(pwd)/shared/logs" "$NEW_RELEASE_DIR"
+
+            ln -sfn "$NEW_RELEASE_DIR" "$(pwd)/current"
+
             pm2 restart trimium-server
-            pm2 save
             pm2 status trimium-server | grep -q "online"
-            echo "Deployment completed."
+
+            HEALTH_ENDPOINT="http://localhost:5000/api/v1/health"
+
+            HEALTH_CHECK_PASSED=false
+
+            for i in {1..10}; do
+              if curl -s "$HEALTH_ENDPOINT" | grep -q "OK"; then
+                HEALTH_CHECK_PASSED=true
+                break
+              fi
+              echo "Health check failed. Retrying in 5 seconds..."
+              sleep 5
+            done
+
+
+            if [ "$HEALTH_CHECK_PASSED" = true ]; then
+              echo "Deployment successful and server is healthy."
+              exit 0
+            fi
+
+            ln -sfn "$PREVIOUS_RELEASE_DIR" "$(pwd)/current"
+            pm2 restart trimium-server
+
+            echo "Deployment failed. Rolled back to previous release."
+            exit 1
