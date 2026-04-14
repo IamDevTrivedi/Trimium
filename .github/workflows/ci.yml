@@ -124,81 +124,124 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
+            #!/bin/bash
+            # Exit immediately if a command exits with non-zero status
+            set -e  
+
+            # Helper function for timestamped logging
+            log() {
+                echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
+            }
+
+            # Load nvm
             source ~/.nvm/nvm.sh
 
-            echo "Pulling latest code..." 
+            log "Pulling latest code..."
             cd /home/${{ secrets.EC2_USER }}/my-projects/Trimium
-            git pull origin main
 
-            echo "Installing dependencies at root level"
+            # Ensure git pull succeeds
+            if ! git pull origin main; then
+                log "ERROR: git pull failed. Aborting deployment."
+                exit 1
+            fi
+
+            log "Installing dependencies at root level"
             pnpm install --frozen-lockfile
 
-            echo "Installing dependencies at server level..."
+            log "Installing dependencies at server level..."
             cd server 
             pnpm install --frozen-lockfile
 
-            echo "Building server..."
+            log "Building server..."
             NODE_OPTIONS="--max-old-space-size=1024" pnpm run build
 
-            echo "Downloading GeoIP database"
+            log "Downloading GeoIP database"
             cd ..
             pnpm run download:geoip
 
             CURRENT_HASH=$(git rev-parse HEAD)
             cd ./server/releases/
+
+            # Find the most recent release directory (excluding current symlink if present)
             PREVIOUS_HASH=$(find . -mindepth 1 -maxdepth 1 -type d -printf '%T@ %f\n' | sort -nr | head -n 1 | cut -d' ' -f2)
 
-            NEW_RELEASE_DIR="$(pwd)/$CURRENT_HASH"
-            PREVIOUS_RELEASE_DIR="$(pwd)/$PREVIOUS_HASH"
-            mkdir -p "$NEW_RELEASE_DIR"
+            # Go back to server directory for release setup
             cd ..
+
+            NEW_RELEASE_DIR="$(pwd)/releases/$CURRENT_HASH"
+            mkdir -p "$NEW_RELEASE_DIR"
+
             cp -r ./dist "$NEW_RELEASE_DIR/"
             rm -rf dist
 
+            # Symlink shared resources into the new release
             ln -sfn "$(pwd)/shared/.env.production" "$NEW_RELEASE_DIR"
             ln -sfn "$(pwd)/shared/logs" "$NEW_RELEASE_DIR"
 
+            # Update 'current' symlink to point to the new release
             ln -sfn "$NEW_RELEASE_DIR" "$(pwd)/current"
 
-            pm2 restart trimium-server
-            pm2 status trimium-server | grep -q "online"
+            log "Reloading PM2 application with zero-downtime..."
+            pm2 reload trimium-server
+
+            log "Waiting 3 seconds for application to stabilize..."
+            sleep 3
 
             HEALTH_ENDPOINT="http://localhost:5000/api/v1/health"
-
             HEALTH_CHECK_PASSED=false
 
+            log "Starting health check for up to 10 attempts..."
             for i in {1..10}; do
-                status_code=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_ENDPOINT")
+                # Use timeout to avoid hanging curl
+                status_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_ENDPOINT")
                 if [ "$status_code" -eq 200 ]; then
                     HEALTH_CHECK_PASSED=true
+                    log "Health check passed (attempt $i)."
                     break
                 fi
-                echo "Health check failed (status: $status_code). Retrying in 5 seconds..."
+                log "Health check failed (status: $status_code). Retrying in 5 seconds... (attempt $i/10)"
                 sleep 5
             done
 
-
             if [ "$HEALTH_CHECK_PASSED" = true ]; then
-              pm2 list
-              echo "Deployment successful and server is healthy."
+                log "Deployment successful and server is healthy."
 
-              echo "Cleaning up old releases, keeping the 5 most recent..."
-              cd ./releases
+                # Cleanup: keep only the 5 most recent releases
+                log "Cleaning up old releases, keeping the 5 most recent..."
+                cd ./releases
+                find . -mindepth 1 -maxdepth 1 -type d -printf '%T@ %f\n' | \
+                    sort -nr | \
+                    tail -n +6 | \
+                    cut -d' ' -f2- | \
+                    while read dir; do
+                        log "Removing old release: $dir"
+                        rm -rf "$dir"
+                    done
+                cd ..
 
-              find . -mindepth 1 -maxdepth 1 -type d -printf '%T@ %f\n' | \
-                  sort -nr | \
-                  tail -n +6 | \
-                  cut -d' ' -f2- | \
-                  while read dir; do
-                      echo "Removing old release: $dir"
-                      rm -rf "$dir"
-                  done
-              exit 0
+                pm2 list
+                exit 0
             fi
 
-            ln -sfn "$PREVIOUS_RELEASE_DIR" "$(pwd)/current"
-            pm2 restart trimium-server
-            rm -rf "$NEW_RELEASE_DIR"
+            # --- Rollback procedure ---
+            log "Health check failed. Rolling back..."
 
-            echo "Deployment failed. Rolled back to previous release."
+            # Only rollback if we have a valid previous release
+            if [ -n "$PREVIOUS_HASH" ] && [ -d "$(pwd)/releases/$PREVIOUS_HASH" ]; then
+                PREVIOUS_RELEASE_DIR="$(pwd)/releases/$PREVIOUS_HASH"
+                log "Rolling back to previous release: $PREVIOUS_HASH"
+                ln -sfn "$PREVIOUS_RELEASE_DIR" "$(pwd)/current"
+                pm2 reload trimium-server
+                log "Rollback completed. Previous release restored."
+            else
+                log "ERROR: No previous release available for rollback. Manual intervention required."
+            fi
+
+            # Remove the failed new release directory
+            if [ -d "$NEW_RELEASE_DIR" ]; then
+                rm -rf "$NEW_RELEASE_DIR"
+                log "Removed failed release directory: $NEW_RELEASE_DIR"
+            fi
+
+            log "Deployment failed."
             exit 1
