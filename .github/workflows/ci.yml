@@ -181,6 +181,18 @@ jobs:
             if [ "$HEALTH_CHECK_PASSED" = true ]; then
               pm2 list
               echo "Deployment successful and server is healthy."
+
+              echo "Cleaning up old releases, keeping the 5 most recent..."
+              cd ./releases
+
+              find . -mindepth 1 -maxdepth 1 -type d -printf '%T@ %f\n' | \
+                  sort -nr | \
+                  tail -n +6 | \
+                  cut -d' ' -f2- | \
+                  while read dir; do
+                      echo "Removing old release: $dir"
+                      rm -rf "$dir"
+                  done
               exit 0
             fi
 
