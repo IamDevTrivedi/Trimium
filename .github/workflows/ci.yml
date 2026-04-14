@@ -186,6 +186,7 @@ jobs:
 
             ln -sfn "$PREVIOUS_RELEASE_DIR" "$(pwd)/current"
             pm2 restart trimium-server
+            rm -rf "$NEW_RELEASE_DIR"
 
             echo "Deployment failed. Rolled back to previous release."
             exit 1
