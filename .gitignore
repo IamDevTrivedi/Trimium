@@ -65,3 +65,8 @@ Thumbs.db
 # .mmdb file: this is a large binary file used for geolocation
 *.mmdb
 *.mmdb.*
+
+# Release Folder, Current release folder and shared folder for releases
+release/
+current-release/
+shared/
