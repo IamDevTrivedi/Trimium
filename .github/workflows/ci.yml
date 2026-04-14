@@ -191,6 +191,8 @@ jobs:
             HEALTH_CHECK_PASSED=false
 
             log "Starting health check for up to 10 attempts..."
+
+            set +e # Allow health check to fail without exiting the script
             for i in {1..10}; do
                 # Use timeout to avoid hanging curl
                 status_code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_ENDPOINT")
@@ -202,6 +204,8 @@ jobs:
                 log "Health check failed (status: $status_code). Retrying in 5 seconds... (attempt $i/10)"
                 sleep 5
             done
+
+            set -e # Re-enable exit on error
 
             if [ "$HEALTH_CHECK_PASSED" = true ]; then
                 log "Deployment successful and server is healthy."
