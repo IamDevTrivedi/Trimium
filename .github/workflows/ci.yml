@@ -179,6 +179,7 @@ jobs:
 
 
             if [ "$HEALTH_CHECK_PASSED" = true ]; then
+              pm2 list
               echo "Deployment successful and server is healthy."
               exit 0
             fi

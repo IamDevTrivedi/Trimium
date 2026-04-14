@@ -81,7 +81,7 @@ const init = async () => {
 
     app.listen(config.PORT, () => {
         logger.info(`Envrionment: ${config.NODE_ENV}`);
-        logger.info(`Server is running on ${config.BACKEND_URL} - TESTING`);
+        logger.info(`Server is running on ${config.BACKEND_URL}`);
     });
 };
 

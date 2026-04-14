@@ -3,7 +3,6 @@ import path from "path";
 import { config } from "@config/env";
 
 const logDir = path.join(process.cwd(), "logs");
-console.log(`Logging directory: ${logDir}`);
 const isProd = config.isProduction;
 
 export const logger = pino(
@@ -27,7 +26,7 @@ export const logger = pino(
                 target: "pino/file",
                 level: "info",
                 options: {
-                    destination: path.join(logDir, `app.log`),
+                    destination: path.join(logDir, `app-${config.NODE_ENV}.log`),
                     mkdir: true,
                 },
             },
@@ -36,7 +35,7 @@ export const logger = pino(
                 target: "pino/file",
                 level: "error",
                 options: {
-                    destination: path.join(logDir, `error.log`),
+                    destination: path.join(logDir, `error-${config.NODE_ENV}.log`),
                     mkdir: true,
                 },
             },
