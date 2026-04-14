@@ -3,6 +3,7 @@ import path from "path";
 import { config } from "@config/env";
 
 const logDir = path.join(process.cwd(), "logs");
+console.log(`Logging directory: ${logDir}`);
 const isProd = config.isProduction;
 
 export const logger = pino(
