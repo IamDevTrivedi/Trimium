@@ -6,7 +6,8 @@
     "scripts": {
         "build": "tsc && tsc-alias",
         "start": "cross-env NODE_ENV=production node dist/index.js",
-        "dev": "cross-env NODE_ENV=development tsx watch --clear-screen=true src src/index.ts"
+        "dev": "cross-env NODE_ENV=development tsx watch --clear-screen=true src src/index.ts",
+        "preview": "pnpm run build && pnpm start"
     },
     "keywords": [],
     "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",

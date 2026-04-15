@@ -1,6 +1,9 @@
 import pinoHttp from "pino-http";
 import { logger } from "@utils/logger";
 
+const getRequestUrl = (req: { originalUrl?: string; url?: string }) =>
+    req.originalUrl ?? req.url ?? "/";
+
 export const httpLoggerMiddleware = pinoHttp({
     logger,
 
@@ -23,8 +26,8 @@ export const httpLoggerMiddleware = pinoHttp({
         return "info";
     },
 
-    customSuccessMessage: (req, res) => `${req.method} ${req.url} ${res.statusCode}`,
+    customSuccessMessage: (req, res) => `${req.method} ${getRequestUrl(req)} ${res.statusCode}`,
 
     customErrorMessage: (req, res, err) =>
-        `${req.method} ${req.url} ${res.statusCode} - ${err.message}`,
+        `${req.method} ${getRequestUrl(req)} ${res.statusCode} - ${err.message}`,
 });
