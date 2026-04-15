@@ -6,8 +6,6 @@ export const controller = {
     index: (req: Request, res: Response) => {
         const memoryUsage = process.memoryUsage();
 
-        throw new Error("Intentional Error for testing");
-
         return sendResponse(res, {
             message: "Server is healthy",
             data: {
