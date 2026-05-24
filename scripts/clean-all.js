@@ -8,7 +8,7 @@ const itemsToDelete = [
     { path: "./server/node_modules", type: "dir" },
     { path: "./client/node_modules", type: "dir" },
 
-    { path: "./server/build", type: "dir" },
+    { path: "./server/dist", type: "dir" },
     { path: "./client/build", type: "dir" },
     { path: "./client/.next", type: "dir" },
 ];
