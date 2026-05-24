@@ -6,8 +6,15 @@ on:
       - main
 
 jobs:
+  gate:
+    runs-on: ubuntu-latest
+    if: vars.SKIP_ACTIONS != 'true'
+    steps:
+      - run: echo "Gate passed — proceeding with CI/CD"
+
   lint:
     runs-on: ubuntu-latest
+    needs: [gate] 
 
     steps:
       - name: Checkout repository
@@ -30,6 +37,7 @@ jobs:
 
   prettier:
     runs-on: ubuntu-latest
+    needs: [gate]
 
     steps:
       - name: Checkout repository
