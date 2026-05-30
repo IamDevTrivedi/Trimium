@@ -133,6 +133,11 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           envs: PROJECT_DIR,SERVER_DIR,RELEASES_DIR,SHARED_DIR,CURRENT_DIR,HEALTH_CHECK_URL,HEALTH_RETRY_COUNT,HEALTH_RETRY_INTERVAL,PM2_APP_NAME,MAX_RELEASES_TO_KEEP
           script: |
+            
+            # ── Setup environment ─────────────────────────────────────
+            source ~/.bashrc
+            source ~/.nvm/nvm.sh
+
             # ── Constants ────────────────────────────────────────────
             PROJECT_DIR="/projects/Trimium"
             SERVER_DIR="$PROJECT_DIR/server"
