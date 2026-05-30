@@ -12,6 +12,7 @@ export default defineConfig([
             "**/.next/**",
             "**/dist/**",
             "**/logs/**",
+            "**/.agents/**",
         ],
     },
     {
