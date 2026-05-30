@@ -201,11 +201,8 @@ jobs:
             mv "$SERVER_DIR/dist" "$RELEASE_DIR/dist"
 
             # Symlink everything from shared into release
-            for item in "$SHARED_DIR"/*; do
-              item_name=$(basename "$item")
-              ln -sfn "$item" "$RELEASE_DIR/$item_name"
-              log "  Linked: $item_name"
-            done
+            ln -sfn "$SHARED_DIR/logs" "$RELEASE_DIR/logs"
+            ln -sfn "$SHARED_DIR/.env.production" "$RELEASE_DIR/.env.production"
 
             # ── Go live ───────────────────────────────────────────────
             log "Pointing current to new release..."
