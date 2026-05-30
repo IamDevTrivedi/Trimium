@@ -2,9 +2,84 @@
 
 ```
 .
+├── .agents
+│   └── skills
+│       ├── architecture-blueprint-generator
+│       │   └── SKILL.md
+│       ├── brainstorming
+│       │   ├── scripts
+│       │   │   ├── frame-template.html
+│       │   │   ├── helper.js
+│       │   │   ├── server.cjs
+│       │   │   ├── start-server.sh
+│       │   │   └── stop-server.sh
+│       │   ├── SKILL.md
+│       │   ├── spec-document-reviewer-prompt.md
+│       │   └── visual-companion.md
+│       ├── create-readme
+│       │   └── SKILL.md
+│       ├── documentation-writer
+│       │   └── SKILL.md
+│       ├── shadcn
+│       │   ├── agents
+│       │   │   └── openai.yml
+│       │   ├── assets
+│       │   │   ├── shadcn.png
+│       │   │   └── shadcn-small.png
+│       │   ├── cli.md
+│       │   ├── customization.md
+│       │   ├── evals
+│       │   │   └── evals.json
+│       │   ├── mcp.md
+│       │   ├── rules
+│       │   │   ├── base-vs-radix.md
+│       │   │   ├── composition.md
+│       │   │   ├── forms.md
+│       │   │   ├── icons.md
+│       │   │   └── styling.md
+│       │   └── SKILL.md
+│       └── ui-ux-pro-max
+│           ├── data
+│           │   ├── charts.csv
+│           │   ├── colors.csv
+│           │   ├── icons.csv
+│           │   ├── landing.csv
+│           │   ├── products.csv
+│           │   ├── react-performance.csv
+│           │   ├── stacks
+│           │   │   ├── astro.csv
+│           │   │   ├── flutter.csv
+│           │   │   ├── html-tailwind.csv
+│           │   │   ├── jetpack-compose.csv
+│           │   │   ├── nextjs.csv
+│           │   │   ├── nuxtjs.csv
+│           │   │   ├── nuxt-ui.csv
+│           │   │   ├── react.csv
+│           │   │   ├── react-native.csv
+│           │   │   ├── shadcn.csv
+│           │   │   ├── svelte.csv
+│           │   │   ├── swiftui.csv
+│           │   │   └── vue.csv
+│           │   ├── styles.csv
+│           │   ├── typography.csv
+│           │   ├── ui-reasoning.csv
+│           │   ├── ux-guidelines.csv
+│           │   └── web-interface.csv
+│           ├── scripts
+│           │   ├── core.py
+│           │   ├── design_system.py
+│           │   ├── __pycache__
+│           │   │   ├── core.cpython-314.pyc
+│           │   │   ├── design_system.cpython-314.pyc
+│           │   │   └── search.cpython-314.pyc
+│           │   └── search.py
+│           └── SKILL.md
 ├── client
 │   ├── components.json
+│   ├── .env
+│   ├── .env.example
 │   ├── next.config.ts
+│   ├── next-env.d.ts
 │   ├── package.json
 │   ├── pnpm-lock.yaml
 │   ├── postcss.config.mjs
@@ -216,7 +291,8 @@
 │   │       ├── login-store.ts
 │   │       ├── reset-password-store.ts
 │   │       └── user-store.ts
-│   └── tsconfig.json
+│   ├── tsconfig.json
+│   └── tsconfig.tsbuildinfo
 ├── docs
 │   ├── architecture
 │   │   ├── AUTHENTICATION_AND_SESSION_MANAGEMENT_ARCHITECTURE.md
@@ -224,10 +300,39 @@
 │   │   └── RATE_LIMITER_ARCHITECTURE.md
 │   ├── DIRECTORY_STRUCTURE.md
 │   └── SETUP.md
+├── .editorconfig
+├── .env
 ├── eslint.config.ts
+├── .github
+│   ├── dependabot.yml
+│   └── workflows
+│       └── ci.yml
+├── .gitignore
+├── .husky
+│   ├── _
+│   │   ├── applypatch-msg
+│   │   ├── commit-msg
+│   │   ├── .gitignore
+│   │   ├── h
+│   │   ├── husky.sh
+│   │   ├── post-applypatch
+│   │   ├── post-checkout
+│   │   ├── post-commit
+│   │   ├── post-merge
+│   │   ├── post-rewrite
+│   │   ├── pre-applypatch
+│   │   ├── pre-auto-gc
+│   │   ├── pre-commit
+│   │   ├── pre-merge-commit
+│   │   ├── prepare-commit-msg
+│   │   ├── pre-push
+│   │   └── pre-rebase
+│   └── pre-push
 ├── LICENSE
 ├── package.json
 ├── pnpm-lock.yaml
+├── .prettierignore
+├── .prettierrc
 ├── public
 │   └── preview.png
 ├── README.md
@@ -237,6 +342,12 @@
 │   ├── reset-all.js
 │   └── update-geolite2.js
 ├── server
+│   ├── .env.development
+│   ├── .env.example
+│   ├── .env.production
+│   ├── logs
+│   │   ├── app-development.log
+│   │   └── error-development.log
 │   ├── package.json
 │   ├── pnpm-lock.yaml
 │   ├── src
@@ -248,6 +359,8 @@
 │   │   │   └── mailer.ts
 │   │   ├── constants
 │   │   │   ├── app.ts
+│   │   │   ├── GeoLite2-City.mmdb
+│   │   │   ├── GeoLite2-City.mmdb.backup
 │   │   │   ├── regex.ts
 │   │   │   └── tags.ts
 │   │   ├── db
@@ -318,87 +431,11 @@
 │   │       ├── sendResponse.ts
 │   │       └── tags.ts
 │   └── tsconfig.json
-└── skills-lock.json
+├── skills-lock.json
+├── .vercel
+│   ├── project.json
+│   └── README.txt
+└── .vercelignore
 
-73 directories, 246 files
+96 directories, 339 files
 ```
-
-## Overview
-
-This document outlines the directory structure of the Trimium project, a full-stack URL shortener application built with Next.js (client) and Node.js/Express (server).
-
-## Root Level
-
-- **docs/**: Project documentation
-- **client/**: Frontend Next.js application
-- **server/**: Backend Node.js/Express API
-- **scripts/**: Utility scripts for project management
-- **.husky/**: Git hooks (pre-push quality gate)
-- **package.json**: Root workspace scripts (`lint`, `format:check`, `check`, `prepare`)
-
-## Local Environment Files
-
-These files are local-only and ignored by Git:
-
-- **`./.env`**: Root script variables (currently `MAXMIND_LICENSE_KEY` for GeoLite auto-download)
-- **`server/.env.development`**: Backend development environment variables
-- **`server/.env.production`**: Backend production environment variables
-- **`client/.env`**: Frontend public environment variables (`NEXT_PUBLIC_*`)
-
-For complete variable-by-variable guidance, see `docs/SETUP.md`.
-
-## Git Hooks & Quality Gate
-
-- **Hook file**: `.husky/pre-push`
-- **Command run before push**: `pnpm run check`
-- **Current check pipeline**: `pnpm run lint && pnpm run format:check`
-- **Behavior**: Push is blocked locally if linting or format checks fail
-
-## Client Structure
-
-### App Directory (`client/src/app`)
-
-The client uses Next.js 13+ App Router with route groups:
-
-- **(accounts)**: User account management pages
-- **(auth)**: Authentication flows (login, signup, password reset)
-- **(legal)**: Legal pages (privacy policy, terms of service, about)
-- **(redirecting)**: Short URL redirect handler
-- **(tools)**: Utility tools like QR code generator
-- **(workspaces)**: Main workspace and URL management interface
-
-### Components (`client/src/components`)
-
-Reusable React components including:
-- Form components for authentication and URL creation
-- UI components library (shadcn/ui based)
-- Custom components for workspace and analytics display
-
-### Configuration & State
-
-- **config/**: Backend API and environment configuration
-- **constants/**: Shared constants like regex patterns and tags
-- **hooks/**: Custom React hooks
-- **lib/**: Utility functions and helpers
-- **store/**: Zustand state management stores
-
-## Server Structure
-
-### Core (`server/src`)
-
-- **config/**: Environment variables and email configuration
-- **db/**: Database connection handlers (MongoDB, Redis)
-- **middlewares/**: Express middlewares for authentication, rate limiting, logging
-- **models/**: MongoDB/Mongoose data models
-- **modules/**: Feature-based module organization with controllers and routes
-- **utils/**: Server-side utility functions
-
-### Modules
-
-Each module contains its own controllers and routes:
-- **auth**: User authentication
-- **contact**: Contact form submissions
-- **health**: Health check endpoints
-- **url**: URL shortening and management
-- **user**: User profile management
-- **workspace**: Workspace operations and team collaboration
