@@ -1,115 +1,131 @@
-# Trimium
+<div align="center">
+  <img src="./client/public/favicon.png" alt="Trimium" height="64" />
 
-[![Live](https://img.shields.io/badge/Live-trimium.vercel.app-brightgreen?style=for-the-badge)](https://trimium.vercel.app/)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-IamDevTrivedi%2FTrimium-181717?style=for-the-badge&logo=github)](https://github.com/IamDevTrivedi/Trimium)
+  # Trimium
 
-![pnpm](https://img.shields.io/badge/pnpm-10.27.0-F69220?logo=pnpm&logoColor=white)
-![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)
-![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)
-![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+  [![Live](https://img.shields.io/badge/Live-trimium.vercel.app-22c55e?style=flat-square)](https://trimium.vercel.app/)
+  [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+  [![CI/CD](https://img.shields.io/github/actions/workflow/status/IamDevTrivedi/Trimium/ci.yml?style=flat-square&label=CI%2FCD)](https://github.com/IamDevTrivedi/Trimium/actions)
+  <br>
+  ![pnpm](https://img.shields.io/badge/pnpm-10.28.0-F69220?style=flat-square&logo=pnpm)
+  ![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=next.js)
+  ![Express](https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express)
+  ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
+  ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb)
+  ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis)
+  ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss)
 
+  A professional URL shortener and link management platform. Create short URLs, generate QR codes, manage team workspaces, and gain deep insights with analytics.
 
-A professional URL shortener and link management platform. Create powerful short URLs, generate custom QR codes, and gain deep insights with advanced analytics. Perfect for businesses, marketers, and teams.
-
----
-
-![Trimium Screenshot](./public/preview.png)
+</div>
 
 ---
 
 ## Features
 
-- **URL Shortening**: 
-   - Create short, memorable URLs with custom aliases.
-   - Get useful Analytics like Total lands, total redirects, Unique visitors, Top referrers, Top countries, Browsers & OS stats, and more.
-   - create Expiring links that automatically deactivate after a set period or number of clicks.
-   - Schedule links to go live at a specific date and time. Countdown with custom message before activation.
-   - Optionally protect your links with passwords.
-   - Organize links using tags for easy management and retrieval.
-   - Bulk URL shortening to create multiple short links in one go, saving time and effort.
-   - Export analytics reports in CSV format for further analysis.
-   - Edit short URLs properties as per need.
+- **URL Shortening** — Custom aliases, expiring links, scheduled links, password protection, bulk creation, tags, CSV analytics export, and full edit capabilities.
+- **Analytics** — Track total clicks, unique visitors, top referrers, geographic data (country-level), browser & OS breakdown, and redirect timelines.
+- **QR Code Generation** — Auto-generated QR codes for every short link, downloadable in PNG and SVG formats.
+- **Link-in-Bio (Linkhub)** — Fully customizable landing pages with themes, social links, custom buttons, and rich text content.
+- **Team Workspaces** — Multi-workspace support with role-based access (Admin, Member, Viewer), shared link management, member invitations, and tagging.
+- **User Authentication** — Email-verified registration, secure password reset, profile management, and session tracking with the ability to view/terminate active sessions.
 
-- **Linkhub (Link-in-Bio)**: 
-   - Create fully customizable personalized link-in-bio pages.
-   - Choose from multiple visually appealing themes to match your brand.
-   - Add your social links, custom buttons, and detailed text content.
-   - Centralize and easily manage all your important links in one place.
-
-- **Workspace Management**: 
-   - Create and manage multiple workspaces for different projects or teams.
-   - Invite team members with role-based access control (Admin, Member, Viewer).
-   - Shared link management and analytics within workspaces.
-   - Create Tags to categorize and manage links effectively.
-   - leave or delete workspaces as needed.
-   
-- **QR Code Generation**:
-   - Generate customizable QR codes for each short URL.
-   - Download QR codes in various formats (PNG, SVG).
-
-- **User Authentication & Profile Management**:
-   - Secure user registration and login with email verification.
-   - Password reset functionality.
-   - User profile management with the ability to update personal information and change passwords.
-   - Session management to view and terminate active sessions.
+> [!TIP]
+> Visit **[trimium.vercel.app](https://trimium.vercel.app/)** to try the live application.
 
 ## Tech Stack
 
-### Frontend (Client)
+### Frontend
 
-- **Next.js 16** — React framework with App Router
-- **React 19** — UI library
-- **TypeScript** — Type-safe development
-- **Tailwind CSS 4** — Utility-first CSS framework
-- **shadcn/ui** — Accessible component library
-- **Zustand** — State management
-- **React Hook Form + Zod** — Form handling and validation
-- **Recharts** — Data visualization
-- **Motion** — Animations
+| Technology | Purpose |
+|---|---|
+| **Next.js 16** (App Router) | React framework |
+| **React 19** | UI library |
+| **TypeScript** | Type safety |
+| **Tailwind CSS 4** | Utility-first CSS |
+| **shadcn/ui** + @base-ui/react | Accessible component library |
+| **Zustand** | State management |
+| **React Hook Form + Zod** | Form handling & validation |
+| **Recharts** | Data visualization (analytics charts) |
+| **Axios** | HTTP client (with PoW challenge solver) |
 
-### Backend (Server)
+### Backend
 
-- **Express 5** — Node.js web framework
-- **TypeScript** — Type-safe development
-- **MongoDB + Mongoose** — Database and ODM
-- **Redis** — Caching and rate limiting
-- **JWT** — Authentication tokens
-- **Nodemailer** — Email sending
-- **Pino** — Logging
-- **Zod** — Request validation
+| Technology | Purpose |
+|---|---|
+| **Express 5** | Web framework |
+| **TypeScript** | Type safety |
+| **MongoDB + Mongoose** | Database & ODM |
+| **Redis** (ioredis) | Caching, rate limiting, job queues |
+| **BullMQ** | Background job queues (email, activity updates) |
+| **JWT** | Authentication tokens with token versioning |
+| **Argon2** | Password hashing |
+| **Zod** | Request & environment validation |
+| **Brevo API** (Sendinblue) | Transactional email delivery |
+| **Cloudinary** | Image & file upload management |
+| **MaxMind GeoIP** | IP geolocation (country, city) |
+| **ua-parser-js** | User-agent parsing |
+| **Pino** | Structured logging |
+| **express-rate-limit + rate-limit-redis** | Rate limiting |
 
-### Development Tools
+### DevOps & Tooling
 
-- **pnpm** — Fast, disk space efficient package manager
-- **ESLint** — Code linting
-- **Prettier** — Code formatting
-- **Concurrently** — Run multiple scripts
+| Technology | Purpose |
+|---|---|
+| **pnpm** | package manager |
+| **Turbopack** | Next.js bundler |
+| **Husky** | Git hooks (pre-push lint + format check) |
+| **ESLint + Prettier** | Code quality & formatting |
+| **GitHub Actions** | CI/CD (Vercel client + EC2 server) |
+| **Dependabot** | Automated dependency updates |
+| **PM2** | Production server process manager |
+| **Concurrently** | Parallel dev script runner |
+
+## Architecture
+
+Trimium follows a **monorepo structure** with two packages managed by pnpm workspaces:
+
+```
+Trimium/
+├── client/          # Next.js frontend (App Router, route groups)
+├── server/          # Express backend (feature-based modules)
+├── scripts/         # Utility scripts (install, clean, reset, GeoIP update)
+├── docs/            # Architecture and setup documentation
+└── .github/         # CI/CD workflow
+```
+
+The server uses a **feature-based modular architecture** — each domain (`auth`, `url`, `workspace`, `linkhub`, `user`, `contact`) is isolated in `server/src/modules/<name>/` with a `routes.ts` + `controllers.ts` pair.
+
+### Security Highlights
+
+- **JWT authentication** with cookie-based sessions and **token versioning** (stored in User and LoginHistory models) for instant session invalidation across all devices.
+- **Redis-backed rate limiting** with adaptive **Proof-of-Work (SHA-256 hashcash)** challenges — when a client exceeds the rate limit, the server issues a computational puzzle that the client-side Axios interceptor automatically solves and retries.
+- **Cloudflare Turnstile** CAPTCHA verification on public forms.
+- **Argon2** password hashing.
 
 ## Getting Started
 
-- Please refer to the [SETUP.md](./docs/SETUP.md) file for detailed setup instructions.
+### Prerequisites
 
-### Available Scripts
+- **Node.js** >= 20
+- **pnpm** 10.28+
+- **MongoDB** instance (local or Atlas)
+- **Redis** instance (local or cloud)
+- **MaxMind GeoLite2** license key (for geo-analytics)
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start both client and server in development mode |
-| `pnpm install:all` | Install dependencies for root, client, and server |
-| `pnpm clean:all` | Clean all node_modules and lock files |
-| `pnpm reset:all` | Clean and reinstall all dependencies |
-| `pnpm format` | Format code with Prettier |
-| `pnpm format:check` | Check code formatting with Prettier |
-| `pnpm lint` | Run ESLint |
-| `pnpm lint:fix` | Fix ESLint issues |
+> For detailed setup instructions, refer to [docs/SETUP.md](./docs/SETUP.md).
 
-## Project Structure
+### Project Structure
 
-Please refer to the [DIRECTORY_STRUCTURE.md](docs/DIRECTORY_STRUCTURE.md) file for a detailed overview of the project structure.
+For a full directory breakdown, see [docs/DIRECTORY_STRUCTURE.md](./docs/DIRECTORY_STRUCTURE.md).
+
+## Deployment
+
+The project uses an automated CI/CD pipeline via GitHub Actions:
+
+- **Client** — Built and deployed to **Vercel** on every push to `main`.
+- **Server** — Deployed to **EC2** with zero-downtime PM2 reload, health check verification, and automatic rollback to the previous release on failure.
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+Licensed under the [MIT License](LICENSE).

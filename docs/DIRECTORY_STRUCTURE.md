@@ -106,6 +106,7 @@
 │   │   │                   └── page.tsx
 │   │   ├── components
 │   │   │   ├── account-page.tsx
+│   │   │   ├── auth-turnstile.tsx
 │   │   │   ├── bulk-upload-urls.tsx
 │   │   │   ├── card-footer.tsx
 │   │   │   ├── contact-form.tsx
@@ -216,12 +217,10 @@
 │   │       ├── reset-password-store.ts
 │   │       └── user-store.ts
 │   └── tsconfig.json
-├── .husky
-│   ├── _
-│   └── pre-push
 ├── docs
 │   ├── architecture
 │   │   ├── AUTHENTICATION_AND_SESSION_MANAGEMENT_ARCHITECTURE.md
+│   │   ├── CI_CD_PIPELINE_ARCHITECTURE.md
 │   │   └── RATE_LIMITER_ARCHITECTURE.md
 │   ├── DIRECTORY_STRUCTURE.md
 │   └── SETUP.md
@@ -237,89 +236,91 @@
 │   ├── install-all.js
 │   ├── reset-all.js
 │   └── update-geolite2.js
-└── server
-    ├── package.json
-    ├── pnpm-lock.yaml
-    ├── src
-    │   ├── config
-    │   │   ├── checkEnv.ts
-    │   │   ├── cloudinary.ts
-    │   │   ├── env.ts
-    │   │   └── mailer.ts
-    │   ├── constants
-    │   │   ├── app.ts
-    │   │   ├── hash.ts
-    │   │   ├── regex.ts
-    │   │   └── tags.ts
-    │   ├── db
-    │   │   ├── connectMongo.ts
-    │   │   └── connectRedis.ts
-    │   ├── index.ts
-    │   ├── middlewares
-    │   │   ├── httpLogger.ts
-    │   │   ├── IP.ts
-    │   │   ├── location.ts
-    │   │   ├── protectRoute.ts
-    │   │   ├── rateLimiter.ts
-    │   │   ├── UAParser.ts
-    │   │   └── upload.ts
-    │   ├── models
-    │   │   ├── analytics.ts
-    │   │   ├── contactFormSubmissions.ts
-    │   │   ├── invitation.ts
-    │   │   ├── linkhub.ts
-    │   │   ├── loginHistory.ts
-    │   │   ├── url.ts
-    │   │   ├── user.ts
-    │   │   └── workspace.ts
-    │   ├── modules
-    │   │   ├── auth
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   ├── contact
-    │   │   │   ├── controller.ts
-    │   │   │   └── routes.ts
-    │   │   ├── health
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   ├── linkhub
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   ├── queue
-    │   │   │   ├── index.ts
-    │   │   │   ├── processors
-    │   │   │   │   ├── sendEmail.ts
-    │   │   │   │   └── updateLastActivity.ts
-    │   │   │   ├── queues.ts
-    │   │   │   ├── redisConfig.ts
-    │   │   │   └── workers.ts
-    │   │   ├── root
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   ├── url
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   ├── user
-    │   │   │   ├── controllers.ts
-    │   │   │   └── routes.ts
-    │   │   └── workspace
-    │   │       ├── controllers.ts
-    │   │       └── routes.ts
-    │   └── utils
-    │       ├── date.ts
-    │       ├── emailTemplates.ts
-    │       ├── generateOTP.ts
-    │       ├── generateShortCode.ts
-    │       ├── getWorkspacePerformance.ts
-    │       ├── hash.ts
-    │       ├── logger.ts
-    │       ├── loginThrottle.ts
-    │       ├── normalizeEmail.ts
-    │       ├── sendResponse.ts
-    │       └── tags.ts
-    └── tsconfig.json
+├── server
+│   ├── package.json
+│   ├── pnpm-lock.yaml
+│   ├── src
+│   │   ├── config
+│   │   │   ├── argon2.ts
+│   │   │   ├── checkEnv.ts
+│   │   │   ├── cloudinary.ts
+│   │   │   ├── env.ts
+│   │   │   └── mailer.ts
+│   │   ├── constants
+│   │   │   ├── app.ts
+│   │   │   ├── regex.ts
+│   │   │   └── tags.ts
+│   │   ├── db
+│   │   │   ├── connectMongo.ts
+│   │   │   └── connectRedis.ts
+│   │   ├── index.ts
+│   │   ├── middlewares
+│   │   │   ├── httpLogger.ts
+│   │   │   ├── IP.ts
+│   │   │   ├── location.ts
+│   │   │   ├── protectRoute.ts
+│   │   │   ├── rateLimiter.ts
+│   │   │   ├── UAParser.ts
+│   │   │   ├── upload.ts
+│   │   │   └── verifyTurnstile.ts
+│   │   ├── models
+│   │   │   ├── analytics.ts
+│   │   │   ├── contactFormSubmissions.ts
+│   │   │   ├── invitation.ts
+│   │   │   ├── linkhub.ts
+│   │   │   ├── loginHistory.ts
+│   │   │   ├── url.ts
+│   │   │   ├── user.ts
+│   │   │   └── workspace.ts
+│   │   ├── modules
+│   │   │   ├── auth
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── contact
+│   │   │   │   ├── controller.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── health
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── linkhub
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── queue
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── processors
+│   │   │   │   │   ├── sendEmail.ts
+│   │   │   │   │   └── updateLastActivity.ts
+│   │   │   │   ├── queues.ts
+│   │   │   │   ├── redisConfig.ts
+│   │   │   │   └── workers.ts
+│   │   │   ├── root
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── url
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   ├── user
+│   │   │   │   ├── controllers.ts
+│   │   │   │   └── routes.ts
+│   │   │   └── workspace
+│   │   │       ├── controllers.ts
+│   │   │       └── routes.ts
+│   │   └── utils
+│   │       ├── date.ts
+│   │       ├── emailTemplates.ts
+│   │       ├── generateOTP.ts
+│   │       ├── generateShortCode.ts
+│   │       ├── getWorkspacePerformance.ts
+│   │       ├── hash.ts
+│   │       ├── logger.ts
+│   │       ├── loginThrottle.ts
+│   │       ├── normalizeEmail.ts
+│   │       ├── sendResponse.ts
+│   │       └── tags.ts
+│   └── tsconfig.json
+└── skills-lock.json
 
-72 directories, 240 files
+73 directories, 246 files
 ```
 
 ## Overview

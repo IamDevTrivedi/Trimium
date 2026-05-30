@@ -1,30 +1,18 @@
-# Trimium Authentication and Session Management Architecture
+# Authentication and Session Management Architecture
 
-Source of truth:
+This document describes how Trimium authenticates users, manages sessions, enforces device-level logout controls, protects login from brute-force attacks, and handles account registration — while keeping protected-route latency low.
 
-- server/src/modules/auth/controllers.ts
-- server/src/modules/auth/routes.ts
-- server/src/middlewares/protectRoute.ts
-- server/src/utils/loginThrottle.ts
-- server/src/modules/queue/queues.ts
-- server/src/modules/queue/workers.ts
-- server/src/modules/queue/processors/updateLastActivity.ts
-- server/src/models/user.ts
-- server/src/models/loginHistory.ts
-
-This document explains how Trimium authenticates users, validates sessions, enforces device-level logout controls, and protects login from brute-force attacks while keeping protected-route latency low.
+---
 
 ## Overview
 
-What this design demonstrates:
+The authentication system is built around these design goals:
 
-- Stateless JWT auth with server-side revocation control.
-- Per-user and per-device session invalidation model.
-- Performance-aware middleware with Redis caching and async workers.
-- Multi-path logout controls (current device, other devices, specific device, email alert link).
-- Layered anti-abuse strategy (rate limit + account-level cooldown).
-
-## Architecture At A Glance
+- **Stateless JWT** with server-side revocation control via token versioning
+- **Per-user and per-device** session invalidation model
+- **Performance-aware middleware** with Redis-first reads and async background workers
+- **Multi-path logout controls** — current device, other devices, specific device, and email alert link
+- **Layered anti-abuse strategy** — network rate limits, account-level cooldown, and OTP brute-force protection
 
 ```mermaid
 flowchart LR
@@ -42,44 +30,56 @@ flowchart LR
     I --> F
     I --> J[Last Activity Queue]
 
-    J --> K[Last Activity Worker]
-    K --> F
+    subgraph Workers
+        H --> K[Email Worker]
+        J --> L[Activity Worker]
+    end
 
-    H --> L[Email Worker]
+    K --> M[Brevo API]
+    L --> F
 ```
 
-## JWT Design
+---
 
-### Token shape and transport
+## Core Concepts
 
-- JWT is created during login and sent in `authToken` HTTP-only cookie.
-- Expiration: 7 days (`expiresIn: "7d"`).
-- Cookie strategy:
-    - `httpOnly: true`
-    - `sameSite: lax` in development, `none` in production
-    - `secure` in production
-    - `path: /`
+### JWT Design
+
+The JWT is created on login and delivered via an HTTP-only cookie.
+
+| Property | Value |
+|---|---|
+| Cookie name | `authToken` |
+| Expiration | 7 days (`expiresIn: "7d"`) |
+| `httpOnly` | `true` |
+| `sameSite` | `lax` (development), `none` (production) |
+| `secure` | `true` in production |
+| `path` | `/` |
 
 JWT payload fields:
 
-- `userID`
-- `loginHistoryID`
-- `tokenVersion`
+```json
+{
+  "userID": "string",
+  "loginHistoryID": "string",
+  "tokenVersion": "number"
+}
+```
 
-### Why tokenVersion exists at two levels
+### Dual Token Version Model
 
-Trimium uses a dual-version revocation model:
+Trimium uses a two-level versioning scheme for session revocation:
 
-- User-level `tokenVersion` (in `User`): global/session-group invalidation.
-- Device-level `tokenVersion` (in `LoginHistory`): single-session invalidation.
+- **User-level `tokenVersion`** (stored in `User` model): global invalidation. Incrementing it revokes every session across all devices at once.
+- **Device-level `tokenVersion`** (stored in `LoginHistory` model): single-session invalidation. Decrementing it revokes only that specific device.
 
-A token is accepted only if both versions match the JWT payload version.
+A JWT is accepted only if **both** versions stored in the database match the versions embedded in the token payload.
 
 ```mermaid
 flowchart TD
     T[Incoming JWT: userID, loginHistoryID, tokenVersion] --> A[Verify JWT signature]
-    A --> B[Load user tokenVersion]
-    A --> C[Load loginHistory tokenVersion]
+    A --> B[Load user tokenVersion from Redis/DB]
+    A --> C[Load loginHistory tokenVersion from Redis/DB]
 
     B --> D{userVersion == tokenVersion?}
     C --> E{loginHistoryVersion == tokenVersion?}
@@ -91,73 +91,57 @@ flowchart TD
     Y -- Yes --> Z[Allow request]
 ```
 
-## Middleware Design
+---
 
-`protectRoute` is the session gate for protected endpoints.
+## Authentication Flows
 
-Primary responsibilities:
+### Account Creation
 
-- Read and verify JWT from cookie.
-- Validate user-level token version.
-- Validate loginHistory-level token version.
-- Set `res.locals` context (`userID`, `loginHistoryID`, `tokenVersion`).
-- Trigger debounced last-activity write via queue.
-
-### Response-time optimization by caching
-
-To avoid MongoDB read pressure on every protected request, `protectRoute` reads token versions from Redis first.
-
-Cache pattern:
-
-| Key                               | Value                       | TTL    | Miss fallback                   |
-| --------------------------------- | --------------------------- | ------ | ------------------------------- |
-| `userID:{userID}`                 | User `tokenVersion`         | 1 hour | Query `User` collection         |
-| `loginHistoryID:{loginHistoryID}` | LoginHistory `tokenVersion` | 1 hour | Query `LoginHistory` collection |
-
-Performance impact:
-
-- Hot-session authorization is mostly Redis-backed.
-- DB reads occur mostly on cold keys and after cache expiry.
-- Revocation propagates quickly because write paths update Redis immediately after version changes.
-
-### Last-activity update via background worker
-
-Trimium avoids synchronous DB writes for each authenticated request.
-
-Design details:
-
-- Debounce key: `activity:debounce:{loginHistoryID}` in Redis.
-- Debounce TTL: 3 minutes.
-- If key exists: skip enqueue.
-- If key missing: set key and enqueue `updateActivity` job.
-- Worker updates `LoginHistory.lastAccessedAt` asynchronously.
+Registration is a three-step OTP-gated flow. Each step is rate-limited by `otpLimiter` (5 requests per 15 minutes).
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant PR as protectRoute
-    participant Redis
-    participant Queue as lastActivityQueue
-    participant Worker as lastActivityWorker
-    participant DB as LoginHistory
+    participant U as User
+    participant API as Auth Controller
+    participant R as Redis
+    participant EQ as Email Queue
+    participant DB as MongoDB
 
-    Client->>PR: Protected request
-    PR->>Redis: exists(activity:debounce:{id})
+    U->>API: POST send-otp-for-create-account
+    API->>API: Validate email + Turnstile token
+    API->>DB: Check email not taken
+    API->>R: set upcomingEmail:{email} {OTP, expiresAt, status:NOT_VERIFIED, failedAttempts:0}
+    Note over R: TTL: 5 minutes
+    API->>EQ: Enqueue OTP email
+    API-->>U: OTP sent
 
-    alt Debounce key exists
-        Redis-->>PR: true
-        PR-->>Client: continue without write
-    else Debounce key missing
-        Redis-->>PR: false
-        PR->>Redis: set debounce key (180s)
-        PR->>Queue: add(updateActivity, {id, timestamp})
-        PR-->>Client: continue immediately
-        Queue->>Worker: deliver job
-        Worker->>DB: updateOne({_id:id}, {$set:{lastAccessedAt}})
-    end
+    U->>API: POST verify-otp-for-create-account
+    API->>R: get upcomingEmail:{email}
+    API->>API: Validate OTP match, expiry, failedAttempts < 3
+    API->>R: set status=VERIFIED (extend TTL to 15 min)
+    API-->>U: OTP verified
+
+    U->>API: POST create-account
+    API->>R: get upcomingEmail:{email} (must be VERIFIED)
+    API->>DB: Check email + username not taken
+    API->>API: argon2 hash password
+    API->>DB: Create User document (tokenVersion: 0)
+    API->>R: delete upcomingEmail:{email}
+    API-->>U: Account created
 ```
 
-## Login Flow and Session Creation
+**OTP security properties:**
+
+| Property | Value |
+|---|---|
+| OTP storage key | `upcomingEmail:{email}` |
+| OTP length | 6 digits (generated by `generateOTP`) |
+| Max failed attempts | 3 (invalidates the OTP and deletes the key) |
+| Unverified TTL | 5 minutes |
+| Verified TTL | 15 minutes (gives user time to complete registration) |
+| Rate limiter | `otpLimiter`: 5 requests per 15 minutes |
+
+### Login
 
 ```mermaid
 sequenceDiagram
@@ -169,185 +153,297 @@ sequenceDiagram
     participant R as Redis Cache
 
     U->>API: POST /auth/login
+    Note over U,API: Protected by loginLimiter (10 req/15min) + Turnstile
+
+    API->>DB: Find user by email or username
     API->>LT: checkLoginCooldown(email)
 
     alt Cooldown active
-        API-->>U: 429 + Retry-After
+        API-->>U: 429 + Retry-After header
     else Continue
-        API->>DB: Verify password hash
+        API->>API: argon2.verify(password hash)
+
         alt Invalid password
             API->>LT: recordFailedAttempt(email)
-            API->>EQ: enqueue warning/lockout email if threshold reached
-            API-->>U: 401 or 429
+            alt count == 3
+                API->>EQ: Enqueue warning email
+            else count >= 5
+                API->>LT: set cooldown key (15 min TTL)
+                API->>EQ: Enqueue lockout email
+                API-->>U: 429 Account locked
+            else
+                API-->>U: 401 Invalid credentials
+            end
         else Valid password
             API->>LT: clearFailedAttempts(email)
-            API->>DB: create LoginHistory record
-            API->>API: sign JWT(userID, loginHistoryID, tokenVersion)
-            API-->>U: Set-Cookie authToken
-            API->>EQ: enqueue login alert email with revoke link
-            API->>R: set userID:* and loginHistoryID:* caches
-            API-->>U: login success
+            API->>DB: Create LoginHistory record
+            Note over DB: Stores UA, IP, lat, lon, displayName, tokenVersion
+            API->>API: Sign JWT (userID, loginHistoryID, tokenVersion)
+            API-->>U: Set-Cookie authToken (httpOnly, 7d)
+
+            API->>EQ: Enqueue login alert email with revoke link
+            API->>R: set userID:{id} = tokenVersion (1h TTL)
+            API->>R: set loginHistoryID:{id} = tokenVersion (1h TTL)
+            API-->>U: 200 Login successful
         end
     end
 ```
 
-## Device and Session Logout Controls
+### Password Reset
 
-### Logout my device
-
-Endpoint: `POST /api/v1/auth/logout-my-device`
-
-- Requires `protectRoute`.
-- Decrements current `LoginHistory.tokenVersion`.
-- Updates Redis cache for that login history.
-- Clears auth cookie.
-- Result: current device session is invalidated immediately.
-
-### Logout all other devices
-
-Endpoint: `POST /api/v1/auth/logout-all-other-devices`
-
-- Requires `protectRoute`.
-- Increments `User.tokenVersion` (invalidates all old sessions globally).
-- Increments current `LoginHistory.tokenVersion` and issues a fresh JWT for current device.
-- Result: current device stays logged in; every other device is logged out.
-
-### Logout particular device
-
-Endpoint: `POST /api/v1/auth/logout-particular-device`
-
-- Requires `protectRoute`.
-- Input: `targetLoginHistoryID`.
-- Blocks self-target logout (cannot use this endpoint for current device).
-- Finds target login history under current version scope.
-- Decrements target `LoginHistory.tokenVersion`.
-- Updates Redis cache for target session.
-- Result: only the selected device is logged out.
-
-
-When a user resets their password, all existing sessions are revoked by incrementing the `User.tokenVersion`. This forces all previously issued JWTs to fail validation on the next request, effectively logging out the user from every device.
-
-```mermaid
-flowchart TD
-    A[Need to revoke sessions] --> B{Scope}
-
-    B -- Current device only --> C[logout-my-device]
-    B -- One specific device --> D[logout-particular-device]
-    B -- Keep current, remove others --> E[logout-all-other-devices]
-
-    C --> C1[Decrement current loginHistory version + clear cookie]
-    D --> D1[Decrement target loginHistory version]
-    E --> E1[Increment user version + rotate current session version]
-```
-
-## Reset Password and Global Session Invalidation
-
-Reset password is OTP-gated and doubles as a security reset of active sessions.
-
-Flow summary:
-
-1. `send-otp` stores OTP state in Redis (`resetPassword:{email}`) with expiry.
-2. `verify-otp` marks state as verified.
-3. `set-new-password` updates password hash and increments `User.tokenVersion`.
-
-Security effect:
-
-- Incrementing user token version revokes every previously issued JWT across all devices.
+Reset password is OTP-gated and doubles as a security reset — it increments `User.tokenVersion` to revoke all active sessions.
 
 ```mermaid
 sequenceDiagram
     participant U as User
     participant API as Reset Password APIs
     participant R as Redis
-    participant DB as User DB
+    participant DB as MongoDB
 
-    U->>API: send-otp(identity)
-    API->>R: set resetPassword:{email} (OTP, expiry)
+    U->>API: POST reset-password/send-otp
+    Note over U,API: Protected by otpLimiter (5 req/15min)
+    API->>DB: Find user by email or username
+    API->>R: set resetPassword:{email} {OTP, expiresAt, status:NOT_VERIFIED}
+    Note over R: TTL: 5 minutes
     API-->>U: OTP sent
 
-    U->>API: verify-otp(identity, OTP)
-    API->>R: validate OTP state
-    API->>R: mark status VERIFIED
+    U->>API: POST reset-password/verify-otp
+    API->>R: get resetPassword:{email}
+    API->>API: Validate OTP (same logic as registration: max 3 attempts)
+    API->>R: set status=VERIFIED (extend TTL to 15 min)
     API-->>U: OTP verified
 
-    U->>API: set-new-password(identity, newPassword)
-    API->>DB: update passwordHash
-    API->>DB: user.tokenVersion += 1
-    API->>R: set userID:{id} new tokenVersion
+    U->>API: POST reset-password/set-new-password
+    API->>R: get resetPassword:{email} (must be VERIFIED)
+    API->>API: argon2 hash new password
+    API->>DB: Update passwordHash
+    API->>DB: Increment user.tokenVersion += 1
+    API->>R: set userID:{id} = new tokenVersion (1h TTL)
     API->>R: delete resetPassword:{email}
-    API-->>U: password reset successful
+    API-->>U: Password reset successful
+    Note over U,API: All existing JWTs are now invalid
 ```
 
-## Logout From Login Alert Email
+---
 
-Trimium sends a login alert email on successful login with a signed revoke link.
+## Session Management
 
-Token structure:
+### Token Validation Middleware
 
-- Payload (base64url JSON): `loginHistoryID`, `expiresAt`
-- Signature: HMAC-SHA256 using `EMAIL_LOGOUT_SIGNING_KEY`
-- Final format: `{payloadB64}.{signature}`
-- Expiration constant: `REVOKE_TOKEN_EXPIRATION_TIME` (3 hours)
+`protectRoute` is the gate for all protected endpoints. Responsibilities:
 
-Verification behavior in `emailLogout`:
+1. Read and verify JWT from the `authToken` cookie
+2. Validate user-level token version
+3. Validate loginHistory-level token version
+4. Populate `res.locals` with `{ userID, loginHistoryID, tokenVersion }`
+5. Trigger debounced last-activity write via BullMQ queue
 
-- Validate signature with timing-safe comparison.
-- Validate expiry.
-- Load target `LoginHistory` and owning `User`.
-- If already invalidated, return idempotent success.
-- Otherwise decrement target session `tokenVersion` and update Redis cache.
+#### Redis-First Cache Strategy
+
+To minimize MongoDB read pressure on every request, token versions are read from Redis first.
+
+| Cache key | Value | TTL | Miss fallback |
+|---|---|---|---|
+| `userID:{userID}` | User `tokenVersion` | 1 hour | `User.findById(id).select("tokenVersion")` |
+| `loginHistoryID:{loginHistoryID}` | LoginHistory `tokenVersion` | 1 hour | `LoginHistory.findById(id).select("tokenVersion")` |
+
+**Performance characteristics:**
+- Hot sessions are authorized entirely via Redis (sub-millisecond)
+- MongoDB reads occur only on cold keys or after cache expiry
+- Token version writes immediately update Redis, so revocation propagates instantly
 
 ```mermaid
 flowchart TD
-    A[User clicks email logout link] --> B[POST /auth/email-logout with revokeToken]
-    B --> C[Split payload and signature]
-    C --> D[Recompute HMAC with EMAIL_LOGOUT_SIGNING_KEY]
-
-    D --> E{Signature matches?}
-    E -- No --> X[400 Invalid revoke token]
-    E -- Yes --> F[Decode payload]
-    F --> G{expiresAt valid?}
-    G -- No --> Y[400 Token expired]
-    G -- Yes --> H[Load LoginHistory and User]
-    H --> I{Already revoked?}
-    I -- Yes --> J[200 Session already revoked]
-    I -- No --> K[Decrement loginHistory tokenVersion]
-    K --> L[Update Redis loginHistory cache]
-    L --> M[200 Session logged out]
+    A[Request arrives] --> B{Has authToken cookie?}
+    B -- No --> C[401 Unauthorized]
+    B -- Yes --> D[jwt.verify token]
+    D --> E{Valid signature?}
+    E -- No --> C
+    E -- Yes --> F[getCurrentTokenVersion from Redis]
+    F --> G{Redis hit?}
+    G -- No --> H[Query User collection]
+    H --> I[Cache in Redis for 1h]
+    G -- Yes --> J{userVersion == tokenVersion?}
+    I --> J
+    J -- No --> C
+    J -- Yes --> K[getLoginHistoryTokenVersion from Redis]
+    K --> L{Redis hit?}
+    L -- No --> M[Query LoginHistory collection]
+    M --> N[Cache in Redis for 1h]
+    L -- Yes --> O{loginHistoryVersion == tokenVersion?}
+    N --> O
+    O -- No --> C
+    O -- Yes --> P[Set res.locals + debounce lastActivity]
+    P --> Q[Allow request]
 ```
 
-## Login Throttle for Brute-Force Prevention
+#### Last Activity Tracking
 
-Trimium uses two complementary control layers.
+Trimium avoids synchronous database writes on every authenticated request by using a debounced background job.
 
-### Layer 1: Route-level rate limiting
+```mermaid
+sequenceDiagram
+    participant Client
+    participant PR as protectRoute
+    participant Redis
+    participant Queue as lastActivityQueue
+    participant Worker as lastActivityWorker
+    participant DB as LoginHistory
 
-- `POST /auth/login` is protected by `loginLimiter`.
-- policy: 10 requests per 15 minutes per rate-limit key.
-- Backed by Redis via `createRateLimiter` middleware.
+    Client->>PR: Protected request
+    PR->>Redis: EXISTS activity:debounce:{loginHistoryID}
 
-### Layer 2: Account-level credential throttle
+    alt Debounce key exists
+        Redis-->>PR: true (skip)
+        PR-->>Client: Continue
+    else Debounce key missing
+        PR->>Redis: SET activity:debounce:{id} (180s TTL)
+        PR->>Queue: ADD updateActivity { loginHistoryID, timestamp }
+        PR-->>Client: Continue immediately
+        Queue->>Worker: Deliver job
+        Worker->>DB: updateOne({ _id:id }, { $set: { lastAccessedAt } })
+    end
+```
 
-In `loginThrottle` (Redis-backed):
+**Queue configuration:**
 
-- Failed attempts key: `login:failed:{email}` with 30-minute TTL.
-- Cooldown key: `login:cooldown:{email}` with 15-minute TTL.
-- Warning threshold: 3 failed attempts (warning email queued).
-- Lockout threshold: 5 failed attempts (temporary lockout + lockout email queued).
-- Successful login clears failed-attempt counter.
+| Property | `lastActivityQueue` | `emailQueue` |
+|---|---|---|
+| Retries | 1 | 3 |
+| Backoff | None | Exponential (3s delay) |
+| Auto-remove on complete | Yes | No |
+| Auto-remove on fail | Yes | No |
 
-This gives both network-level and account-level defense.
+### Session Invalidation Strategies
+
+Trimium provides four distinct session invalidation paths:
+
+#### 1. Logout Current Device
+
+`POST /api/v1/auth/logout-my-device`
+
+- Decrements the current `LoginHistory.tokenVersion`
+- Updates the Redis cache for that login history
+- Clears the `authToken` cookie
+- **Result:** only the current device is logged out
+
+#### 2. Logout All Other Devices
+
+`POST /api/v1/auth/logout-all-other-devices`
+
+- Increments `User.tokenVersion` (invalidates all old sessions globally)
+- Increments the current `LoginHistory.tokenVersion` (brings it in sync with the new user version)
+- Issues a fresh JWT for the current device
+- **Result:** current device stays logged in; every other device is logged out
+
+#### 3. Logout a Specific Device
+
+`POST /api/v1/auth/logout-particular-device`
+
+- Accepts `targetLoginHistoryID` in the request body
+- Blocks self-targeting (cannot use this endpoint on the current device)
+- Finds the target login history scoped by the current `tokenVersion`
+- Decrements the target device's `LoginHistory.tokenVersion`
+- Updates the Redis cache for the target session
+- **Result:** only the selected device is logged out
+
+#### 4. Global Invalidation (Password Reset)
+
+When a user resets their password, `User.tokenVersion` is incremented. This forces all previously issued JWTs to fail validation on the next request, logging the user out from every device.
 
 ```mermaid
 flowchart TD
-    A["Login request"] --> B["Route loginLimiter"]
+    A[Session needs revocation] --> B{Scope}
+
+    B -- Current device only --> C[logout-my-device]
+    B -- One specific device --> D[logout-particular-device]
+    B -- Keep current, remove others --> E[logout-all-other-devices]
+    B -- Every device --> F[Password reset / force logout]
+
+    C --> C1[Decrement loginHistory.version + clear cookie]
+    D --> D1[Validate not self-target + decrement target loginHistory.version]
+    E --> E1[Increment user.version + loginHistory.version + reissue JWT]
+    F --> F1[Increment user.version only]
+```
+
+---
+
+## Email-Based Logout
+
+Each successful login triggers a **login alert email** containing a signed revoke link. This allows users to remotely terminate a session without needing to log in.
+
+### Revoke Token Structure
+
+| Component | Description |
+|---|---|
+| Payload | Base64url-encoded JSON: `{ loginHistoryID, expiresAt }` |
+| Signature | HMAC-SHA256 using `EMAIL_LOGOUT_SIGNING_KEY` |
+| Format | `{payloadB64}.{signature}` |
+| Expiration | 3 hours (`REVOKE_TOKEN_EXPIRATION_TIME`) |
+
+### Client-Side Flow
+
+The revoke link points to the **client-side page** at `FRONTEND_URL/email-logout?revokeToken=...`. This page:
+
+1. Extracts the `revokeToken` query parameter
+2. Calls `POST /api/v1/auth/email-logout` with the token
+3. Renders one of three UI states: **success**, **error**, or **expired**
+
+### Server-Side Verification
+
+```mermaid
+flowchart TD
+    A[Client POSTs revokeToken] --> B[Split on '.' into payloadB64 and signature]
+    B --> C[Recompute HMAC-SHA256 with EMAIL_LOGOUT_SIGNING_KEY]
+
+    C --> D{timingSafeEqual match?}
+    D -- No --> X[400 Invalid revoke token]
+    D -- Yes --> E[Decode payload from base64url]
+
+    E --> F{"Date.now() < expiresAt?"}
+    F -- No --> Y[400 Token expired]
+    F -- Yes --> G[Load LoginHistory and User from MongoDB]
+
+    G --> H{Already revoked?}
+    H -- Yes --> Z[200 Session already revoked]
+    H -- No --> I[Decrement loginHistory.tokenVersion]
+    I --> J[Update Redis cache]
+    J --> K[200 Session logged out]
+```
+
+---
+
+## Anti-Abuse Architecture
+
+Trimium implements three complementary defense layers.
+
+### Layer 1: Route-Level Rate Limiting
+
+Each auth endpoint has a dedicated rate limiter backed by Redis.
+
+| Rate Limiter | Applied To | Window | Max Requests |
+|---|---|---|---|
+| `loginLimiter` | `POST /auth/login` | 15 min | 10 |
+| `otpLimiter` | All OTP endpoints | 15 min | 5 |
+| `authGeneralLimiter` | Logout, profile, history | 1 min | 60 |
+| `usernameCheckLimiter` | `POST /auth/check-username` | 1 min | 30 |
+
+When a rate limit is exceeded, the server may issue a **Proof-of-Work challenge** (SHA-256 hashcash) instead of a hard 429. The client-side Axios interceptor automatically solves the puzzle and retries the request.
+
+### Layer 2: Account-Level Credential Throttle
+
+The `loginThrottle` module provides Redis-backed per-account protection.
+
+```mermaid
+flowchart TD
+    A["Login request"] --> B["Route loginLimiter (10/15min)"]
     B --> C{"Rate limit passed?"}
     C -- No --> C1["429 Rate limited"]
     C -- Yes --> D["checkLoginCooldown(email)"]
 
     D --> E{"Cooldown active?"}
     E -- Yes --> E1["429 + Retry-After"]
-    E -- No --> F["Verify password"]
+    E -- No --> F["argon2.verify(password)"]
 
     F --> G{"Password correct?"}
     G -- Yes --> H["clearFailedAttempts + login success"]
@@ -357,30 +453,74 @@ flowchart TD
     J -- Yes --> J1["Send warning email"]
 
     I --> K{"count >= 5?"}
-    K -- Yes --> K1["Set cooldown + send lockout email + 429"]
+    K -- Yes --> K1["Set cooldown 15min + send lockout email + 429"]
     K -- No --> K2["401 Invalid credentials"]
 ```
 
-## Endpoint Map (Session-Relevant)
+**Configuration:**
 
-| Endpoint                                            | Purpose                                    | Auth Required |
-| --------------------------------------------------- | ------------------------------------------ | ------------- |
-| `POST /api/v1/auth/login`                           | Issue JWT cookie and create device session | No            |
-| `POST /api/v1/auth/logout-my-device`                | Logout current device                      | Yes           |
-| `POST /api/v1/auth/logout-all-other-devices`        | Keep current device, revoke all others     | Yes           |
-| `POST /api/v1/auth/logout-particular-device`        | Revoke one selected device                 | Yes           |
-| `POST /api/v1/auth/email-logout`                    | Revoke session via login-alert link        | No            |
-| `POST /api/v1/auth/reset-password/send-otp`         | Start password reset                       | No            |
-| `POST /api/v1/auth/reset-password/verify-otp`       | Validate reset OTP                         | No            |
-| `POST /api/v1/auth/reset-password/set-new-password` | Set new password and invalidate sessions   | No            |
-| `POST /api/v1/auth/login-history`                   | Inspect sessions/devices                   | Yes           |
+| Property | Value |
+|---|---|
+| Failed attempts key | `login:failed:{email}` (30 min TTL) |
+| Cooldown key | `login:cooldown:{email}` (15 min TTL) |
+| Warning threshold | 3 failed attempts |
+| Lockout threshold | 5 failed attempts |
+
+> [!NOTE]
+> Both `checkLoginCooldown` and `recordFailedAttempt` fail open on Redis errors — they return safe defaults (`blocked: false`, `shouldWarn: false`) rather than blocking legitimate users due to infrastructure issues.
+
+### Layer 3: OTP Brute-Force Protection
+
+OTP verification tracks `failedAttempts` in the Redis state object. After 3 failed OTP attempts, the OTP record is deleted, forcing the user to request a new one.
+
+---
+
+## Endpoint Reference
+
+| Endpoint | Purpose | Rate Limiter | Auth |
+|---|---|---|---|
+| `POST /auth/send-otp-for-create-account` | Begin registration | `otpLimiter` (5/15min) | No |
+| `POST /auth/verify-otp-for-create-account` | Verify registration OTP | `otpLimiter` (5/15min) | No |
+| `POST /auth/create-account` | Complete registration | `otpLimiter` (5/15min) | No |
+| `POST /auth/login` | Issue JWT + create session | `loginLimiter` (10/15min) | No |
+| `POST /auth/logout-my-device` | Logout current device | `authGeneralLimiter` (60/min) | Yes |
+| `POST /auth/logout-all-other-devices` | Keep current, revoke others | `authGeneralLimiter` (60/min) | Yes |
+| `POST /auth/logout-particular-device` | Revoke one selected device | `authGeneralLimiter` (60/min) | Yes |
+| `POST /auth/email-logout` | Revoke via signed token | `authGeneralLimiter` (60/min) | No |
+| `POST /auth/reset-password/send-otp` | Start password reset | `otpLimiter` (5/15min) | No |
+| `POST /auth/reset-password/verify-otp` | Validate reset OTP | `otpLimiter` (5/15min) | No |
+| `POST /auth/reset-password/set-new-password` | Set new password + revoke all | `otpLimiter` (5/15min) | No |
+| `POST /auth/login-history` | List/inspect device sessions | `authGeneralLimiter` (60/min) | Yes |
+| `POST /auth/me` | Get current user profile | `authGeneralLimiter` (60/min) | Yes |
+| `POST /auth/check-username` | Check username availability | `usernameCheckLimiter` (30/min) | No |
+
+> The `/auth/login-history` endpoint has dual behavior: without `targetLoginHistoryID` it returns all sessions for the user; with it, it returns details for a specific device. Each entry is enriched with parsed user-agent, `isActive` flag (compares token versions), and `currentDevice` flag.
+
+---
+
+## Related Files
+
+| File | Role |
+|---|---|
+| `server/src/modules/auth/routes.ts` | Route definitions and rate limiter bindings |
+| `server/src/modules/auth/controllers.ts` | All auth controller logic |
+| `server/src/middlewares/protectRoute.ts` | JWT validation, token version checks, activity debouncing |
+| `server/src/utils/loginThrottle.ts` | Account-level brute-force protection |
+| `server/src/modules/queue/queues.ts` | BullMQ queue definitions (email + activity) |
+| `server/src/modules/queue/workers.ts` | BullMQ worker definitions |
+| `server/src/modules/queue/processors/updateLastActivity.ts` | Last-activity update worker |
+| `server/src/models/user.ts` | User model with `tokenVersion` |
+| `server/src/models/loginHistory.ts` | LoginHistory model with per-device `tokenVersion` |
+| `server/src/constants/app.ts` | `REVOKE_TOKEN_EXPIRATION_TIME` (3 hours) |
+| `client/src/app/(auth)/email-logout/page.tsx` | Client-side email logout page |
+
+---
 
 ## Key Takeaways
 
-This architecture reflects production-grade security and performance thinking:
-
-- Session revocation is deterministic through version checks, not token blacklists.
-- Authorization path is optimized with Redis-first reads.
-- Activity auditing is async and debounced to reduce write amplification.
-- Device-level and account-level controls provide fine-grained incident response.
-- Brute-force protection is layered and user-notified through queued emails.
+- **Version-based revocation** is deterministic — no token blacklists or bloom filters needed. A JWT is either valid (versions match) or invalid (versions diverge).
+- **Redis-first reads** keep the authorization path sub-millisecond for hot sessions. MongoDB is only consulted on cache misses.
+- **Activity auditing is async and debounced** with a 3-minute debounce window to prevent write amplification.
+- **Device-level and account-level controls** provide fine-grained incident response — users can kill a single rogue device or wipe all sessions instantly.
+- **Brute-force protection is layered**: network-level rate limits, account-level credential throttling with escalating email notifications, and OTP-level attempt limits.
+- **Fail-open resilience** in the login throttle ensures that Redis infrastructure issues do not block legitimate users.
