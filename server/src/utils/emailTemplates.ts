@@ -81,7 +81,7 @@ const actionButton = (action: EmailAction): string => {
 
     return `
         <a href="${escapeHtml(action.href)}"
-            style="display:inline-block;margin-top:20px;padding:12px 18px;background:${isDanger ? EMAIL_THEME.danger : EMAIL_THEME.primary};color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;border-radius:10px;">
+            class="email-action-btn" style="display:inline-block;margin-top:20px;padding:12px 18px;background:${isDanger ? EMAIL_THEME.danger : EMAIL_THEME.primary};color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;border-radius:10px;">
             ${escapeHtml(action.label)}
         </a>
     `;
@@ -91,7 +91,7 @@ const otpCard = (OTP: string): string => {
     return `
         <div style="margin:20px 0;padding:18px;border:1px solid ${EMAIL_THEME.border};background:${EMAIL_THEME.primarySoft};border-radius:12px;text-align:center;">
             <p style="margin:0;color:${EMAIL_THEME.primarySoftText};font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Verification Code</p>
-            <p style="margin:10px 0 6px;color:${EMAIL_THEME.primary};font-family:${MONO_FONT_STACK};font-size:32px;font-weight:700;letter-spacing:8px;line-height:1;">${safeText(OTP)}</p>
+            <p class="otp-code" style="margin:10px 0 6px;color:${EMAIL_THEME.primary};font-family:${MONO_FONT_STACK};font-size:32px;font-weight:700;letter-spacing:8px;line-height:1;">${safeText(OTP)}</p>
             <p style="margin:0;color:${EMAIL_THEME.muted};font-size:12px;line-height:18px;">This code expires in 5 minutes.</p>
         </div>
     `;
@@ -105,8 +105,8 @@ const detailsTable = (
         .map((row) => {
             return `
                 <tr>
-                    <td style="padding:8px 0;color:${EMAIL_THEME.muted};font-size:13px;line-height:18px;width:145px;vertical-align:top;">${escapeHtml(row.label)}</td>
-                    <td style="padding:8px 0;color:${EMAIL_THEME.text};font-size:13px;line-height:18px;font-weight:500;vertical-align:top;">${safeText(row.value)}</td>
+                    <td class="detail-label" style="padding:8px 0;color:${EMAIL_THEME.muted};font-size:13px;line-height:18px;width:145px;vertical-align:top;">${escapeHtml(row.label)}</td>
+                    <td class="detail-value" style="padding:8px 0;color:${EMAIL_THEME.text};font-size:13px;line-height:18px;font-weight:500;vertical-align:top;">${safeText(row.value)}</td>
                 </tr>
             `;
         })
@@ -145,6 +145,27 @@ const createEmailShell = ({
     return `
 <!doctype html>
 <html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
+    <style>
+        @media only screen and (max-width: 480px) {
+            .email-card { padding: 16px !important; border-radius: 10px !important; }
+            .email-card-inner { padding: 16px !important; }
+            .otp-code { font-size: 24px !important; letter-spacing: 6px !important; }
+            .email-action-btn { display: block !important; width: 100% !important; text-align: center !important; box-sizing: border-box !important; }
+            .detail-label { display: block !important; width: 100% !important; padding-bottom: 0 !important; }
+            .detail-value { display: block !important; width: 100% !important; padding-top: 2px !important; }
+            .email-title { font-size: 20px !important; line-height: 26px !important; }
+            .email-footer { padding: 8px 4px 0 !important; }
+        }
+        @media only screen and (max-width: 360px) {
+            .otp-code { font-size: 20px !important; letter-spacing: 4px !important; }
+            .email-title { font-size: 18px !important; line-height: 24px !important; }
+        }
+    </style>
+</head>
     <body style="margin:0;padding:0;background:${EMAIL_THEME.pageBackground};font-family:${FONT_STACK};">
         <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;background:${EMAIL_THEME.pageBackground};">
             <tr>
@@ -154,11 +175,11 @@ const createEmailShell = ({
                             <td style="padding:0 0 12px 4px;color:${EMAIL_THEME.muted};font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Trimium</td>
                         </tr>
                         <tr>
-                            <td style="background:${EMAIL_THEME.cardBackground};border:1px solid ${EMAIL_THEME.border};border-radius:14px;overflow:hidden;">
+                            <td class="email-card" style="background:${EMAIL_THEME.cardBackground};border:1px solid ${EMAIL_THEME.border};border-radius:14px;overflow:hidden;">
                                 <div style="height:6px;background:${EMAIL_THEME.primary};"></div>
-                                <div style="padding:26px 24px;">
+                                <div class="email-card-inner" style="padding:26px 24px;">
                                     <p style="display:inline-block;margin:0 0 14px;padding:6px 10px;border-radius:999px;background:${EMAIL_THEME.primarySoft};color:${EMAIL_THEME.primarySoftText};font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">${escapeHtml(badge)}</p>
-                                    <h1 style="margin:0 0 10px;color:${EMAIL_THEME.text};font-size:24px;line-height:30px;font-weight:700;">${escapeHtml(title)}</h1>
+                                    <h1 class="email-title" style="margin:0 0 10px;color:${EMAIL_THEME.text};font-size:24px;line-height:30px;font-weight:700;">${escapeHtml(title)}</h1>
                                     <p style="margin:0;color:${EMAIL_THEME.muted};font-size:14px;line-height:22px;">${escapeHtml(intro)}</p>
                                     ${content}
                                     ${action ? actionButton(action) : ""}
@@ -171,7 +192,7 @@ const createEmailShell = ({
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:12px 6px 0;text-align:center;color:${EMAIL_THEME.muted};font-size:12px;line-height:18px;">
+                            <td class="email-footer" style="padding:12px 6px 0;text-align:center;color:${EMAIL_THEME.muted};font-size:12px;line-height:18px;">
                                 Sent by Trimium · Professional URL management and analytics<br/>
                                 <a href="${escapeHtml(config.FRONTEND_URL)}" style="color:${EMAIL_THEME.primary};text-decoration:none;">Open Trimium</a>
                             </td>
