@@ -34,6 +34,12 @@ A professional URL shortener and link management platform. Create powerful short
    - Export analytics reports in CSV format for further analysis.
    - Edit short URLs properties as per need.
 
+- **Linkhub (Link-in-Bio)**: 
+   - Create fully customizable personalized link-in-bio pages.
+   - Choose from multiple visually appealing themes to match your brand.
+   - Add your social links, custom buttons, and detailed text content.
+   - Centralize and easily manage all your important links in one place.
+
 - **Workspace Management**: 
    - Create and manage multiple workspaces for different projects or teams.
    - Invite team members with role-based access control (Admin, Member, Viewer).
