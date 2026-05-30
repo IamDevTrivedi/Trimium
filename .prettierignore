@@ -34,6 +34,9 @@ Thumbs.db
 coverage
 .nyc_output
 
+# Agent skills
+.agents
+
 # Misc
 *.min.js
 *.min.css
