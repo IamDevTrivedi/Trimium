@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 export const controllers = {
     index: (req: Request, res: Response) => {
         return sendResponse(res, {
-            message: "Welcome to the Trimium API! - Root Endpoint - Changed - 4",
+            message: "Welcome to the Trimium API! - Root Endpoint",
         });
     },
 };
