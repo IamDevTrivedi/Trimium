@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     authors: [{ name: "Trimium" }],
     creator: "Trimium",
     publisher: "Trimium",
-    metadataBase: new URL(siteUrl),
+    metadataBase: new URL(siteUrl || "https://trimium.vercel.app"),
     openGraph: {
         type: "website",
         locale: "en_US",
