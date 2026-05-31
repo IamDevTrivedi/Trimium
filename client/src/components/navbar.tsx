@@ -74,8 +74,11 @@ export function Navbar() {
     }
 
     return (
-        <div className="relative w-full">
-            <FloatingNav navItems={navItems} />
-        </div>
+        <>
+            <div className="relative w-full">
+                <FloatingNav navItems={navItems} />
+            </div>
+            <div aria-hidden="true" className="h-[68px] sm:h-20" />
+        </>
     );
 }

@@ -12,7 +12,10 @@ import {
     Download,
     FileDown,
     Globe,
+    History,
     Lock,
+    LogOut,
+    Mail,
     MapPin,
     Monitor,
     Palette,
@@ -21,14 +24,13 @@ import {
     Tag,
     Target,
     Users,
+    UserPen,
     Zap,
     FileSpreadsheet,
-    Grid3x3,
     Timer,
     TrendingUp,
     Link2,
     Eye,
-    MousePointerClick,
     Sparkles,
     ArrowRight,
 } from "lucide-react";
@@ -48,7 +50,7 @@ export const metadata: Metadata = {
 
 export default function FeaturesPage() {
     return (
-        <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8 my-12">
+        <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8">
             {/* Hero Section */}
             <section className="w-full max-w-6xl mx-auto border-b border-border bg-muted/10 py-16 md:py-24">
                 <div className="container px-4">
@@ -182,6 +184,39 @@ export default function FeaturesPage() {
                                     <CardDescription>
                                         Assign admin, editor, or viewer roles to control access
                                         levels
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <Mail className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Member Invitations</CardTitle>
+                                    <CardDescription>
+                                        Invite team members by email with specific role assignments
+                                        and manage pending invites
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <Tag className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Workspace Tags</CardTitle>
+                                    <CardDescription>
+                                        Create custom colored tags for links within each workspace
+                                        for advanced filtering and organization
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <BarChart3 className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Workspace Dashboard</CardTitle>
+                                    <CardDescription>
+                                        Get an at-a-glance performance overview with total URLs,
+                                        clicks, active links, and top-performing content
                                     </CardDescription>
                                 </CardHeader>
                             </Card>
@@ -338,6 +373,66 @@ export default function FeaturesPage() {
                                 </CardDescription>
                             </CardHeader>
                         </Card>
+                    </div>
+                </div>
+            </section>
+
+            {/* Account Management */}
+            <section className="w-full max-w-6xl mx-auto border-y border-border bg-muted/10 py-16">
+                <div className="container px-4">
+                    <div className="mx-auto max-w-6xl">
+                        <div className="mb-12">
+                            <h2 className="mb-4 text-3xl font-bold">Account Management</h2>
+                            <p className="text-lg text-muted-foreground leading-relaxed">
+                                Full control over your account, sessions, and security settings
+                            </p>
+                        </div>
+
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                            <Card>
+                                <CardHeader>
+                                    <History className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Login Activity</CardTitle>
+                                    <CardDescription>
+                                        View all active sessions with device, browser, OS, IP, and
+                                        location details at a glance
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <LogOut className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Remote Logout</CardTitle>
+                                    <CardDescription>
+                                        Securely log out of devices you no longer have access to via
+                                        an email-triggered revoke link
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <UserPen className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Profile Management</CardTitle>
+                                    <CardDescription>
+                                        Update your name, username with real-time availability
+                                        checking, and personal details anytime
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <Lock className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Password Changes</CardTitle>
+                                    <CardDescription>
+                                        Change your password securely with current password
+                                        verification and strength validation
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -567,6 +662,46 @@ export default function FeaturesPage() {
                                 creating short URLs, generating QR codes, and tracking analytics.
                                 Our intuitive interface makes it simple to get up and running in
                                 minutes.
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="item-11">
+                            <AccordionTrigger className="text-left">
+                                Can I view and manage my active sessions?
+                            </AccordionTrigger>
+                            <AccordionContent className="text-muted-foreground leading-relaxed">
+                                Yes. Your account includes a login activity page that shows all
+                                active sessions with device, browser, OS, IP address, and location.
+                                You can terminate individual sessions or all other sessions with one
+                                click. If you lose access to a device, you can also request a remote
+                                logout link via email.
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="item-12">
+                            <AccordionTrigger className="text-left">
+                                What security measures protect my account and links?
+                            </AccordionTrigger>
+                            <AccordionContent className="text-muted-foreground leading-relaxed">
+                                Trimium uses industry-standard security throughout. Passwords are
+                                hashed with Argon2, authentication uses HTTP-only JWT cookies with
+                                token versioning for instant session invalidation, and all public
+                                forms are protected by Cloudflare Turnstile CAPTCHA. API endpoints
+                                have Redis-backed rate limiting with proof-of-work challenges to
+                                prevent abuse. All data is encrypted in transit and at rest.
+                            </AccordionContent>
+                        </AccordionItem>
+
+                        <AccordionItem value="item-13">
+                            <AccordionTrigger className="text-left">
+                                Can I use custom shortcode aliases for my links?
+                            </AccordionTrigger>
+                            <AccordionContent className="text-muted-foreground leading-relaxed">
+                                Absolutely. You can set custom shortcode aliases (5-20 characters)
+                                when creating links, with real-time availability checking. If you
+                                leave the alias blank, a unique 7-character code is auto-generated.
+                                You can also edit existing link properties including the destination
+                                URL, title, description, and active status at any time.
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>

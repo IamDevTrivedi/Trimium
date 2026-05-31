@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function LinkhubPage() {
     return (
         <ProtectPage>
-            <div className="w-full max-w-6xl mx-auto px-4 py-8 my-12">
+            <div className="w-full max-w-6xl mx-auto px-4 py-8">
                 <LinkhubEditor />
             </div>
         </ProtectPage>

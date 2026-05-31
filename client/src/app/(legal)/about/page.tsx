@@ -4,14 +4,13 @@ import matter from "gray-matter";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "About Us",
+    title: "About",
     description:
-        "Learn about Trimium, our mission to simplify URL management, and the team behind the platform. Discover why thousands of users trust us for their link needs.",
+        "Trimium is a full-stack URL shortening and link management portfolio project built with Next.js, Express, MongoDB, and Redis.",
     openGraph: {
-        title: "About Us | Trimium",
+        title: "About | Trimium",
         description:
-            "Learn about Trimium, our mission to simplify URL management, and the team behind the platform.",
-        images: ["/og-about.png"],
+            "Full-stack portfolio project demonstrating URL shortening, analytics, team workspaces, QR codes, and more.",
     },
 };
 
@@ -20,7 +19,7 @@ export default function Page() {
     const matterResult = matter(markdown);
 
     return (
-        <div className="container mx-auto px-4 py-8 my-12 max-w-5xl">
+        <div className="container mx-auto px-4 py-8 max-w-5xl">
             <div className="text-center">
                 <h1 className="text-4xl font-bold mb-4">{matterResult.data.title}</h1>
                 <p className="text-sm text-muted-foreground mb-8">
