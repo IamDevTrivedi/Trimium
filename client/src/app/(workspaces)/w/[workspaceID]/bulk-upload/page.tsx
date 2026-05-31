@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function BulkUploadPage({ params }: { params: Promise<{ workspaceID: string }> }) {
     return (
-        <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-8 my-12">
+        <div className="mx-auto w-full max-w-5xl space-y-6 px-4 py-8">
             <BulkUploadWrapper params={params} />
         </div>
     );

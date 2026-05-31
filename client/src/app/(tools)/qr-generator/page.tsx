@@ -6,7 +6,7 @@ import { QrCode, Sparkles } from "lucide-react";
 
 export default function QRGeneratorPage() {
     return (
-        <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8 my-12">
+        <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8">
             {/* Header */}
             <div className="mb-8">
                 <TopBackButton />

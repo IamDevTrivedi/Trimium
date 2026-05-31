@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 
 export default function FeaturesPage() {
     return (
-        <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8 my-12">
+        <div className="flex flex-col bg-background w-full max-w-5xl mx-auto px-4 py-8">
             {/* Hero Section */}
             <section className="w-full max-w-6xl mx-auto border-b border-border bg-muted/10 py-16 md:py-24">
                 <div className="container px-4">
