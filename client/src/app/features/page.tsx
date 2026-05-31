@@ -177,50 +177,50 @@ export default function FeaturesPage() {
                                 </CardHeader>
                             </Card>
 
-                        <Card>
-                            <CardHeader>
-                                <Shield className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Role-Based Permissions</CardTitle>
-                                <CardDescription>
-                                    Assign admin, editor, or viewer roles to control access
-                                    levels
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
+                            <Card>
+                                <CardHeader>
+                                    <Shield className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Role-Based Permissions</CardTitle>
+                                    <CardDescription>
+                                        Assign admin, editor, or viewer roles to control access
+                                        levels
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
 
-                        <Card>
-                            <CardHeader>
-                                <Mail className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Member Invitations</CardTitle>
-                                <CardDescription>
-                                    Invite team members by email with specific role assignments
-                                    and manage pending invites
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
+                            <Card>
+                                <CardHeader>
+                                    <Mail className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Member Invitations</CardTitle>
+                                    <CardDescription>
+                                        Invite team members by email with specific role assignments
+                                        and manage pending invites
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
 
-                        <Card>
-                            <CardHeader>
-                                <Tag className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Workspace Tags</CardTitle>
-                                <CardDescription>
-                                    Create custom colored tags for links within each workspace for
-                                    advanced filtering and organization
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
+                            <Card>
+                                <CardHeader>
+                                    <Tag className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Workspace Tags</CardTitle>
+                                    <CardDescription>
+                                        Create custom colored tags for links within each workspace
+                                        for advanced filtering and organization
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
 
-                        <Card>
-                            <CardHeader>
-                                <BarChart3 className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Workspace Dashboard</CardTitle>
-                                <CardDescription>
-                                    Get an at-a-glance performance overview with total URLs, clicks,
-                                    active links, and top-performing content
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-                    </div>
+                            <Card>
+                                <CardHeader>
+                                    <BarChart3 className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Workspace Dashboard</CardTitle>
+                                    <CardDescription>
+                                        Get an at-a-glance performance overview with total URLs,
+                                        clicks, active links, and top-performing content
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -327,16 +327,16 @@ export default function FeaturesPage() {
                                 </CardHeader>
                             </Card>
 
-                        <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-transparent">
-                            <CardHeader>
-                                <Download className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Export Options</CardTitle>
-                                <CardDescription>
-                                    Download in PNG, SVG, JPEG, or WebP formats for any platform
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-                    </div>
+                            <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-transparent">
+                                <CardHeader>
+                                    <Download className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Export Options</CardTitle>
+                                    <CardDescription>
+                                        Download in PNG, SVG, JPEG, or WebP formats for any platform
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -515,17 +515,17 @@ export default function FeaturesPage() {
                                 </CardHeader>
                             </Card>
 
-                        <Card className="border-primary/20">
-                            <CardHeader>
-                                <Shield className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Publish Control</CardTitle>
-                                <CardDescription>
-                                    Keep your page private while editing, then publish when
-                                    you&apos;re ready
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-                    </div>
+                            <Card className="border-primary/20">
+                                <CardHeader>
+                                    <Shield className="mb-2 h-8 w-8 text-primary" />
+                                    <CardTitle>Publish Control</CardTitle>
+                                    <CardDescription>
+                                        Keep your page private while editing, then publish when
+                                        you&apos;re ready
+                                    </CardDescription>
+                                </CardHeader>
+                            </Card>
+                        </div>
                     </div>
                 </div>
             </section>
