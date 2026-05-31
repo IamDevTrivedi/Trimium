@@ -96,6 +96,11 @@ Trimium/
 
 The server uses a **feature-based modular architecture** — each domain (`auth`, `url`, `workspace`, `linkhub`, `user`, `contact`) is isolated in `server/src/modules/<name>/` with a `routes.ts` + `controllers.ts` pair.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./docs/diagrams/trimium-architecture-dark.png">
+  <img src="./docs/diagrams/trimium-architecture.png" alt="Trimium System Architecture">
+</picture>
+
 ### Security Highlights
 
 - **JWT authentication** with cookie-based sessions and **token versioning** (stored in User and LoginHistory models) for instant session invalidation across all devices.
