@@ -85,7 +85,7 @@ export function CreateAccountEmail() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
             <FieldGroup>
                 <Field>
                     <FieldLabel htmlFor="email">Email Address</FieldLabel>
@@ -222,7 +222,7 @@ export function CreateAccountVerify() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
             <FieldGroup>
                 <Field>
                     <FieldLabel htmlFor="otp">Verification Code</FieldLabel>
@@ -236,15 +236,15 @@ export function CreateAccountVerify() {
                             required
                         >
                             <InputOTPGroup>
-                                <InputOTPSlot index={0} />
-                                <InputOTPSlot index={1} />
-                                <InputOTPSlot index={2} />
+                                <InputOTPSlot index={0} className="size-10 sm:size-8" />
+                                <InputOTPSlot index={1} className="size-10 sm:size-8" />
+                                <InputOTPSlot index={2} className="size-10 sm:size-8" />
                             </InputOTPGroup>
                             <InputOTPSeparator />
                             <InputOTPGroup>
-                                <InputOTPSlot index={3} />
-                                <InputOTPSlot index={4} />
-                                <InputOTPSlot index={5} />
+                                <InputOTPSlot index={3} className="size-10 sm:size-8" />
+                                <InputOTPSlot index={4} className="size-10 sm:size-8" />
+                                <InputOTPSlot index={5} className="size-10 sm:size-8" />
                             </InputOTPGroup>
                         </InputOTP>
                     </div>
@@ -388,43 +388,45 @@ export function CreateAccountProfile() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
             <FieldGroup>
-                <Field>
-                    <FieldLabel htmlFor="firstName">First Name</FieldLabel>
-                    <Input
-                        id="firstName"
-                        type="text"
-                        placeholder="John"
-                        className={`${errors.firstName ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                        {...register("firstName")}
-                        aria-invalid={!!errors.firstName}
-                        aria-describedby={errors.firstName ? "firstName-error" : undefined}
-                    />
-                    {errors.firstName && (
-                        <p id="firstName-error" className="text-sm text-destructive">
-                            {errors.firstName.message}
-                        </p>
-                    )}
-                </Field>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Field>
+                        <FieldLabel htmlFor="firstName">First Name</FieldLabel>
+                        <Input
+                            id="firstName"
+                            type="text"
+                            placeholder="John"
+                            className={`${errors.firstName ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                            {...register("firstName")}
+                            aria-invalid={!!errors.firstName}
+                            aria-describedby={errors.firstName ? "firstName-error" : undefined}
+                        />
+                        {errors.firstName && (
+                            <p id="firstName-error" className="text-sm text-destructive">
+                                {errors.firstName.message}
+                            </p>
+                        )}
+                    </Field>
 
-                <Field>
-                    <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
-                    <Input
-                        id="lastName"
-                        type="text"
-                        placeholder="Doe"
-                        className={`${errors.lastName ? "border-destructive focus-visible:ring-destructive" : ""}`}
-                        {...register("lastName")}
-                        aria-invalid={!!errors.lastName}
-                        aria-describedby={errors.lastName ? "lastName-error" : undefined}
-                    />
-                    {errors.lastName && (
-                        <p id="lastName-error" className="text-sm text-destructive">
-                            {errors.lastName.message}
-                        </p>
-                    )}
-                </Field>
+                    <Field>
+                        <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+                        <Input
+                            id="lastName"
+                            type="text"
+                            placeholder="Doe"
+                            className={`${errors.lastName ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                            {...register("lastName")}
+                            aria-invalid={!!errors.lastName}
+                            aria-describedby={errors.lastName ? "lastName-error" : undefined}
+                        />
+                        {errors.lastName && (
+                            <p id="lastName-error" className="text-sm text-destructive">
+                                {errors.lastName.message}
+                            </p>
+                        )}
+                    </Field>
+                </div>
 
                 <Field>
                     <FieldLabel htmlFor="username">Username</FieldLabel>
@@ -579,7 +581,7 @@ export function CreateAccountPassword() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
             <FieldGroup>
                 <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -598,7 +600,7 @@ export function CreateAccountPassword() {
                     />
                     <div
                         id="password-requirements"
-                        className="mt-3 space-y-3 rounded-md border bg-muted/30 p-3"
+                        className="mt-3 space-y-3 rounded-md border bg-muted/30 p-3 sm:p-4"
                     >
                         <div className="flex items-center justify-between">
                             <p className="text-xs text-muted-foreground">Password strength</p>
