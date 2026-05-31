@@ -4,14 +4,13 @@ import matter from "gray-matter";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "About Us",
+    title: "About",
     description:
-        "Learn about Trimium, our mission to simplify URL management, and the team behind the platform. Discover why thousands of users trust us for their link needs.",
+        "Trimium is a full-stack URL shortening and link management portfolio project built with Next.js, Express, MongoDB, and Redis.",
     openGraph: {
-        title: "About Us | Trimium",
+        title: "About | Trimium",
         description:
-            "Learn about Trimium, our mission to simplify URL management, and the team behind the platform.",
-        images: ["/og-about.png"],
+            "Full-stack portfolio project demonstrating URL shortening, analytics, team workspaces, QR codes, and more.",
     },
 };
 

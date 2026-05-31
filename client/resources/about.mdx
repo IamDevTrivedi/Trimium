@@ -1,63 +1,34 @@
 ---
 title: About Trimium
-lastUpdate: January 1, 2026
+lastUpdate: May 31, 2026
 ---
 
-## Our Mission
+## What This Is
 
-At Trimium, our mission is to simplify link management for everyone—from individual creators to enterprise teams. We believe that managing, sharing, and tracking URLs should be effortless, insightful, and secure. We're here to transform long, unwieldy links into powerful tools for engagement and growth.
+Trimium is a full-stack URL shortening and link management platform built as a portfolio project. It demonstrates modern web development patterns across a complete production-grade stack — authentication, analytics, team collaboration, QR code generation, and more.
 
-## Our Story
+## How It's Built
 
-Trimium was born from a simple frustration: sharing long URLs was messy, tracking their performance was complicated, and collaborating on link campaigns was nearly impossible. We set out to build a platform that solves all of these problems in one elegant solution.
+### Frontend
+Next.js 16, React 19, Tailwind CSS v4, shadcn/ui (Base UI), Zustand, React Hook Form + Zod, Recharts, motion
 
-What started as a simple URL shortener has evolved into a comprehensive link management platform. Today, Trimium helps thousands of businesses, marketers, and developers create branded short links, generate custom QR codes, and gain deep insights into their audience engagement.
+### Backend
+Express 5, TypeScript, Mongoose, BullMQ (Redis), Cloudflare Turnstile, PoW rate limiting, Brevo (email), Cloudinary (media)
 
-## What We Offer
+### Infrastructure
+MongoDB, Redis, Docker, Nginx, AWS EC2
 
-### URL Shortening
-Transform lengthy URLs into clean, memorable short links. Customize your links with branded domains and meaningful slugs that your audience will trust and remember.
+## Key Features
 
-### Advanced Analytics
-Gain valuable insights into your link performance. Track clicks, geographic distribution, device types, referrers, and more. Make data-driven decisions to optimize your campaigns.
+- **URL Shortening** — custom slugs, branded domains, bulk upload
+- **Analytics** — real-time click tracking, geo/devices/referrers, hourly & daily patterns
+- **QR Codes** — customizable colors, logos, multiple download formats
+- **Team Workspaces** — shared links, member invitations, role-based access
+- **Auth** — email OTP, password policies, session management, Turnstile CAPTCHA
+- **Security** — rate limiting, proof-of-work challenges, HTTP-only cookies
 
-### Custom QR Codes
-Generate beautiful, branded QR codes that seamlessly connect your offline and online presence. Customize colors, add logos, and download in multiple formats.
+## Links
 
-### Team Workspaces
-Collaborate effortlessly with your team. Create shared workspaces, manage permissions, and keep all your links organized in one place.
-
-### Enterprise-Grade Security
-Your data security is our top priority. We use industry-standard encryption, secure authentication, and regular security audits to keep your information safe.
-
-## Why Choose Trimium?
-
-- **Simplicity:** Our intuitive interface makes link management accessible to everyone, regardless of technical expertise.
-- **Reliability:** Built on robust infrastructure, Trimium delivers 99.9% uptime so your links are always accessible.
-- **Scalability:** Whether you're managing 10 links or 10 million, Trimium scales seamlessly with your needs.
-- **Privacy-First:** We respect your privacy and your users' privacy. We never sell your data to third parties.
-- **Continuous Innovation:** We're constantly improving our platform based on user feedback and emerging technologies.
-
-## Our Values
-
-### Transparency
-We believe in open communication with our users. From clear pricing to honest product updates, we keep you informed every step of the way.
-
-### User-Centric Design
-Every feature we build starts with understanding our users' needs. Your feedback shapes the future of Trimium.
-
-### Quality Over Quantity
-We focus on doing fewer things exceptionally well rather than many things poorly. Every feature is polished before release.
-
-### Community
-We're building more than a product—we're building a community of link management enthusiasts who help each other succeed.
-
-## Contact Us
-
-We'd love to hear from you! Whether you have questions, feedback, or just want to say hello, our team is here to help.
-
-- **Email:** devtrivedi.work@gmail.com
+- **GitHub:** [IamDevTrivedi/Trimium](https://github.com/IamDevTrivedi/Trimium)
 - **LinkedIn:** [Dev Trivedi](https://in.linkedin.com/in/contact-devtrivedi)
-- **GitHub:** [IamDevTrivedi](https://github.com/IamDevTrivedi)
-
-Join thousands of users who trust Trimium for their link management needs. Start shortening smarter today!
+- **Email:** devtrivedi.work@gmail.com
