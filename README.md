@@ -96,10 +96,7 @@ Trimium/
 
 The server uses a **feature-based modular architecture** — each domain (`auth`, `url`, `workspace`, `linkhub`, `user`, `contact`) is isolated in `server/src/modules/<name>/` with a `routes.ts` + `controllers.ts` pair.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./docs/diagrams/trimium-architecture-dark.png">
-  <img src="./docs/diagrams/trimium-architecture.png" alt="Trimium System Architecture">
-</picture>
+<img src="./docs/diagrams/trimium-architecture.png" alt="Trimium System Architecture">
 
 ### Security Highlights
 
