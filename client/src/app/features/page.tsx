@@ -27,12 +27,10 @@ import {
     UserPen,
     Zap,
     FileSpreadsheet,
-    ScanText,
     Timer,
     TrendingUp,
     Link2,
     Eye,
-    MousePointerClick,
     Sparkles,
     ArrowRight,
 } from "lucide-react";
@@ -129,28 +127,6 @@ export default function FeaturesPage() {
                                 <CardTitle>Unique vs Returning</CardTitle>
                                 <CardDescription>
                                     Distinguish between unique visitors and returning users
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <MousePointerClick className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Referrer Tracking</CardTitle>
-                                <CardDescription>
-                                    Discover which websites and domains are sending traffic to your
-                                    links
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <Clock className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Hourly & Daily Patterns</CardTitle>
-                                <CardDescription>
-                                    Analyze click patterns across hours, days, and weeks to find
-                                    peak engagement times
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -291,39 +267,6 @@ export default function FeaturesPage() {
                                 </CardDescription>
                             </CardHeader>
                         </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <Shield className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>CAPTCHA Protection</CardTitle>
-                                <CardDescription>
-                                    Cloudflare Turnstile blocks automated bot attacks on all public
-                                    forms while preserving user privacy
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <Zap className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Rate Limiting</CardTitle>
-                                <CardDescription>
-                                    Intelligent request throttling with proof-of-work challenges to
-                                    prevent abuse without blocking real users
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <History className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Session Management</CardTitle>
-                                <CardDescription>
-                                    View all active sessions with device and location details, and
-                                    terminate individual sessions remotely
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
                     </div>
                 </div>
             </section>
@@ -390,28 +333,6 @@ export default function FeaturesPage() {
                                 <CardTitle>Export Options</CardTitle>
                                 <CardDescription>
                                     Download in PNG, SVG, JPEG, or WebP formats for any platform
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-transparent">
-                            <CardHeader>
-                                <ScanText className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Content Types</CardTitle>
-                                <CardDescription>
-                                    Generate QR codes for URLs, plain text, email addresses, phone
-                                    numbers, and SMS messages
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card className="border-primary/20 bg-linear-to-br from-primary/5 to-transparent">
-                            <CardHeader>
-                                <Target className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Error Correction</CardTitle>
-                                <CardDescription>
-                                    Choose from four error correction levels — auto-set to High when
-                                    a logo is added for maximum durability
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -601,17 +522,6 @@ export default function FeaturesPage() {
                                 <CardDescription>
                                     Keep your page private while editing, then publish when
                                     you&apos;re ready
-                                </CardDescription>
-                            </CardHeader>
-                        </Card>
-
-                        <Card className="border-primary/20">
-                            <CardHeader>
-                                <UserPen className="mb-2 h-8 w-8 text-primary" />
-                                <CardTitle>Avatar & Bio</CardTitle>
-                                <CardDescription>
-                                    Upload a profile picture and write a bio — personalize your page
-                                    with your own identity
                                 </CardDescription>
                             </CardHeader>
                         </Card>
