@@ -463,7 +463,7 @@ export function WorkspacePerformance({
                                 Manage and monitor all short links in your workspace.
                             </CardDescription>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-wrap">
                             {/* Tag Filter Dropdown */}
                             <Popover open={isTagFilterOpen} onOpenChange={setIsTagFilterOpen}>
                                 <PopoverTrigger>
@@ -582,7 +582,7 @@ export function WorkspacePerformance({
                                 <Input
                                     type="search"
                                     placeholder="Search title or code..."
-                                    className="pl-9 w-[200px] lg:w-[300px] h-9 bg-background"
+                                    className="pl-9 w-full sm:w-[200px] lg:w-[300px] h-9 bg-background"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
@@ -633,28 +633,30 @@ export function WorkspacePerformance({
                     <Table>
                         <TableHeader className="">
                             <TableRow>
-                                <TableHead className="w-[300px]">
+                                <TableHead className="sm:w-[300px]">
                                     <Button
                                         variant="ghost"
                                         size="sm"
                                         className="-ml-3 h-8 font-bold"
                                         onClick={() => toggleSort("title")}
                                     >
-                                        Link Title <SortIcon columnKey="title" />
+                                        <span className="hidden sm:inline">Link Title</span>
+                                        <SortIcon columnKey="title" />
                                     </Button>
                                 </TableHead>
-                                <TableHead>
+                                <TableHead className="hidden sm:table-cell">
                                     <Button
                                         variant="ghost"
                                         size="sm"
                                         className="-ml-3 h-8 font-bold"
                                         onClick={() => toggleSort("shortCode")}
                                     >
-                                        Short Code <SortIcon columnKey="shortCode" />
+                                        <span className="hidden sm:inline">Short Code</span>
+                                        <SortIcon columnKey="shortCode" />
                                     </Button>
                                 </TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Tags</TableHead>
+                                <TableHead className="hidden sm:table-cell">Status</TableHead>
+                                <TableHead className="hidden lg:table-cell">Tags</TableHead>
                                 <TableHead className="text-right">
                                     <Button
                                         variant="ghost"
@@ -662,10 +664,11 @@ export function WorkspacePerformance({
                                         className="-ml-3 h-8 font-bold"
                                         onClick={() => toggleSort("totalClicks")}
                                     >
-                                        Redirects <SortIcon columnKey="totalClicks" />
+                                        <span className="hidden sm:inline">Redirects</span>
+                                        <SortIcon columnKey="totalClicks" />
                                     </Button>
                                 </TableHead>
-                                <TableHead className="text-right">
+                                <TableHead className="text-right hidden md:table-cell">
                                     <Button
                                         variant="ghost"
                                         size="sm"
@@ -675,7 +678,7 @@ export function WorkspacePerformance({
                                         Lands <SortIcon columnKey="lands" />
                                     </Button>
                                 </TableHead>
-                                <TableHead className="text-right">
+                                <TableHead className="text-right hidden md:table-cell">
                                     <Button
                                         variant="ghost"
                                         size="sm"
@@ -700,12 +703,12 @@ export function WorkspacePerformance({
                                                 <span className="truncate">{url.title}</span>
                                             </div>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="hidden sm:table-cell">
                                             <code className="bg-muted px-1.5 py-0.5 rounded text-[11px] font-mono border border-border">
                                                 {url.shortCode}
                                             </code>
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="hidden sm:table-cell">
                                             {url.isActive ? (
                                                 <Badge
                                                     variant="secondary"
@@ -722,7 +725,7 @@ export function WorkspacePerformance({
                                                 </Badge>
                                             )}
                                         </TableCell>
-                                        <TableCell>
+                                        <TableCell className="hidden lg:table-cell">
                                             <div className="flex flex-wrap gap-1 max-w-[200px]">
                                                 {url.tags.length > 0 ? (
                                                     url.tags.slice(0, 3).map((tagName) => {
@@ -764,10 +767,10 @@ export function WorkspacePerformance({
                                         <TableCell className="text-right font-semibold">
                                             {url.totalClicks.toLocaleString()}
                                         </TableCell>
-                                        <TableCell className="text-right text-muted-foreground">
+                                        <TableCell className="text-right text-muted-foreground hidden md:table-cell">
                                             {url.lands.toLocaleString()}
                                         </TableCell>
-                                        <TableCell className="text-right text-muted-foreground">
+                                        <TableCell className="text-right text-muted-foreground hidden md:table-cell">
                                             {url.uniqueVisitors.toLocaleString()}
                                         </TableCell>
                                         <TableCell>
@@ -800,7 +803,7 @@ export function WorkspacePerformance({
                     </Table>
 
                     {/* Pagination Controls */}
-                    <div className="flex items-center justify-between py-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 py-4">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span>Rows per page</span>
                             <Select

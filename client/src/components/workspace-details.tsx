@@ -336,7 +336,7 @@ export function WorkspaceDetails() {
             <div className="grid gap-8">
                 {/* Members Management Section */}
                 <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-                    <CardHeader className="flex flex-row items-center justify-between border-b bg-muted/5 pb-4">
+                    <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b bg-muted/5 pb-4">
                         <div className="space-y-1">
                             <CardTitle className="text-xl">Workspace Members</CardTitle>
                             <CardDescription>
@@ -421,7 +421,9 @@ export function WorkspaceDetails() {
                                 <TableHeader className="    ">
                                     <TableRow className="hover:bg-transparent">
                                         <TableHead className="py-4 pl-6">Member</TableHead>
-                                        <TableHead className="py-4">Role</TableHead>
+                                        <TableHead className="py-4 hidden sm:table-cell">
+                                            Role
+                                        </TableHead>
                                         {isAdmin && (
                                             <TableHead className="py-4 pr-6 text-right">
                                                 Actions
@@ -436,16 +438,16 @@ export function WorkspaceDetails() {
                                             className="group border-border/40 transition-colors"
                                         >
                                             <TableCell className="py-4 pl-6">
-                                                <div className="flex flex-col gap-0.5">
-                                                    <span className="font-semibold text-foreground">
+                                                <div className="flex flex-col gap-0.5 min-w-0">
+                                                    <span className="font-semibold text-foreground truncate">
                                                         {member.fullName}
                                                     </span>
-                                                    <span className="text-xs text-muted-foreground">
+                                                    <span className="text-xs text-muted-foreground truncate">
                                                         {member.email}
                                                     </span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="py-4">
+                                            <TableCell className="py-4 hidden sm:table-cell">
                                                 {isAdmin && member.userID !== myUserID ? (
                                                     <Select
                                                         value={member.permission}
@@ -537,7 +539,7 @@ export function WorkspaceDetails() {
                 {/* New Short Link Section */}
                 {permission !== "viewer" && (
                     <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-                        <CardHeader className="flex items-center justify-between bg-muted/5">
+                        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-muted/5">
                             <div className="space-y-1">
                                 <CardTitle className="text-xl">Create a New Short Link</CardTitle>
                                 <CardDescription>
@@ -556,7 +558,7 @@ export function WorkspaceDetails() {
                 {/* Bulk Upload Section */}
                 {permission !== "viewer" && (
                     <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-                        <CardHeader className="flex items-center justify-between bg-muted/5">
+                        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-muted/5">
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">
                                     <CardTitle className="text-xl">
@@ -603,7 +605,7 @@ export function WorkspaceDetails() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="divide-y divide-destructive/10 p-0">
-                        <div className="flex items-center justify-between p-6 transition-colors hover:bg-destructive/5">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 transition-colors hover:bg-destructive/5">
                             <div className="space-y-1">
                                 <p className="font-semibold text-foreground">Leave Workspace</p>
                                 <p className="text-sm text-muted-foreground">
@@ -641,7 +643,7 @@ export function WorkspaceDetails() {
                         </div>
 
                         {isAdmin && (
-                            <div className="flex items-center justify-between p-6 transition-colors hover:bg-destructive/5">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 transition-colors hover:bg-destructive/5">
                                 <div className="space-y-1">
                                     <p className="font-semibold text-destructive">
                                         Delete Workspace

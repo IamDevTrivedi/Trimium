@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function WorkspacesPage() {
     return (
         <div className="flex min-h-screen flex-col max-w-5xl mx-auto px-4 py-8 bg-background text-foreground">
-            <main className="flex-1 overflow-auto p-6">
+            <main className="flex-1 overflow-visible p-4 sm:p-6">
                 <WorkspacePageTabs />
             </main>
         </div>

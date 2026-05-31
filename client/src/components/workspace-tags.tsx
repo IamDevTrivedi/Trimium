@@ -254,7 +254,7 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
 
     return (
         <Card className="overflow-hidden border-border/50 bg-card/50 backdrop-blur-sm">
-            <CardHeader className="flex flex-row items-center justify-between border-b bg-muted/5 pb-4">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b bg-muted/5 pb-4">
                 <div className="space-y-1">
                     <CardTitle className="text-xl flex items-center gap-2">
                         <Tag className="h-5 w-5" />
@@ -361,7 +361,9 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
                             <TableHeader>
                                 <TableRow className="hover:bg-transparent">
                                     <TableHead className="py-4 pl-6">Tag</TableHead>
-                                    <TableHead className="py-4">Color Theme</TableHead>
+                                    <TableHead className="py-4 hidden sm:table-cell">
+                                        Color Theme
+                                    </TableHead>
                                     {canEdit && (
                                         <TableHead className="py-4 pr-6 text-right">
                                             Actions
@@ -380,7 +382,7 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
                                             <TableCell className="py-4 pl-6">
                                                 {renderTagPreview(tagData.tagID, tagData.tag)}
                                             </TableCell>
-                                            <TableCell className="py-4">
+                                            <TableCell className="py-4 hidden sm:table-cell">
                                                 <div className="flex items-center gap-2">
                                                     <div
                                                         className={cn(
