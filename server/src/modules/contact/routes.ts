@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { controller } from "@modules/contact/controller";
 import { createRateLimiter } from "@/middlewares/rateLimiter";
+import { verifyTurnstileToken } from "@/middlewares/verifyTurnstile";
 
 const router = Router();
 
@@ -10,6 +11,6 @@ const contactLimiter = createRateLimiter({
     prefix: "rl:contact",
 });
 
-router.post("/submit", contactLimiter, controller.submitContactForm);
+router.post("/submit", contactLimiter, verifyTurnstileToken, controller.submitContactForm);
 
 export default router;

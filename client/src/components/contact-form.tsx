@@ -10,9 +10,11 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { backend } from "@/config/backend";
 import { toastError } from "@/lib/toast-error";
 import { handleResponse } from "@/lib/handle-response";
-import { Send, Loader2, CheckCircle2 } from "lucide-react";
+import { Send, CheckCircle2 } from "lucide-react";
 import React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { AuthTurnstile } from "./auth-turnstile";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 
 const contactFormSchema = z.object({
     firstName: z
@@ -51,6 +53,10 @@ const subjectOptions = [
 
 export function ContactForm() {
     const [isSubmitted, setIsSubmitted] = React.useState(false);
+    const [showTurnstileModal, setShowTurnstileModal] = React.useState(false);
+    const [isVerifying, setIsVerifying] = React.useState(false);
+    const [turnstileWidgetKey, setTurnstileWidgetKey] = React.useState(0);
+    const pendingFormDataRef = React.useRef<ContactFormData | null>(null);
 
     const {
         register,
@@ -74,38 +80,62 @@ export function ContactForm() {
     const subjectValue = watch("subject");
 
     const onSubmit = async (data: ContactFormData) => {
+        pendingFormDataRef.current = data;
+        setShowTurnstileModal(true);
+    };
+
+    const handleTurnstileToken = React.useCallback(async (token: string) => {
+        if (!token) return;
+
+        const formData = pendingFormDataRef.current;
+        if (!formData) return;
+
+        setIsVerifying(true);
         try {
             const { data: resData } = await backend.post("/api/v1/contact/submit", {
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                subject: data.subject,
-                description: data.description,
+                ...formData,
+                turnstileToken: token,
             });
 
             if (handleResponse(resData)) {
                 setIsSubmitted(true);
                 reset();
+                setShowTurnstileModal(false);
+                pendingFormDataRef.current = null;
             }
         } catch (error: unknown) {
             toastError(error);
+            setTurnstileWidgetKey((prev) => prev + 1);
+        } finally {
+            setIsVerifying(false);
         }
+    }, []);
+
+    const closeModal = () => {
+        if (isVerifying) return;
+        setShowTurnstileModal(false);
+        pendingFormDataRef.current = null;
+        setTurnstileWidgetKey((prev) => prev + 1);
     };
 
     if (isSubmitted) {
         return (
-            <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                    <CheckCircle2 className="h-8 w-8 text-primary" />
+            <div className="flex flex-col items-center justify-center py-8 sm:py-12 text-center space-y-4">
+                <div className="flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-primary/10">
+                    <CheckCircle2 className="h-7 w-7 sm:h-8 sm:w-8 text-primary" />
                 </div>
-                <h3 className="text-2xl font-semibold tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-semibold tracking-tight">
                     Message Sent Successfully!
                 </h3>
-                <p className="text-muted-foreground max-w-md leading-relaxed">
+                <p className="text-sm sm:text-base text-muted-foreground max-w-md leading-relaxed px-2">
                     Thank you for reaching out. We&apos;ve received your message and will get back
                     to you within 24-48 hours.
                 </p>
-                <Button variant="outline" onClick={() => setIsSubmitted(false)} className="mt-4">
+                <Button
+                    variant="outline"
+                    onClick={() => setIsSubmitted(false)}
+                    className="mt-2 sm:mt-4"
+                >
                     Send Another Message
                 </Button>
             </div>
@@ -113,153 +143,179 @@ export function ContactForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <FieldGroup>
-                {/* Name Fields - Side by Side */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 sm:space-y-6">
+                <FieldGroup>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <Field>
+                            <FieldLabel htmlFor="firstName">First Name</FieldLabel>
+                            <Input
+                                id="firstName"
+                                type="text"
+                                placeholder="John"
+                                className={
+                                    errors.firstName
+                                        ? "border-destructive focus-visible:ring-destructive"
+                                        : "transition-colors"
+                                }
+                                {...register("firstName")}
+                                aria-invalid={!!errors.firstName}
+                                aria-describedby={errors.firstName ? "firstName-error" : undefined}
+                            />
+                            {errors.firstName && (
+                                <p id="firstName-error" className="text-sm text-destructive">
+                                    {errors.firstName.message}
+                                </p>
+                            )}
+                        </Field>
+
+                        <Field>
+                            <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+                            <Input
+                                id="lastName"
+                                type="text"
+                                placeholder="Doe"
+                                className={
+                                    errors.lastName
+                                        ? "border-destructive focus-visible:ring-destructive"
+                                        : "transition-colors"
+                                }
+                                {...register("lastName")}
+                                aria-invalid={!!errors.lastName}
+                                aria-describedby={errors.lastName ? "lastName-error" : undefined}
+                            />
+                            {errors.lastName && (
+                                <p id="lastName-error" className="text-sm text-destructive">
+                                    {errors.lastName.message}
+                                </p>
+                            )}
+                        </Field>
+                    </div>
+
                     <Field>
-                        <FieldLabel htmlFor="firstName">First Name</FieldLabel>
+                        <FieldLabel htmlFor="email">Email Address</FieldLabel>
                         <Input
-                            id="firstName"
-                            type="text"
-                            placeholder="John"
+                            id="email"
+                            type="email"
+                            placeholder="you@example.com"
                             className={
-                                errors.firstName
+                                errors.email
                                     ? "border-destructive focus-visible:ring-destructive"
-                                    : ""
+                                    : "transition-colors"
                             }
-                            {...register("firstName")}
-                            aria-invalid={!!errors.firstName}
-                            aria-describedby={errors.firstName ? "firstName-error" : undefined}
+                            {...register("email")}
+                            aria-invalid={!!errors.email}
+                            aria-describedby={errors.email ? "email-error" : undefined}
                         />
-                        {errors.firstName && (
-                            <p id="firstName-error" className="text-sm text-destructive">
-                                {errors.firstName.message}
+                        {errors.email && (
+                            <p id="email-error" className="text-sm text-destructive">
+                                {errors.email.message}
                             </p>
                         )}
+                        <FieldDescription>
+                            We&apos;ll send a confirmation to this email address.
+                        </FieldDescription>
                     </Field>
 
                     <Field>
-                        <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
-                        <Input
-                            id="lastName"
-                            type="text"
-                            placeholder="Doe"
-                            className={
-                                errors.lastName
-                                    ? "border-destructive focus-visible:ring-destructive"
-                                    : ""
-                            }
-                            {...register("lastName")}
-                            aria-invalid={!!errors.lastName}
-                            aria-describedby={errors.lastName ? "lastName-error" : undefined}
-                        />
-                        {errors.lastName && (
-                            <p id="lastName-error" className="text-sm text-destructive">
-                                {errors.lastName.message}
-                            </p>
-                        )}
-                    </Field>
-                </div>
-
-                {/* Email Field */}
-                <Field>
-                    <FieldLabel htmlFor="email">Email Address</FieldLabel>
-                    <Input
-                        id="email"
-                        type="email"
-                        placeholder="you@example.com"
-                        className={
-                            errors.email ? "border-destructive focus-visible:ring-destructive" : ""
-                        }
-                        {...register("email")}
-                        aria-invalid={!!errors.email}
-                        aria-describedby={errors.email ? "email-error" : undefined}
-                    />
-                    {errors.email && (
-                        <p id="email-error" className="text-sm text-destructive">
-                            {errors.email.message}
-                        </p>
-                    )}
-                    <FieldDescription>
-                        We&apos;ll send a confirmation to this email address.
-                    </FieldDescription>
-                </Field>
-
-                {/* Subject Field */}
-                <Field>
-                    <FieldLabel htmlFor="subject">Subject</FieldLabel>
-                    <Select
-                        value={subjectValue}
-                        onValueChange={(value) => setValue("subject", value ?? "")}
-                    >
-                        <SelectTrigger
-                            id="subject"
-                            className={`w-full ${
-                                errors.subject
-                                    ? "border-destructive focus-visible:ring-destructive"
-                                    : ""
-                            }`}
-                            aria-invalid={!!errors.subject}
+                        <FieldLabel htmlFor="subject">Subject</FieldLabel>
+                        <Select
+                            value={subjectValue}
+                            onValueChange={(value) => setValue("subject", value ?? "")}
                         >
-                            <SelectValue>
-                                {subjectValue || (
-                                    <span className="text-muted-foreground">Select a subject</span>
-                                )}
-                            </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent>
-                            {subjectOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.label}>
-                                    {option.label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                    {errors.subject && (
-                        <p id="subject-error" className="text-sm text-destructive">
-                            {errors.subject.message}
-                        </p>
-                    )}
-                </Field>
+                            <SelectTrigger
+                                id="subject"
+                                className={`w-full ${
+                                    errors.subject
+                                        ? "border-destructive focus-visible:ring-destructive"
+                                        : ""
+                                }`}
+                                aria-invalid={!!errors.subject}
+                            >
+                                <SelectValue>
+                                    {subjectValue || (
+                                        <span className="text-muted-foreground">
+                                            Select a subject
+                                        </span>
+                                    )}
+                                </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {subjectOptions.map((option) => (
+                                    <SelectItem key={option.value} value={option.label}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {errors.subject && (
+                            <p id="subject-error" className="text-sm text-destructive">
+                                {errors.subject.message}
+                            </p>
+                        )}
+                    </Field>
 
-                {/* Message Field */}
-                <Field>
-                    <FieldLabel htmlFor="description">Message</FieldLabel>
-                    <Textarea
-                        id="description"
-                        placeholder="Tell us how we can help you..."
-                        rows={6}
-                        className={
-                            errors.description
-                                ? "border-destructive focus-visible:ring-destructive"
-                                : ""
-                        }
-                        {...register("description")}
-                        aria-invalid={!!errors.description}
-                        aria-describedby={errors.description ? "description-error" : undefined}
-                    />
-                    {errors.description && (
-                        <p id="description-error" className="text-sm text-destructive">
-                            {errors.description.message}
-                        </p>
-                    )}
-                    <FieldDescription>
-                        Please provide as much detail as possible so we can assist you better.
-                    </FieldDescription>
-                </Field>
-            </FieldGroup>
+                    <Field>
+                        <FieldLabel htmlFor="description">Message</FieldLabel>
+                        <Textarea
+                            id="description"
+                            placeholder="Tell us how we can help you..."
+                            rows={6}
+                            className={
+                                errors.description
+                                    ? "border-destructive focus-visible:ring-destructive"
+                                    : "transition-colors"
+                            }
+                            {...register("description")}
+                            aria-invalid={!!errors.description}
+                            aria-describedby={errors.description ? "description-error" : undefined}
+                        />
+                        {errors.description && (
+                            <p id="description-error" className="text-sm text-destructive">
+                                {errors.description.message}
+                            </p>
+                        )}
+                        <FieldDescription>
+                            Please provide as much detail as possible so we can assist you better.
+                        </FieldDescription>
+                    </Field>
+                </FieldGroup>
 
-            <Button
-                type="submit"
-                className="w-full"
-                size="lg"
-                disabled={isSubmitting}
-                loading={isSubmitting}
+                <Button
+                    type="submit"
+                    className="w-full transition-all"
+                    size="lg"
+                    disabled={isSubmitting}
+                    loading={isSubmitting}
+                >
+                    <Send className="mr-2 h-4 w-4" />
+                    Send Message
+                </Button>
+            </form>
+
+            <Dialog
+                open={showTurnstileModal}
+                onOpenChange={(open) => {
+                    if (!open) closeModal();
+                }}
             >
-                <Send className="mr-2 h-4 w-4" />
-                Send Message
-            </Button>
-        </form>
+                <DialogContent className="sm:max-w-md" showCloseButton={!isVerifying}>
+                    <DialogHeader>
+                        <DialogTitle>Security Verification</DialogTitle>
+                        <DialogDescription>
+                            Complete this challenge to verify you&apos;re human before sending your
+                            message.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-center py-4">
+                        <AuthTurnstile
+                            key={turnstileWidgetKey}
+                            onTokenChange={handleTurnstileToken}
+                            description="Verify before submitting your message."
+                        />
+                    </div>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }
