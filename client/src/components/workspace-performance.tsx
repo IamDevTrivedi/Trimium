@@ -137,9 +137,7 @@ export function WorkspacePerformance({
         if (!workspaceID) return;
         try {
             setTagsLoading(true);
-            const { data: resData } = await backend.post("/api/v1/workspace/get-tags", {
-                workspaceID,
-            });
+            const { data: resData } = await backend.get(`/api/v1/workspace/${workspaceID}/tags`);
 
             if (handleResponse(resData, true)) {
                 setWorkspaceTags(resData.data || []);

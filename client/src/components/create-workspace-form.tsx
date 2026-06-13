@@ -107,7 +107,7 @@ export function CreateWorkspaceForm() {
             };
 
             const { data: resData } = await backend.post(
-                "/api/v1/workspace/create-workspace",
+                "/api/v1/workspace",
                 payload
             );
 

@@ -35,43 +35,20 @@ const tagLimiter = createRateLimiter({
     prefix: "rl:workspace:tag",
 });
 
-router.post("/create-workspace", protectRoute, workspaceCreateLimiter, controllers.createWorkspace);
-router.post(
-    "/accept-or-decline-invitation",
-    protectRoute,
-    invitationLimiter,
-    controllers.acceptORDeclineInvitation
-);
-router.post("/get-all-invitations", protectRoute, invitationLimiter, controllers.getAllInvitations);
+router.post("/", protectRoute, workspaceCreateLimiter, controllers.createWorkspace);
+router.get("/", protectRoute, workspaceReadLimiter, controllers.getMyWorkspaces);
+router.get("/:workspaceID", protectRoute, workspaceReadLimiter, controllers.getWorkspaceDetails);
+router.patch("/:workspaceID", protectRoute, workspaceMutationLimiter, controllers.sudoUpdateWorkspace);
+router.post("/:workspaceID/leave", protectRoute, workspaceMutationLimiter, controllers.leaveWorkspace);
+router.delete("/:workspaceID", protectRoute, workspaceMutationLimiter, controllers.deleteWorkspace);
+router.get("/:workspaceID/permission", protectRoute, workspaceReadLimiter, controllers.workspacePermission);
 
-router.post(
-    "/sudo-update-workspace",
-    protectRoute,
-    workspaceMutationLimiter,
-    controllers.sudoUpdateWorkspace
-);
+router.get("/:workspaceID/tags", protectRoute, tagLimiter, controllers.getTags);
+router.post("/:workspaceID/tags", protectRoute, tagLimiter, controllers.createTag);
+router.patch("/:workspaceID/tags", protectRoute, tagLimiter, controllers.updateTag);
+router.delete("/:workspaceID/tags/:tag", protectRoute, tagLimiter, controllers.deleteTag);
 
-router.post("/my-workspaces", protectRoute, workspaceReadLimiter, controllers.getMyWorkspaces);
-router.post("/leave-workspace", protectRoute, workspaceMutationLimiter, controllers.leaveWorkspace);
-router.post(
-    "/get-workspace-details",
-    protectRoute,
-    workspaceReadLimiter,
-    controllers.getWorkspaceDetails
-);
-router.post(
-    "/workspace-permission",
-    protectRoute,
-    workspaceReadLimiter,
-    controllers.workspacePermission
-);
-
-router.post("/create-tag", protectRoute, tagLimiter, controllers.createTag);
-router.post("/update-tag", protectRoute, tagLimiter, controllers.updateTag);
-router.post("/delete-tag", protectRoute, tagLimiter, controllers.deleteTag);
-
-router.post("/set-tags-to-shortcode", protectRoute, tagLimiter, controllers.setTagsToShortcode);
-
-router.post("/get-tags", protectRoute, tagLimiter, controllers.getTags);
+router.get("/invitations", protectRoute, invitationLimiter, controllers.getAllInvitations);
+router.patch("/invitations/:invitationID", protectRoute, invitationLimiter, controllers.acceptORDeclineInvitation);
 
 export default router;

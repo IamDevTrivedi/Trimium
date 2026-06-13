@@ -22,11 +22,8 @@ export function ProtectWorkspace({ children }: { children: React.ReactNode }) {
 
                 // BUG: this is begin called 3 times when person is a viewer
 
-                const { data: resData } = await backend.post(
-                    "/api/v1/workspace/workspace-permission",
-                    {
-                        workspaceID: workspaceID,
-                    }
+                const { data: resData } = await backend.get(
+                    `/api/v1/workspace/${workspaceID}/permission`
                 );
 
                 if (resData.success === false) {

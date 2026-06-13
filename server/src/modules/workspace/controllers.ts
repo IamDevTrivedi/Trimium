@@ -9,7 +9,7 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 import { DEFAULT_TAG, TAGS_ID_RANGE } from "@/constants/tags";
-import { TAGS, TAGS_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
+import { TAGS, TAGS_NOTICE } from "@/constants/regex";
 import { Invitation } from "@/models/invitation";
 import { URL } from "@/models/url";
 import { Analytics } from "@/models/analytics";
@@ -179,8 +179,23 @@ export const controllers = {
 
     acceptORDeclineInvitation: async (req: Request, res: Response) => {
         try {
-            const schema = z.object({
+            const paramSchema = z.object({
                 invitationID: z.string().length(24, "Invalid invitation ID"),
+            });
+
+            const paramResult = paramSchema.safeParse(req.params);
+            if (!paramResult.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(paramResult.error),
+                });
+            }
+
+            const { invitationID } = paramResult.data;
+
+            const schema = z.object({
                 accept: z.boolean(),
             });
 
@@ -194,7 +209,7 @@ export const controllers = {
                 });
             }
 
-            const { invitationID, accept } = result.data;
+            const { accept } = result.data;
             const { userID } = res.locals;
 
             const existingUser = await User.findById(userID).select("email").lean();
@@ -320,7 +335,7 @@ export const controllers = {
                 workspaceID: z.string().length(24, "Invalid workspace ID"),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -395,8 +410,23 @@ export const controllers = {
 
     sudoUpdateWorkspace: async (req: Request, res: Response) => {
         try {
-            const schema = z.object({
+            const paramSchema = z.object({
                 workspaceID: z.string().length(24, "Invalid workspace ID"),
+            });
+
+            const paramResult = paramSchema.safeParse(req.params);
+            if (!paramResult.success) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid Request",
+                    success: false,
+                    errors: z.treeifyError(paramResult.error),
+                });
+            }
+
+            const { workspaceID } = paramResult.data;
+
+            const schema = z.object({
                 title: z.string().min(3, "Title must be at least 3 characters long").optional(),
                 description: z
                     .string()
@@ -420,8 +450,6 @@ export const controllers = {
                     .optional(),
 
                 membersToRemove: z.string().length(24, "Invalid member ID").array().optional(),
-
-                deleteWorkspace: z.boolean().optional(),
             });
 
             const result = schema.safeParse(req.body);
@@ -436,13 +464,11 @@ export const controllers = {
             }
 
             const {
-                workspaceID,
                 title,
                 description,
                 membersToAdd,
                 membersToUpdate,
                 membersToRemove,
-                deleteWorkspace,
             } = result.data;
             const { userID } = res.locals;
 
@@ -470,42 +496,6 @@ export const controllers = {
                     statusCode: StatusCodes.FORBIDDEN,
                     message: "You do not have admin rights to perform this action",
                 });
-            }
-
-            if (deleteWorkspace) {
-                const session = await mongoose.startSession();
-                try {
-                    if (config.isProduction) {
-                        await session.withTransaction(async () => {
-                            await existingWorkspace.deleteOne({ session });
-                            await Invitation.deleteMany({ workspaceID }, { session });
-                            await URL.deleteMany({ workspaceID }, { session });
-                            await Analytics.deleteMany({ workspaceID }, { session });
-                        });
-                    } else {
-                        await existingWorkspace.deleteOne();
-                        await Invitation.deleteMany({ workspaceID });
-                        await URL.deleteMany({ workspaceID });
-                        await Analytics.deleteMany({ workspaceID });
-                    }
-
-                    return sendResponse(res, {
-                        success: true,
-                        statusCode: StatusCodes.OK,
-                        message: "Workspace deleted successfully",
-                    });
-                } catch (error) {
-                    logger.error("Error deleting workspace in transaction:");
-                    logger.error(error);
-
-                    return sendResponse(res, {
-                        success: false,
-                        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                        message: "Failed to delete workspace",
-                    });
-                } finally {
-                    await session.endSession();
-                }
             }
 
             if (title) {
@@ -619,7 +609,7 @@ export const controllers = {
                 workspaceID: z.string().length(24, "Invalid workspace ID"),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -704,7 +694,7 @@ export const controllers = {
                 workspaceID: z.string().length(24, "Invalid workspace ID"),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -769,8 +759,23 @@ export const controllers = {
 
     createTag: async (req: Request, res: Response) => {
         try {
-            const schema = z.object({
+            const paramSchema = z.object({
                 workspaceID: z.string().length(24, "Invalid workspace ID"),
+            });
+
+            const paramResult = paramSchema.safeParse(req.params);
+            if (!paramResult.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(paramResult.error),
+                });
+            }
+
+            const { workspaceID } = paramResult.data;
+
+            const schema = z.object({
                 tag: z.string().regex(TAGS, TAGS_NOTICE),
                 tagID: z.int().positive().max(TAGS_ID_RANGE).optional().default(DEFAULT_TAG.id),
             });
@@ -786,7 +791,7 @@ export const controllers = {
                 });
             }
 
-            const { workspaceID, tag, tagID } = result.data;
+            const { tag, tagID } = result.data;
             const { userID } = res.locals;
 
             const existingWorkspace = await Workspace.findById(workspaceID).select("tags members");
@@ -839,9 +844,24 @@ export const controllers = {
 
     updateTag: async (req: Request, res: Response) => {
         try {
+            const paramSchema = z.object({
+                workspaceID: z.string().length(24, "Invalid workspace ID"),
+            });
+
+            const paramResult = paramSchema.safeParse(req.params);
+            if (!paramResult.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(paramResult.error),
+                });
+            }
+
+            const { workspaceID } = paramResult.data;
+
             const schema = z
                 .object({
-                    workspaceID: z.string().length(24, "Invalid workspace ID"),
                     oldTag: z.string().regex(TAGS, TAGS_NOTICE),
                     newTag: z.string().regex(TAGS, TAGS_NOTICE).optional(),
                     newTagID: z.number().int().positive().max(TAGS_ID_RANGE).optional(),
@@ -866,7 +886,7 @@ export const controllers = {
                 });
             }
 
-            const { workspaceID, oldTag, newTag, newTagID } = result.data;
+            const { oldTag, newTag, newTagID } = result.data;
             const { userID } = res.locals;
 
             const existingWorkspace = await Workspace.findById(workspaceID).select("tags members");
@@ -964,6 +984,92 @@ export const controllers = {
         }
     },
 
+    deleteWorkspace: async (req: Request, res: Response) => {
+        try {
+            const paramSchema = z.object({
+                workspaceID: z.string().length(24, "Invalid workspace ID"),
+            });
+
+            const paramResult = paramSchema.safeParse(req.params);
+            if (!paramResult.success) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid Request",
+                    success: false,
+                    errors: z.treeifyError(paramResult.error),
+                });
+            }
+
+            const { workspaceID } = paramResult.data;
+            const { userID } = res.locals;
+
+            const existingWorkspace = await Workspace.findById(workspaceID);
+
+            if (!existingWorkspace) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found",
+                });
+            }
+
+            const isAdmin = existingWorkspace.members.some(
+                (m) => m.userID.equals(userID) && m.permission === "admin"
+            );
+
+            if (!isAdmin) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You do not have admin rights to perform this action",
+                });
+            }
+
+            const session = await mongoose.startSession();
+            try {
+                if (config.isProduction) {
+                    await session.withTransaction(async () => {
+                        await existingWorkspace.deleteOne({ session });
+                        await Invitation.deleteMany({ workspaceID }, { session });
+                        await URL.deleteMany({ workspaceID }, { session });
+                        await Analytics.deleteMany({ workspaceID }, { session });
+                    });
+                } else {
+                    await existingWorkspace.deleteOne();
+                    await Invitation.deleteMany({ workspaceID });
+                    await URL.deleteMany({ workspaceID });
+                    await Analytics.deleteMany({ workspaceID });
+                }
+
+                return sendResponse(res, {
+                    success: true,
+                    statusCode: StatusCodes.OK,
+                    message: "Workspace deleted successfully",
+                });
+            } catch (error) {
+                logger.error("Error deleting workspace in transaction:");
+                logger.error(error);
+
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                    message: "Failed to delete workspace",
+                });
+            } finally {
+                await session.endSession();
+            }
+        } catch (error) {
+            logger.error("Error in deleteWorkspace controller:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Internal Server Error",
+            });
+        }
+    },
+
     deleteTag: async (req: Request, res: Response) => {
         try {
             const schema = z.object({
@@ -971,7 +1077,7 @@ export const controllers = {
                 tag: z.string().regex(TAGS, TAGS_NOTICE),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -1037,21 +1143,11 @@ export const controllers = {
 
     getTags: async (req: Request, res: Response) => {
         try {
-            const schema = z
-                .object({
-                    workspaceID: z.string().length(24, "Invalid workspace ID").optional(),
-                    shortCode: z.string().regex(SHORTCODE, SHORTCODE_NOTICE).optional(),
-                })
-                .refine(
-                    (data) => {
-                        return data.workspaceID || data.shortCode;
-                    },
-                    {
-                        message: "Either workspaceID or shortCode must be provided",
-                    }
-                );
+            const schema = z.object({
+                workspaceID: z.string().length(24, "Invalid workspace ID"),
+            });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -1062,94 +1158,42 @@ export const controllers = {
                 });
             }
 
-            const { workspaceID, shortCode } = result.data;
+            const { workspaceID } = result.data;
             const { userID } = res.locals;
 
-            if (workspaceID) {
-                const existingWorkspace = await Workspace.findById(workspaceID)
-                    .select("tags members")
-                    .lean();
+            const existingWorkspace = await Workspace.findById(workspaceID)
+                .select("tags members")
+                .lean();
 
-                if (!existingWorkspace) {
-                    return sendResponse(res, {
-                        success: false,
-                        statusCode: StatusCodes.NOT_FOUND,
-                        message: "Workspace not found",
-                    });
-                }
-
-                const member = existingWorkspace.members.find(
-                    (m) => m.userID.toString() === userID
-                );
-
-                if (!member) {
-                    return sendResponse(res, {
-                        success: false,
-                        statusCode: StatusCodes.FORBIDDEN,
-                        message: "You do not have access to this workspace",
-                    });
-                }
-
+            if (!existingWorkspace) {
                 return sendResponse(res, {
-                    success: true,
-                    statusCode: StatusCodes.OK,
-                    message: "Tags fetched successfully",
-                    data: Object.entries(existingWorkspace.tags).map(([tag, tagID]) => ({
-                        tag,
-                        tagID,
-                    })),
-                });
-            } else {
-                const existingURL = await URL.findOne({
-                    shortCode: shortCode,
-                })
-                    .select("workspaceID tags")
-                    .lean();
-
-                if (!existingURL) {
-                    return sendResponse(res, {
-                        success: false,
-                        statusCode: StatusCodes.NOT_FOUND,
-                        message: "URL not found",
-                    });
-                }
-
-                const existingWorkspace = await Workspace.findById(existingURL.workspaceID)
-                    .select("tags members")
-                    .lean();
-
-                if (!existingWorkspace) {
-                    return sendResponse(res, {
-                        success: false,
-                        statusCode: StatusCodes.NOT_FOUND,
-                        message: "Workspace not found",
-                    });
-                }
-
-                const member = existingWorkspace.members.find(
-                    (m) => m.userID.toString() === userID
-                );
-
-                if (!member) {
-                    return sendResponse(res, {
-                        success: false,
-                        statusCode: StatusCodes.FORBIDDEN,
-                        message: "You do not have access to this workspace",
-                    });
-                }
-
-                return sendResponse(res, {
-                    success: true,
-                    statusCode: StatusCodes.OK,
-                    message: "Tags fetched successfully",
-                    data: existingURL.tags.map((tag) => {
-                        return {
-                            tag,
-                            tagID: existingWorkspace.tags[tag],
-                        };
-                    }),
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found",
                 });
             }
+
+            const member = existingWorkspace.members.find(
+                (m) => m.userID.toString() === userID
+            );
+
+            if (!member) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You do not have access to this workspace",
+                });
+            }
+
+            return sendResponse(res, {
+                success: true,
+                statusCode: StatusCodes.OK,
+                message: "Tags fetched successfully",
+                data: Object.entries(existingWorkspace.tags).map(([tag, tagID]) => ({
+                    tag,
+                    tagID,
+                })),
+            });
         } catch (error) {
             logger.error("Error in getTags controller:");
             logger.error(error);
@@ -1162,128 +1206,4 @@ export const controllers = {
         }
     },
 
-    setTagsToShortcode: async (req: Request, res: Response) => {
-        try {
-            const schema = z
-                .object({
-                    shortCode: z.string().regex(SHORTCODE, SHORTCODE_NOTICE),
-                    tagsToAdd: z.string().regex(TAGS, TAGS_NOTICE).array().optional(),
-                    tagsToRemove: z.string().regex(TAGS, TAGS_NOTICE).array().optional(),
-                })
-                .refine(
-                    (data) => {
-                        return data.tagsToAdd?.length || data.tagsToRemove?.length;
-                    },
-                    {
-                        message: "At least one of tagsToAdd or tagsToRemove must be provided",
-                    }
-                );
-
-            const result = schema.safeParse(req.body);
-
-            if (!result.success) {
-                return sendResponse(res, {
-                    success: false,
-                    statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
-                    errors: z.treeifyError(result.error),
-                });
-            }
-
-            const { shortCode, tagsToAdd, tagsToRemove } = result.data;
-            const { userID } = res.locals;
-
-            const existingURL = await URL.findOne({ shortCode });
-
-            if (!existingURL) {
-                return sendResponse(res, {
-                    success: false,
-                    statusCode: StatusCodes.NOT_FOUND,
-                    message: "URL not found",
-                });
-            }
-
-            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).select(
-                "tags members"
-            );
-
-            if (!existingWorkspace) {
-                return sendResponse(res, {
-                    success: false,
-                    statusCode: StatusCodes.NOT_FOUND,
-                    message: "Workspace not found",
-                });
-            }
-
-            const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
-
-            if (!member || member.permission === "viewer") {
-                return sendResponse(res, {
-                    success: false,
-                    statusCode: StatusCodes.FORBIDDEN,
-                    message: "You do not have permission to modify tags in this workspace",
-                });
-            }
-
-            const alreadyPresentTags = new Set(existingURL.tags);
-            if (typeof tagsToAdd !== "undefined") {
-                for (const tag of tagsToAdd) {
-                    if (alreadyPresentTags.has(tag)) {
-                        return sendResponse(res, {
-                            success: false,
-                            statusCode: StatusCodes.CONFLICT,
-                            message: `Tag "${tag}" already exists on this shortcode`,
-                        });
-                    } else if (existingWorkspace.tags.has(tag) === false) {
-                        return sendResponse(res, {
-                            success: false,
-                            statusCode: StatusCodes.BAD_REQUEST,
-                            message: `Tag "${tag}" does not exist in the workspace`,
-                        });
-                    } else {
-                        alreadyPresentTags.add(tag);
-                        existingURL.tags.push(tag);
-                    }
-                }
-            }
-
-            if (typeof tagsToRemove !== "undefined") {
-                for (const tag of tagsToRemove) {
-                    if (!alreadyPresentTags.has(tag)) {
-                        return sendResponse(res, {
-                            success: false,
-                            statusCode: StatusCodes.NOT_FOUND,
-                            message: `Tag "${tag}" does not exist on this shortcode`,
-                        });
-                    } else if (existingWorkspace.tags.has(tag) === false) {
-                        return sendResponse(res, {
-                            success: false,
-                            statusCode: StatusCodes.BAD_REQUEST,
-                            message: `Tag "${tag}" does not exist in the workspace`,
-                        });
-                    } else {
-                        alreadyPresentTags.delete(tag);
-                        existingURL.tags = existingURL.tags.filter((t) => t !== tag);
-                    }
-                }
-            }
-
-            await existingURL.save();
-
-            return sendResponse(res, {
-                success: true,
-                statusCode: StatusCodes.OK,
-                message: "Tags updated successfully",
-            });
-        } catch (error) {
-            logger.error("Error in setTagsToShortcode controller:");
-            logger.error(error);
-
-            return sendResponse(res, {
-                success: false,
-                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
-            });
-        }
-    },
 };
