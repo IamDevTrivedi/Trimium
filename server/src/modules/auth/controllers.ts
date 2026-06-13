@@ -144,7 +144,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     message: "OTP already verified for this email",
-                    statusCode: StatusCodes.BAD_REQUEST,
+                    statusCode: StatusCodes.CONFLICT,
                 });
             }
 
@@ -152,7 +152,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     message: "OTP has expired",
-                    statusCode: StatusCodes.BAD_REQUEST,
+                    statusCode: StatusCodes.GONE,
                 });
             }
 
@@ -331,8 +331,8 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No user found with given identity",
-                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "If the account exists, an OTP has been sent to the registered email",
+                    statusCode: StatusCodes.UNAUTHORIZED,
                 });
             }
 
@@ -433,7 +433,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     message: "OTP already verified for this user",
-                    statusCode: StatusCodes.BAD_REQUEST,
+                    statusCode: StatusCodes.CONFLICT,
                 });
             }
 
@@ -441,7 +441,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     message: "OTP has expired",
-                    statusCode: StatusCodes.BAD_REQUEST,
+                    statusCode: StatusCodes.GONE,
                 });
             }
 
@@ -621,8 +621,8 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No user found with given identity",
-                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Invalid credentials",
+                    statusCode: StatusCodes.UNAUTHORIZED,
                 });
             }
 
@@ -899,7 +899,7 @@ export const controllers = {
                 targetLoginHistoryID: z.string().length(24),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -1000,7 +1000,7 @@ export const controllers = {
                 })
                 .optional();
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.query);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -1076,10 +1076,10 @@ export const controllers = {
     checkUsernameAvailability: async (req: Request, res: Response) => {
         try {
             const schema = z.object({
-                usernameToCheck: z.string().regex(USERNAME),
+                username: z.string().regex(USERNAME),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -1089,10 +1089,10 @@ export const controllers = {
                 });
             }
 
-            const { usernameToCheck } = result.data;
+            const { username } = result.data;
 
             const existingUser = await User.findOne({
-                username: usernameToCheck,
+                username,
             }).select("_id");
 
             if (existingUser) {
@@ -1168,7 +1168,7 @@ export const controllers = {
                     expired: true,
                     message:
                         "Revoke Token has expired. You can still logout device from your account. Please login to your account and go to security settings to logout the device",
-                    statusCode: StatusCodes.BAD_REQUEST,
+                    statusCode: StatusCodes.GONE,
                 });
             }
 

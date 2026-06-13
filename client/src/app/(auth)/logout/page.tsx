@@ -24,7 +24,7 @@ export default function page() {
     React.useEffect(() => {
         const fetcher = async () => {
             try {
-                const { data: resData } = await backend.post("/api/v1/auth/logout-my-device");
+                const { data: resData } = await backend.post("/api/v1/auth/logout");
                 handleResponse(resData);
             } catch (error) {
                 toastError(error);

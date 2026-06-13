@@ -52,7 +52,7 @@ export function CreateAccountEmail() {
         try {
             setEmail(data.email);
             const { data: resData } = await backend.post(
-                "/api/v1/auth/send-otp-for-create-account",
+                "/api/v1/auth/otp",
                 {
                     email: data.email,
                     turnstileToken,
@@ -166,7 +166,7 @@ export function CreateAccountVerify() {
         try {
             setLoadingResend(true);
             const { data: resData } = await backend.post(
-                "/api/v1/auth/send-otp-for-create-account",
+                "/api/v1/auth/otp",
                 {
                     email: email,
                 }
@@ -198,7 +198,7 @@ export function CreateAccountVerify() {
 
         try {
             const { data: resData } = await backend.post(
-                "/api/v1/auth/verify-otp-for-create-account",
+                "/api/v1/auth/otp/verify",
                 {
                     email: email,
                     OTP: OTP,
@@ -335,9 +335,7 @@ export function CreateAccountProfile() {
         try {
             setUsernameStatus("checking");
 
-            const { data: resData } = await backend.post("/api/v1/auth/check-username", {
-                usernameToCheck: usernameToCheck,
-            });
+            const { data: resData } = await backend.get(`/api/v1/auth/check-username/${usernameToCheck}`);
 
             if (!resData || !resData.success) {
                 setUsernameStatus("unavailable");
@@ -559,7 +557,7 @@ export function CreateAccountPassword() {
             setPassword(data.password);
             setConfirmPassword(data.confirmPassword);
 
-            const { data: resData } = await backend.post("/api/v1/auth/create-account", {
+            const { data: resData } = await backend.post("/api/v1/auth/accounts", {
                 email,
                 firstName,
                 lastName,
