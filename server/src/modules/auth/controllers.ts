@@ -144,7 +144,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     message: "OTP already verified for this email",
-                    statusCode: StatusCodes.CONFLICT,
+                    statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
 
@@ -152,7 +152,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     message: "OTP has expired",
-                    statusCode: StatusCodes.GONE,
+                    statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
 
@@ -331,8 +331,8 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "If the account exists, an OTP has been sent to the registered email",
-                    statusCode: StatusCodes.UNAUTHORIZED,
+                    message: "No user found with given identity",
+                    statusCode: StatusCodes.NOT_FOUND,
                 });
             }
 
@@ -433,7 +433,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     message: "OTP already verified for this user",
-                    statusCode: StatusCodes.CONFLICT,
+                    statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
 
@@ -441,7 +441,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     message: "OTP has expired",
-                    statusCode: StatusCodes.GONE,
+                    statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
 
@@ -621,8 +621,8 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "Invalid credentials",
-                    statusCode: StatusCodes.UNAUTHORIZED,
+                    message: "No user found with given identity",
+                    statusCode: StatusCodes.NOT_FOUND,
                 });
             }
 
@@ -1168,7 +1168,7 @@ export const controllers = {
                     expired: true,
                     message:
                         "Revoke Token has expired. You can still logout device from your account. Please login to your account and go to security settings to logout the device",
-                    statusCode: StatusCodes.GONE,
+                    statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
 

@@ -535,8 +535,8 @@ export const controllers = {
 
             if (!existingURL) {
                 return sendResponse(res, {
-                    statusCode: StatusCodes.NOT_FOUND,
-                    success: false,
+                    statusCode: StatusCodes.OK,
+                    success: true,
                     message: "Invalid shortcode",
                     verdict: "INVALID" as VERDICT,
                 });
@@ -576,8 +576,8 @@ export const controllers = {
 
             if (!existingURL.isActive) {
                 return sendResponse(res, {
-                    statusCode: StatusCodes.LOCKED,
-                    success: false,
+                    statusCode: StatusCodes.OK,
+                    success: true,
                     message: "URL is inactive",
                     verdict: "INACTIVE" as VERDICT,
                 });
@@ -606,9 +606,9 @@ export const controllers = {
                     }
                 } else if (now.getTime() > existingURL.schedule.endAt) {
                     return sendResponse(res, {
-                        statusCode: StatusCodes.GONE,
-                        success: false,
-                        message: "Shortcode has expired",
+                        statusCode: StatusCodes.OK,
+                        success: true,
+                        message: "URL is expired",
                         verdict: "EXPIRED" as VERDICT,
                     });
                 }
@@ -617,9 +617,9 @@ export const controllers = {
             if (existingURL.transfer.isEnabled) {
                 if (existingAnalytics.totalClicks >= existingURL.transfer.maxTransfers) {
                     return sendResponse(res, {
-                        statusCode: StatusCodes.TOO_MANY_REQUESTS,
-                        success: false,
-                        message: "Maximum transfer limit reached",
+                        statusCode: StatusCodes.OK,
+                        success: true,
+                        message: "Max transfer limit reached",
                         verdict: "MAX_TRANSFER_REACHED" as VERDICT,
                     });
                 }
@@ -628,8 +628,8 @@ export const controllers = {
             if (existingURL.passwordProtect.isEnabled) {
                 if (typeof password !== "string") {
                     return sendResponse(res, {
-                        statusCode: StatusCodes.UNAUTHORIZED,
-                        success: false,
+                        statusCode: StatusCodes.OK,
+                        success: true,
                         message: "Password required",
                         verdict: "SHOW_PASSWORD_PROMPT" as VERDICT,
                     });
@@ -642,8 +642,8 @@ export const controllers = {
 
                 if (!isPasswordCorrect) {
                     return sendResponse(res, {
-                        statusCode: StatusCodes.FORBIDDEN,
-                        success: false,
+                        statusCode: StatusCodes.OK,
+                        success: true,
                         message: "Incorrect password",
                         verdict: "PASSWORD_INCORRECT" as VERDICT,
                     });
