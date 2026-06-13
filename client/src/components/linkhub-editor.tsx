@@ -106,7 +106,7 @@ export function LinkhubEditor() {
 
     const fetchLinkhub = async () => {
         try {
-            const response = await backend.post("/api/v1/linkhub/get-my-profile");
+            const response = await backend.get("/api/v1/linkhub/me");
             if (response.data.success) {
                 const linkhub = response.data.data;
                 setOriginalData({
@@ -173,7 +173,7 @@ export function LinkhubEditor() {
 
         try {
             setSaving(true);
-            const response = await backend.post("/api/v1/linkhub/update-my-profile", data);
+            const response = await backend.put("/api/v1/linkhub/me", data);
             if (response.data.success) {
                 Toast.success("Profile saved successfully!");
             }
@@ -266,7 +266,7 @@ export function LinkhubEditor() {
             const formData = new FormData();
             formData.append("avatar", file);
 
-            const response = await backend.post("/api/v1/linkhub/update-avatar", formData, {
+            const response = await backend.post("/api/v1/linkhub/me/avatar", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

@@ -18,15 +18,15 @@ const linkhubPublicLimiter = createRateLimiter({
     prefix: "rl:linkhub:public",
 });
 
-router.post("/get-my-profile", protectRoute, controllers.getMyLinkhub);
-router.post("/update-my-profile", protectRoute, linkhubUpdateLimiter, controllers.updateMyLinkhub);
+router.get("/me", protectRoute, controllers.getMyLinkhub);
+router.put("/me", protectRoute, linkhubUpdateLimiter, controllers.updateMyLinkhub);
 router.post(
-    "/update-avatar",
+    "/me/avatar",
     protectRoute,
     linkhubUpdateLimiter,
     uploadAvatar,
     controllers.uploadAvatar
 );
-router.post("/public-profile", linkhubPublicLimiter, controllers.getPublicLinkhub);
+router.get("/u/:username", linkhubPublicLimiter, controllers.getPublicLinkhub);
 
 export default router;

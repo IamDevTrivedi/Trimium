@@ -50,9 +50,7 @@ export default function LinkhubPage() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await backend.post("/api/v1/linkhub/public-profile", {
-                    username,
-                });
+                const response = await backend.get(`/api/v1/linkhub/u/${username}`);
 
                 if (response.data.success) {
                     setProfile(response.data.data);
