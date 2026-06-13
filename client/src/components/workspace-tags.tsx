@@ -197,7 +197,9 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
     const handleDeleteTag = async (tagName: string) => {
         try {
             setDeleteLoading(tagName);
-            const { data: resData } = await backend.delete(`/api/v1/workspace/${workspaceID}/tags/${tagName}`);
+            const { data: resData } = await backend.delete(
+                `/api/v1/workspace/${workspaceID}/tags/${tagName}`
+            );
 
             if (handleResponse(resData)) {
                 Toast.success("Tag deleted successfully");

@@ -1,4 +1,11 @@
-import { PASSWORD, PASSWORD_NOTICE, SHORTCODE, SHORTCODE_NOTICE, TAGS, TAGS_NOTICE } from "@/constants/regex";
+import {
+    PASSWORD,
+    PASSWORD_NOTICE,
+    SHORTCODE,
+    SHORTCODE_NOTICE,
+    TAGS,
+    TAGS_NOTICE,
+} from "@/constants/regex";
 import { HASH_OPTIONS } from "@config/argon2";
 import { URL } from "@/models/url";
 import { logger } from "@utils/logger";
@@ -1237,9 +1244,7 @@ export const controllers = {
             const { shortCode } = paramResult.data;
             const { userID } = res.locals;
 
-            const existingURL = await URL.findOne({ shortCode })
-                .select("workspaceID tags")
-                .lean();
+            const existingURL = await URL.findOne({ shortCode }).select("workspaceID tags").lean();
 
             if (!existingURL) {
                 return sendResponse(res, {
@@ -1261,9 +1266,7 @@ export const controllers = {
                 });
             }
 
-            const member = existingWorkspace.members.find(
-                (m) => m.userID.toString() === userID
-            );
+            const member = existingWorkspace.members.find((m) => m.userID.toString() === userID);
 
             if (!member) {
                 return sendResponse(res, {

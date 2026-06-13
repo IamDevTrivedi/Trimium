@@ -38,10 +38,25 @@ const tagLimiter = createRateLimiter({
 router.post("/", protectRoute, workspaceCreateLimiter, controllers.createWorkspace);
 router.get("/", protectRoute, workspaceReadLimiter, controllers.getMyWorkspaces);
 router.get("/:workspaceID", protectRoute, workspaceReadLimiter, controllers.getWorkspaceDetails);
-router.patch("/:workspaceID", protectRoute, workspaceMutationLimiter, controllers.sudoUpdateWorkspace);
-router.post("/:workspaceID/leave", protectRoute, workspaceMutationLimiter, controllers.leaveWorkspace);
+router.patch(
+    "/:workspaceID",
+    protectRoute,
+    workspaceMutationLimiter,
+    controllers.sudoUpdateWorkspace
+);
+router.post(
+    "/:workspaceID/leave",
+    protectRoute,
+    workspaceMutationLimiter,
+    controllers.leaveWorkspace
+);
 router.delete("/:workspaceID", protectRoute, workspaceMutationLimiter, controllers.deleteWorkspace);
-router.get("/:workspaceID/permission", protectRoute, workspaceReadLimiter, controllers.workspacePermission);
+router.get(
+    "/:workspaceID/permission",
+    protectRoute,
+    workspaceReadLimiter,
+    controllers.workspacePermission
+);
 
 router.get("/:workspaceID/tags", protectRoute, tagLimiter, controllers.getTags);
 router.post("/:workspaceID/tags", protectRoute, tagLimiter, controllers.createTag);
@@ -49,6 +64,11 @@ router.patch("/:workspaceID/tags", protectRoute, tagLimiter, controllers.updateT
 router.delete("/:workspaceID/tags/:tag", protectRoute, tagLimiter, controllers.deleteTag);
 
 router.get("/invitations", protectRoute, invitationLimiter, controllers.getAllInvitations);
-router.patch("/invitations/:invitationID", protectRoute, invitationLimiter, controllers.acceptORDeclineInvitation);
+router.patch(
+    "/invitations/:invitationID",
+    protectRoute,
+    invitationLimiter,
+    controllers.acceptORDeclineInvitation
+);
 
 export default router;

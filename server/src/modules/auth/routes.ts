@@ -34,21 +34,40 @@ router.post("/otp", otpLimiter, verifyTurnstileToken, controllers.sendOTPForCrea
 router.post("/otp/verify", otpLimiter, controllers.verifyOTPForCreateAccount);
 router.post("/accounts", otpLimiter, controllers.createAccount);
 
-router.post("/otp/reset-password", otpLimiter, verifyTurnstileToken, controllers.sendOTPForResetPassword);
+router.post(
+    "/otp/reset-password",
+    otpLimiter,
+    verifyTurnstileToken,
+    controllers.sendOTPForResetPassword
+);
 router.post("/otp/reset-password/verify", otpLimiter, controllers.verifyOTPForResetPassword);
 router.patch("/accounts/password", otpLimiter, controllers.setNewPasswordForResetPassword);
 
 router.post("/login", loginLimiter, verifyTurnstileToken, controllers.login);
 
 router.post("/logout", protectRoute, authGeneralLimiter, controllers.logoutMyDevice);
-router.post("/logout/all-other", protectRoute, authGeneralLimiter, controllers.logoutAllOtherDevices);
-router.post("/logout/:targetLoginHistoryID", protectRoute, authGeneralLimiter, controllers.logoutParticularDevice);
+router.post(
+    "/logout/all-other",
+    protectRoute,
+    authGeneralLimiter,
+    controllers.logoutAllOtherDevices
+);
+router.post(
+    "/logout/:targetLoginHistoryID",
+    protectRoute,
+    authGeneralLimiter,
+    controllers.logoutParticularDevice
+);
 router.post("/email-logout", authGeneralLimiter, controllers.emailLogout);
 
 router.get("/me", protectRoute, authGeneralLimiter, controllers.me);
 
 router.get("/login-history", protectRoute, authGeneralLimiter, controllers.loginHistory);
 
-router.get("/check-username/:username", usernameCheckLimiter, controllers.checkUsernameAvailability);
+router.get(
+    "/check-username/:username",
+    usernameCheckLimiter,
+    controllers.checkUsernameAvailability
+);
 
 export default router;

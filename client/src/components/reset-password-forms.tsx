@@ -332,13 +332,10 @@ export function ResetPasswordPassword() {
             setPassword(data.password);
             setConfirmPassword(data.confirmPassword);
 
-            const { data: resData } = await backend.patch(
-                "/api/v1/auth/accounts/password",
-                {
-                    identity,
-                    password: data.password,
-                }
-            );
+            const { data: resData } = await backend.patch("/api/v1/auth/accounts/password", {
+                identity,
+                password: data.password,
+            });
 
             if (handleResponse(resData)) {
                 router.replace("/login");

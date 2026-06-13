@@ -26,9 +26,7 @@ export function PendingInvitations() {
         const fetcher = async () => {
             try {
                 setLoading(true);
-                const { data: resData } = await backend.get(
-                    "/api/v1/workspace/invitations"
-                );
+                const { data: resData } = await backend.get("/api/v1/workspace/invitations");
                 if (handleResponse(resData, true)) {
                     setInvitationData(resData.data);
                 }

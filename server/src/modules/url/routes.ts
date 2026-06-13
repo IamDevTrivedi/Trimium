@@ -37,12 +37,7 @@ const redirectLimiter = createRateLimiter({
 
 router.get("/check/:shortCode", shortcodeCheckLimiter, controllers.isShortcodeAvailable);
 router.post("/", protectRoute, shortcodeCreateLimiter, controllers.createShortCode);
-router.post(
-    "/bulk",
-    protectRoute,
-    bulkCreateLimiter,
-    controllers.bulkCreateShortCodes
-);
+router.post("/bulk", protectRoute, bulkCreateLimiter, controllers.bulkCreateShortCodes);
 router.get("/:shortCode", protectRoute, urlGeneralLimiter, controllers.getShortCodeInfo);
 router.patch("/:shortCode", protectRoute, urlGeneralLimiter, controllers.editShortCode);
 router.get(

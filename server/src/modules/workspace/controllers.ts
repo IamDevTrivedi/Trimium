@@ -463,13 +463,8 @@ export const controllers = {
                 });
             }
 
-            const {
-                title,
-                description,
-                membersToAdd,
-                membersToUpdate,
-                membersToRemove,
-            } = result.data;
+            const { title, description, membersToAdd, membersToUpdate, membersToRemove } =
+                result.data;
             const { userID } = res.locals;
 
             const existingWorkspace = await Workspace.findById(workspaceID);
@@ -1173,9 +1168,7 @@ export const controllers = {
                 });
             }
 
-            const member = existingWorkspace.members.find(
-                (m) => m.userID.toString() === userID
-            );
+            const member = existingWorkspace.members.find((m) => m.userID.toString() === userID);
 
             if (!member) {
                 return sendResponse(res, {
@@ -1205,5 +1198,4 @@ export const controllers = {
             });
         }
     },
-
 };

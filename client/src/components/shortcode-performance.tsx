@@ -146,10 +146,9 @@ export function ShortCodePerformance() {
     const handleExportCSV = async () => {
         try {
             setExporting(true);
-            const response = await backend.get(
-                `/api/v1/url/${shortCode}/analytics/export`,
-                { responseType: "blob" }
-            );
+            const response = await backend.get(`/api/v1/url/${shortCode}/analytics/export`, {
+                responseType: "blob",
+            });
 
             const blob = new Blob([response.data], { type: "text/csv" });
             const url = window.URL.createObjectURL(blob);
