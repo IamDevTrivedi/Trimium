@@ -383,7 +383,7 @@ export function BulkUploadURLs({ workspaceID }: BulkUploadProps) {
 
         try {
             setUploadProgress(50);
-            const { data } = await backend.post("/api/v1/url/bulk-create-shortcodes", {
+            const { data } = await backend.post("/api/v1/url/bulk", {
                 workspaceID,
                 rows: payloadRows,
             });

@@ -35,29 +35,33 @@ const redirectLimiter = createRateLimiter({
     prefix: "rl:url:redirect",
 });
 
-router.post("/is-shortcode-available", shortcodeCheckLimiter, controllers.isShortcodeAvailable);
-router.post("/create-shortcode", protectRoute, shortcodeCreateLimiter, controllers.createShortCode);
+router.get("/check/:shortCode", shortcodeCheckLimiter, controllers.isShortcodeAvailable);
+router.post("/", protectRoute, shortcodeCreateLimiter, controllers.createShortCode);
 router.post(
-    "/bulk-create-shortcodes",
+    "/bulk",
     protectRoute,
     bulkCreateLimiter,
     controllers.bulkCreateShortCodes
 );
-router.post("/get-shortcode-info", protectRoute, urlGeneralLimiter, controllers.getShortCodeInfo);
-router.post("/edit-shortcode", protectRoute, urlGeneralLimiter, controllers.editShortCode);
-router.post(
-    "/shortcode-performance",
+router.get("/:shortCode", protectRoute, urlGeneralLimiter, controllers.getShortCodeInfo);
+router.patch("/:shortCode", protectRoute, urlGeneralLimiter, controllers.editShortCode);
+router.get(
+    "/:shortCode/analytics",
     protectRoute,
     urlGeneralLimiter,
     controllers.shortCodePerformance
 );
-router.post(
-    "/export-analytics",
+router.get(
+    "/:shortCode/analytics/export",
     protectRoute,
     urlGeneralLimiter,
     controllers.exportShortCodeAnalytics
 );
 
 router.post("/redirect", redirectLimiter, controllers.redirectToOriginalUrl);
+
+// Tag operations on shortcodes (moved from workspace module)
+router.get("/:shortCode/tags", protectRoute, urlGeneralLimiter, controllers.getShortCodeTags);
+router.patch("/:shortCode/tags", protectRoute, urlGeneralLimiter, controllers.setShortCodeTags);
 
 export default router;

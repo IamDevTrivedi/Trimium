@@ -65,14 +65,10 @@ export function ShortcodeTags({
         try {
             setLoading(true);
             // Fetch shortcode tags
-            const { data: shortcodeRes } = await backend.post("/api/v1/workspace/get-tags", {
-                shortCode,
-            });
+            const { data: shortcodeRes } = await backend.get(`/api/v1/url/${shortCode}/tags`);
 
             // Fetch workspace tags
-            const { data: workspaceRes } = await backend.post("/api/v1/workspace/get-tags", {
-                workspaceID,
-            });
+            const { data: workspaceRes } = await backend.get(`/api/v1/workspace/${workspaceID}/tags`);
 
             if (handleResponse(shortcodeRes, true)) {
                 setShortcodeTags(shortcodeRes.data || []);
@@ -101,10 +97,9 @@ export function ShortcodeTags({
     const handleAddTag = async (tagName: string) => {
         try {
             setAddLoading(tagName);
-            const { data: resData } = await backend.post(
-                "/api/v1/workspace/set-tags-to-shortcode",
+            const { data: resData } = await backend.patch(
+                `/api/v1/url/${shortCode}/tags`,
                 {
-                    shortCode,
                     tagsToAdd: [tagName],
                 }
             );
@@ -126,10 +121,9 @@ export function ShortcodeTags({
     const handleRemoveTag = async (tagName: string) => {
         try {
             setRemoveLoading(tagName);
-            const { data: resData } = await backend.post(
-                "/api/v1/workspace/set-tags-to-shortcode",
+            const { data: resData } = await backend.patch(
+                `/api/v1/url/${shortCode}/tags`,
                 {
-                    shortCode,
                     tagsToRemove: [tagName],
                 }
             );

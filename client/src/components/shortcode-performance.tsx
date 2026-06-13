@@ -146,9 +146,8 @@ export function ShortCodePerformance() {
     const handleExportCSV = async () => {
         try {
             setExporting(true);
-            const response = await backend.post(
-                "/api/v1/url/export-analytics",
-                { shortCode: shortCode },
+            const response = await backend.get(
+                `/api/v1/url/${shortCode}/analytics/export`,
                 { responseType: "blob" }
             );
 
@@ -172,9 +171,7 @@ export function ShortCodePerformance() {
         const fetcher = async () => {
             try {
                 setLoadingData(true);
-                const { data: resData } = await backend.post("/api/v1/url/shortcode-performance", {
-                    shortCode: shortCode,
-                });
+                const { data: resData } = await backend.get(`/api/v1/url/${shortCode}/analytics`);
 
                 if (handleResponse(resData, true)) {
                     setShortCodeData(resData.data);
