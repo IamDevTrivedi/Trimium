@@ -11,6 +11,6 @@ const contactLimiter = createRateLimiter({
     prefix: "rl:contact",
 });
 
-router.post("/submit", contactLimiter, verifyTurnstileToken, controller.submitContactForm);
+router.post("/", contactLimiter, verifyTurnstileToken, controller.submitContactForm);
 
 export default router;

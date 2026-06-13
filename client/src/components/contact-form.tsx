@@ -92,7 +92,7 @@ export function ContactForm() {
 
         setIsVerifying(true);
         try {
-            const { data: resData } = await backend.post("/api/v1/contact/submit", {
+            const { data: resData } = await backend.post("/api/v1/contact", {
                 ...formData,
                 turnstileToken: token,
             });
