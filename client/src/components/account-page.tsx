@@ -142,7 +142,7 @@ export function AccountPage() {
 
         try {
             setLoading((prev) => ({ ...prev, name: true }));
-            const { data: resData } = await backend.post("/api/v1/user/change-name", {
+            const { data: resData } = await backend.patch("/api/v1/user/name", {
                 firstName: nameState.firstName,
                 lastName: nameState.lastName,
             });
@@ -180,9 +180,7 @@ export function AccountPage() {
 
             setUsernameState((prev) => ({ ...prev, availability: "checking" }));
 
-            const { data: resData } = await backend.post("/api/v1/auth/check-username", {
-                usernameToCheck: value,
-            });
+            const { data: resData } = await backend.get(`/api/v1/auth/check-username/${value}`);
 
             if (resData.success) {
                 const { available } = resData;
@@ -210,7 +208,7 @@ export function AccountPage() {
 
         try {
             setLoading((prev) => ({ ...prev, username: true }));
-            const { data: resData } = await backend.post("/api/v1/user/change-username", {
+            const { data: resData } = await backend.patch("/api/v1/user/username", {
                 newUsername: usernameState.value,
             });
 
@@ -259,7 +257,7 @@ export function AccountPage() {
 
         try {
             setLoading((prev) => ({ ...prev, password: true }));
-            const { data: resData } = await backend.post("/api/v1/user/change-password", {
+            const { data: resData } = await backend.patch("/api/v1/user/password", {
                 currentPassword: passwordState.current,
                 newPassword: passwordState.new,
             });
@@ -283,7 +281,7 @@ export function AccountPage() {
     const handleLogoutAllDevices = async () => {
         try {
             setLoading((prev) => ({ ...prev, logoutAll: true }));
-            const { data: resData } = await backend.post("/api/v1/auth/logout-all-other-devices");
+            const { data: resData } = await backend.post("/api/v1/auth/logout/all-other");
             handleResponse(resData);
         } catch (error) {
             toastError(error);

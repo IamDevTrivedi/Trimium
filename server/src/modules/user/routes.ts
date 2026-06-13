@@ -17,8 +17,8 @@ const passwordChangeLimiter = createRateLimiter({
     prefix: "rl:user:password",
 });
 
-router.post("/change-name", protectRoute, profileChangeLimiter, controllers.changeName);
-router.post("/change-password", protectRoute, passwordChangeLimiter, controllers.changePassword);
-router.post("/change-username", protectRoute, profileChangeLimiter, controllers.changeUsername);
+router.patch("/name", protectRoute, profileChangeLimiter, controllers.changeName);
+router.patch("/password", protectRoute, passwordChangeLimiter, controllers.changePassword);
+router.patch("/username", protectRoute, profileChangeLimiter, controllers.changeUsername);
 
 export default router;
