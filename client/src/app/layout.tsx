@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Noto_Sans } from "next/font/google";
+import { Fira_Code, Fira_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -9,11 +9,16 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
 
-const notoSans = Noto_Sans({ variable: "--font-sans" });
-
-const jetbrainsMono = JetBrains_Mono({
-    variable: "--font-jetbrains-mono",
+const firaSans = Fira_Sans({
+    variable: "--font-sans",
     subsets: ["latin"],
+    weight: ["300", "400", "500", "600", "700"],
+});
+
+const firaCode = Fira_Code({
+    variable: "--font-mono",
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700"],
 });
 
 const siteUrl = config.PUBLIC_FRONTEND_URL;
@@ -76,8 +81,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className={notoSans.variable} suppressHydrationWarning>
-            <body className={`${jetbrainsMono.variable} antialiased`}>
+        <html
+            lang="en"
+            className={`${firaSans.variable} ${firaCode.variable}`}
+            suppressHydrationWarning
+        >
+            <body className="antialiased">
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
