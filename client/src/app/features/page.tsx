@@ -561,21 +561,11 @@ export default function FeaturesPage() {
                             <AccordionContent className="text-muted-foreground leading-relaxed">
                                 Yes! Trimium offers a free forever plan with essential features
                                 including URL shortening, basic analytics, and QR code generation.
+                                No credit card required to get started.
                             </AccordionContent>
                         </AccordionItem>
 
                         <AccordionItem value="item-3">
-                            <AccordionTrigger className="text-left">
-                                Can I customize my short links and QR codes?
-                            </AccordionTrigger>
-                            <AccordionContent className="text-muted-foreground leading-relaxed">
-                                You can create custom branded short links with your own aliases. QR
-                                codes can be customized with your brand colors and downloaded in
-                                multiple formats (SVG, PNG, PDF).
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="item-4">
                             <AccordionTrigger className="text-left">
                                 What kind of analytics does Trimium provide?
                             </AccordionTrigger>
@@ -587,33 +577,31 @@ export default function FeaturesPage() {
                             </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="item-5">
+                        <AccordionItem value="item-4">
                             <AccordionTrigger className="text-left">
-                                How does team collaboration work in Trimium?
+                                How does team collaboration work?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Trimium allows you to create workspaces where you can invite team
-                                members with different permission levels (admin, editor, or viewer).
-                                You can organize links with tags, share access to specific projects,
-                                and collaborate on link management while maintaining control over
-                                who can create, edit, or view links.
+                                Create workspaces for different projects, invite team members with
+                                role-based permissions (admin, editor, or viewer), organize links
+                                with custom tags, and collaborate while maintaining full control
+                                over access levels.
                             </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="item-6">
+                        <AccordionItem value="item-5">
                             <AccordionTrigger className="text-left">
                                 Can I protect my links with passwords or set expiration dates?
                             </AccordionTrigger>
                             <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Yes! Trimium offers multiple security features including password
-                                protection for sensitive links, the ability to set start and end
-                                dates for time-sensitive content, and traffic limits to control
-                                bandwidth usage. These features help you maintain control over who
-                                can access your links and when.
+                                Yes! Trimium offers password protection for sensitive links, the
+                                ability to set start and end dates for time-sensitive content, and
+                                traffic limits to control bandwidth usage. You stay in full control
+                                of who accesses your links and when.
                             </AccordionContent>
                         </AccordionItem>
 
-                        <AccordionItem value="item-7">
+                        <AccordionItem value="item-6">
                             <AccordionTrigger className="text-left">
                                 What is LinkHub?
                             </AccordionTrigger>
@@ -622,86 +610,6 @@ export default function FeaturesPage() {
                                 your important links, connect your social profiles (Instagram,
                                 LinkedIn, GitHub, X, and more), choose from 5 modern themes, and
                                 share one simple link everywhere.
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="item-8">
-                            <AccordionTrigger className="text-left">
-                                Can I create multiple short URLs at once?
-                            </AccordionTrigger>
-                            <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Yes! Trimium supports bulk URL generation through CSV template
-                                upload. Simply download our template, fill in your URLs and custom
-                                parameters, upload the file, and create tens of short links at once.
-                                Our system includes error handling with line numbers to help you
-                                quickly fix any issues in your bulk uploads.
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="item-9">
-                            <AccordionTrigger className="text-left">
-                                Are my links and data secure with Trimium?
-                            </AccordionTrigger>
-                            <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Security is our top priority. All data is encrypted in transit and
-                                at rest. We use industry-standard security practices, regular
-                                security audits, and comply with data protection regulations. Your
-                                links and analytics data are stored securely and are never shared
-                                with third parties. We also offer features like password protection
-                                and traffic limits for additional security.
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="item-10">
-                            <AccordionTrigger className="text-left">
-                                How do I get started with Trimium?
-                            </AccordionTrigger>
-                            <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Getting started is easy! Simply sign up for a free account, no
-                                credit card required. Once registered, you can immediately start
-                                creating short URLs, generating QR codes, and tracking analytics.
-                                Our intuitive interface makes it simple to get up and running in
-                                minutes.
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="item-11">
-                            <AccordionTrigger className="text-left">
-                                Can I view and manage my active sessions?
-                            </AccordionTrigger>
-                            <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Yes. Your account includes a login activity page that shows all
-                                active sessions with device, browser, OS, IP address, and location.
-                                You can terminate individual sessions or all other sessions with one
-                                click. If you lose access to a device, you can also request a remote
-                                logout link via email.
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="item-12">
-                            <AccordionTrigger className="text-left">
-                                What security measures protect my account and links?
-                            </AccordionTrigger>
-                            <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Trimium uses industry-standard security throughout. Passwords are
-                                hashed with Argon2, authentication uses HTTP-only JWT cookies with
-                                token versioning for instant session invalidation, and all public
-                                forms are protected by Cloudflare Turnstile CAPTCHA. API endpoints
-                                have Redis-backed rate limiting with proof-of-work challenges to
-                                prevent abuse. All data is encrypted in transit and at rest.
-                            </AccordionContent>
-                        </AccordionItem>
-
-                        <AccordionItem value="item-13">
-                            <AccordionTrigger className="text-left">
-                                Can I use custom shortcode aliases for my links?
-                            </AccordionTrigger>
-                            <AccordionContent className="text-muted-foreground leading-relaxed">
-                                Absolutely. You can set custom shortcode aliases (5-20 characters)
-                                when creating links, with real-time availability checking. If you
-                                leave the alias blank, a unique 7-character code is auto-generated.
-                                You can also edit existing link properties including the destination
-                                URL, title, description, and active status at any time.
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
