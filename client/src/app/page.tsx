@@ -64,7 +64,7 @@ export default function HomePage() {
                             className="mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-muted/50 px-4 py-2 text-sm font-medium text-muted-foreground backdrop-blur-sm"
                         >
                             <Zap className="h-4 w-4 ml-2 text-primary" />
-                            Professional URL Management
+                            URL shortener · QR codes · Analytics
                         </motion.div>
                         <motion.h1
                             initial={{ opacity: 0, y: 16 }}
@@ -72,7 +72,7 @@ export default function HomePage() {
                             transition={{ duration: 0.5, delay: 0.1 }}
                             className="mb-6 text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
                         >
-                            Shorten, Track, and Optimize Your Links with{" "}
+                            Shorten your links. Track every click. Know what works — all with{" "}
                             <span className="bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                                 Trimium
                             </span>
@@ -83,9 +83,9 @@ export default function HomePage() {
                             transition={{ duration: 0.5, delay: 0.2 }}
                             className="mb-10 max-w-2xl text-pretty text-base text-muted-foreground sm:text-lg md:text-xl"
                         >
-                            Create powerful short URLs, generate custom QR codes, and gain deep
-                            insights with advanced analytics. Perfect for businesses, marketers, and
-                            teams.
+                            Shorten URLs, generate QR codes with your brand colors, and see who
+                            clicks — by device, location, browser, and more. No fluff, no hidden
+                            pricing. Just tools that work.
                         </motion.p>
                         <motion.div
                             initial={{ opacity: 0, y: 16 }}
@@ -167,8 +167,8 @@ export default function HomePage() {
                                                     Custom QR Generator
                                                 </h3>
                                                 <p className="text-sm text-muted-foreground">
-                                                    Create stunning branded QR codes with custom
-                                                    colors, sizes, and your logo
+                                                    Generate QR codes with your brand colors and
+                                                    logo. Download in PNG, SVG, or PDF.
                                                 </p>
                                                 <Link href="/qr-generator" className="inline-block">
                                                     <Button
@@ -196,12 +196,12 @@ export default function HomePage() {
                                         </div>
                                         <div className="flex-1 space-y-1">
                                             <h3 className="font-semibold text-foreground">
-                                                LinkHub - Your Link-in-Bio Page
+                                                LinkHub — your link-in-bio, no app needed
                                             </h3>
                                             <p className="text-sm text-muted-foreground">
-                                                Create a personalized page with all your links and
-                                                social profiles. Choose from 5 modern themes and
-                                                share one link everywhere.
+                                                One page at /t/yourname with all your links, social
+                                                profiles, and a theme that fits your style. Share
+                                                one link everywhere.
                                             </p>
                                         </div>
                                         <Link href="/linkhub-editor" className="w-full sm:w-auto">
@@ -223,10 +223,10 @@ export default function HomePage() {
                         <FadeSection>
                             <div className="mb-12 text-center md:mb-16">
                                 <h2 className="mb-4 text-balance text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">
-                                    Powerful Features for Every Need
+                                    What you get with Trimium
                                 </h2>
                                 <p className="mx-auto max-w-2xl text-pretty text-muted-foreground sm:text-lg">
-                                    Everything you need to manage, track, and optimize your links
+                                    Six tools that cover the essentials — no more, no less
                                 </p>
                             </div>
                         </FadeSection>
@@ -237,37 +237,37 @@ export default function HomePage() {
                                     icon: BarChart3,
                                     title: "Advanced Analytics",
                                     description:
-                                        "Track clicks, locations, devices, and referrers with real-time analytics and exportable reports",
+                                        "See which links get clicked, by whom, from where, and on what device. Export reports anytime.",
                                 },
                                 {
                                     icon: Users,
                                     title: "Team Collaboration",
                                     description:
-                                        "Create workspaces, add team members, and manage permissions with role-based access control",
+                                        "Invite your team, set roles (admin, editor, viewer), and keep everyone on the same page",
                                 },
                                 {
                                     icon: Lock,
                                     title: "Password Protection",
                                     description:
-                                        "Secure your links with password protection and set auto-expire dates for time-sensitive content",
+                                        "Lock links with a password, set expiry dates, or cap traffic — you stay in control",
                                 },
                                 {
                                     icon: Globe,
                                     title: "LinkHub Pages",
                                     description:
-                                        "Build your link-in-bio page with custom links, social icons, and 5 modern themes at /t/username",
+                                        "A link-in-bio page at /t/yourname. Add links, connect social profiles, pick a theme, and publish",
                                 },
                                 {
                                     icon: Palette,
                                     title: "Custom QR Codes",
                                     description:
-                                        "Design branded QR codes with custom colors and download in multiple formats (SVG, PNG, PDF)",
+                                        "Pick your colors, drop in your logo, and export in SVG, PNG, or PDF — ready for print or web",
                                 },
                                 {
                                     icon: Zap,
                                     title: "Bulk Operations",
                                     description:
-                                        "Generate multiple URLs at once with CSV upload, complete with error handling and validation",
+                                        "Upload a CSV and create dozens of short URLs at once. Error handling points you straight to any issues",
                                 },
                             ].map((feature, i) => (
                                 <FadeSection key={feature.title} delay={i * 0.06}>
@@ -292,7 +292,7 @@ export default function HomePage() {
                             <div className="mt-12 text-center">
                                 <Link href="/features">
                                     <Button size="lg" variant="outline" className="gap-2">
-                                        Explore All Features
+                                        See everything in detail
                                         <ArrowRight className="h-4 w-4 ml-2" />
                                     </Button>
                                 </Link>
@@ -310,11 +310,10 @@ export default function HomePage() {
                                 <div className="absolute bottom-0 left-0 h-40 w-40 -translate-x-1/2 translate-y-1/2 rounded-full bg-emerald-500/10 blur-3xl" />
                                 <div className="relative">
                                     <h2 className="mb-4 text-balance text-2xl font-bold text-foreground sm:text-3xl md:text-4xl">
-                                        Ready to Get Started?
+                                        Start using Trimium today
                                     </h2>
                                     <p className="mb-8 text-pretty text-muted-foreground sm:text-lg">
-                                        Join thousands of users who trust Trimium for their link
-                                        management needs
+                                        Free to use. No credit card required. Your links, your data.
                                     </p>
                                     <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
                                         <Link href="/create-account" className="w-full sm:w-auto">
