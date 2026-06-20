@@ -524,14 +524,14 @@ export function ShortCodePerformance() {
                             <div
                                 className={`relative overflow-hidden rounded-xl border p-4 transition-all hover:shadow-md ${
                                     shortCodeData.schedule.isEnabled
-                                        ? "border-purple-500/30 bg-purple-500/5"
+                                        ? "border-primary/30 bg-primary/5"
                                         : "border-border bg-muted/30"
                                 }`}
                             >
                                 <div
                                     className={`absolute top-0 right-0 h-20 w-20 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl ${
                                         shortCodeData.schedule.isEnabled
-                                            ? "bg-purple-500/20"
+                                            ? "bg-primary/20"
                                             : "bg-muted/20"
                                     }`}
                                 />
@@ -539,14 +539,14 @@ export function ShortCodePerformance() {
                                     <div
                                         className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${
                                             shortCodeData.schedule.isEnabled
-                                                ? "bg-purple-500/10"
+                                                ? "bg-primary/10"
                                                 : "bg-muted/50"
                                         }`}
                                     >
                                         <Clock
                                             className={`h-5 w-5 ${
                                                 shortCodeData.schedule.isEnabled
-                                                    ? "text-purple-600 dark:text-purple-400"
+                                                    ? "text-primary"
                                                     : "text-muted-foreground"
                                             }`}
                                         />
@@ -558,7 +558,7 @@ export function ShortCodePerformance() {
                                         <p
                                             className={`text-lg font-semibold ${
                                                 shortCodeData.schedule.isEnabled
-                                                    ? "text-purple-600 dark:text-purple-400"
+                                                    ? "text-primary"
                                                     : "text-muted-foreground"
                                             }`}
                                         >
@@ -571,7 +571,7 @@ export function ShortCodePerformance() {
                                                 <div className="flex items-center gap-2">
                                                     <Badge
                                                         variant="outline"
-                                                        className="text-xs border-purple-500/30 text-purple-600 dark:text-purple-400"
+                                                        className="text-xs border-primary/30 text-primary"
                                                     >
                                                         Countdown:{" "}
                                                         {shortCodeData.schedule.countdownEnabled
