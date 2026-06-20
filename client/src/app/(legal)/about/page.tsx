@@ -1,16 +1,17 @@
-import { MarkdownContent } from "@/components/markdown-content";
 import { readFileContent } from "@/lib/readFileContent";
 import matter from "gray-matter";
 import { Metadata } from "next";
+import { AboutContent } from "./about-content";
 
 export const metadata: Metadata = {
     title: "About",
     description:
-        "Trimium is a full-stack URL shortening and link management portfolio project built with Next.js, Express, MongoDB, and Redis.",
+        "Trimium is a URL shortener, QR code generator, and link management platform with analytics, team workspaces, and bulk link management built for teams and individuals.",
     openGraph: {
         title: "About | Trimium",
         description:
-            "Full-stack portfolio project demonstrating URL shortening, analytics, team workspaces, QR codes, and more.",
+            "Learn about Trimium — a URL shortener with click analytics, QR code generation, team collaboration, and link management tools.",
+        images: ["/og-about.png"],
     },
 };
 
@@ -19,14 +20,10 @@ export default function Page() {
     const matterResult = matter(markdown);
 
     return (
-        <div className="container mx-auto px-4 py-8 max-w-5xl">
-            <div className="text-center">
-                <h1 className="text-4xl font-bold mb-4">{matterResult.data.title}</h1>
-                <p className="text-sm text-muted-foreground mb-8">
-                    Last Updated: {matterResult.data.lastUpdate}
-                </p>
-            </div>
-            <MarkdownContent content={matterResult.content} />
-        </div>
+        <AboutContent
+            title={matterResult.data.title}
+            lastUpdate={matterResult.data.lastUpdate}
+            content={matterResult.content}
+        />
     );
 }
