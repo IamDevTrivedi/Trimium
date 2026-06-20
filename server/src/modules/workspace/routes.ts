@@ -94,6 +94,61 @@ router.get("/", protectRoute, workspaceReadLimiter, controllers.getMyWorkspaces)
 
 /**
  * @openapi
+ * /api/v1/workspace/invitations:
+ *   get:
+ *     tags: [Workspace]
+ *     summary: List invitations
+ *     description: Get all pending workspace invitations for the authenticated user.
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Invitations retrieved
+ *       401:
+ *         description: Unauthorized
+ */
+router.get("/invitations", protectRoute, invitationLimiter, controllers.getAllInvitations);
+
+/**
+ * @openapi
+ * /api/v1/workspace/invitations/{invitationID}:
+ *   patch:
+ *     tags: [Workspace]
+ *     summary: Respond to invitation
+ *     description: Accept or decline a workspace invitation.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: invitationID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [accept]
+ *             properties:
+ *               accept:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Invitation responded
+ *       401:
+ *         description: Unauthorized
+ */
+router.patch(
+    "/invitations/:invitationID",
+    protectRoute,
+    invitationLimiter,
+    controllers.acceptORDeclineInvitation
+);
+
+/**
+ * @openapi
  * /api/v1/workspace/{workspaceID}:
  *   get:
  *     tags: [Workspace]
@@ -374,60 +429,5 @@ router.patch("/:workspaceID/tags", protectRoute, tagLimiter, controllers.updateT
  *         description: Unauthorized
  */
 router.delete("/:workspaceID/tags/:tag", protectRoute, tagLimiter, controllers.deleteTag);
-
-/**
- * @openapi
- * /api/v1/workspace/invitations:
- *   get:
- *     tags: [Workspace]
- *     summary: List invitations
- *     description: Get all pending workspace invitations for the authenticated user.
- *     security:
- *       - cookieAuth: []
- *     responses:
- *       200:
- *         description: Invitations retrieved
- *       401:
- *         description: Unauthorized
- */
-router.get("/invitations", protectRoute, invitationLimiter, controllers.getAllInvitations);
-
-/**
- * @openapi
- * /api/v1/workspace/invitations/{invitationID}:
- *   patch:
- *     tags: [Workspace]
- *     summary: Respond to invitation
- *     description: Accept or decline a workspace invitation.
- *     security:
- *       - cookieAuth: []
- *     parameters:
- *       - in: path
- *         name: invitationID
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [accept]
- *             properties:
- *               accept:
- *                 type: boolean
- *     responses:
- *       200:
- *         description: Invitation responded
- *       401:
- *         description: Unauthorized
- */
-router.patch(
-    "/invitations/:invitationID",
-    protectRoute,
-    invitationLimiter,
-    controllers.acceptORDeclineInvitation
-);
 
 export default router;
