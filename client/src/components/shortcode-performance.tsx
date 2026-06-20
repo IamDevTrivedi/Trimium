@@ -181,6 +181,8 @@ export function ShortCodePerformance() {
                 }
             } catch (error) {
                 toastError(error);
+            } finally {
+                setLoadingData(false);
             }
         };
         fetcher();
