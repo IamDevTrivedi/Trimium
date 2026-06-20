@@ -11,6 +11,7 @@ export const metadata: Metadata = {
         title: "About | Trimium",
         description:
             "Learn about Trimium — a URL shortener with click analytics, QR code generation, team collaboration, and link management tools.",
+        images: ["/og-about.png"],
     },
 };
 

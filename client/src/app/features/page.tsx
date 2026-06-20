@@ -9,6 +9,7 @@ export const metadata: Metadata = {
         title: "Features | Trimium",
         description:
             "URL shortener, QR codes, analytics, team workspaces, and link-in-bio — all in one place. No fluff, no upsells.",
+        images: ["/og-features.png"],
     },
 };
 
