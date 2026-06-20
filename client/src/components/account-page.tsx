@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -74,6 +74,14 @@ export function AccountPage() {
         });
     }, [user]);
 
+    React.useEffect(() => {
+        return () => {
+            if (debounceTimerRef.current) {
+                clearTimeout(debounceTimerRef.current);
+            }
+        };
+    }, []);
+
     const [passwordState, setPasswordState] = useState({
         current: "",
         new: "",
@@ -91,6 +99,7 @@ export function AccountPage() {
         logoutAll: false,
     });
     const [logoutAllDialogOpen, setLogoutAllDialogOpen] = useState(false);
+    const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const nameChanged = useMemo(
         () => nameState.firstName !== user?.firstName || nameState.lastName !== user?.lastName,
@@ -168,30 +177,41 @@ export function AccountPage() {
         });
     };
 
-    const handleUsernameChange = async (value: string) => {
+    const handleUsernameChange = (value: string) => {
         setUsernameState((prev) => ({ ...prev, value }));
         clearError("username");
 
-        try {
-            if (!USERNAME.test(value)) {
-                setUsernameState((prev) => ({ ...prev, availability: null }));
-                return;
-            }
-
-            setUsernameState((prev) => ({ ...prev, availability: "checking" }));
-
-            const { data: resData } = await backend.get(`/api/v1/auth/check-username/${value}`);
-
-            if (resData.success) {
-                const { available } = resData;
-                setUsernameState((prev) => ({
-                    ...prev,
-                    availability: available ? "available" : "unavailable",
-                }));
-            }
-        } catch (error) {
-            setUsernameState((prev) => ({ ...prev, availability: "unavailable" }));
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
         }
+
+        debounceTimerRef.current = setTimeout(async () => {
+            try {
+                if (!USERNAME.test(value)) {
+                    setUsernameState((prev) => ({ ...prev, availability: null }));
+                    return;
+                }
+
+                if (value === user?.username) {
+                    setUsernameState((prev) => ({ ...prev, availability: null }));
+                    return;
+                }
+
+                setUsernameState((prev) => ({ ...prev, availability: "checking" }));
+
+                const { data: resData } = await backend.get(`/api/v1/auth/check-username/${value}`);
+
+                if (resData.success) {
+                    const { available } = resData;
+                    setUsernameState((prev) => ({
+                        ...prev,
+                        availability: available ? "available" : "unavailable",
+                    }));
+                }
+            } catch (error) {
+                setUsernameState((prev) => ({ ...prev, availability: "unavailable" }));
+            }
+        }, 500);
     };
 
     const handleSaveUsername = async () => {
@@ -223,6 +243,8 @@ export function AccountPage() {
         } catch (error) {
             setUsernameState((prev) => ({ ...prev, value: user.username }));
             toastError(error);
+        } finally {
+            setLoading((prev) => ({ ...prev, username: false }));
         }
     };
 
