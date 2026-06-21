@@ -20,24 +20,62 @@ interface EmailShellOptions {
     outro?: string;
 }
 
-const EMAIL_THEME = {
-    pageBackground: "#f6f5fb",
-    cardBackground: "#ffffff",
-    border: "#e5e7eb",
-    text: "#111827",
-    muted: "#6b7280",
-    primary: "#7c3aed",
-    primarySoft: "#f3e8ff",
-    primarySoftText: "#6d28d9",
-    danger: "#dc2626",
-    dangerSoft: "#fee2e2",
-    dangerSoftText: "#b91c1c",
+const C = {
+    pageBg: "#f4f5fa",
+    cardBg: "#ffffff",
+    border: "#e2e4ec",
+    text: "#12131a",
+    muted: "#6b6f7e",
+    primary: "#7144e6",
+    primarySoft: "#efeafd",
+    primarySoftText: "#5a41cc",
+    accent: "#3ecba8",
+    accentSoft: "#e0faf2",
+    danger: "#d33636",
+    dangerSoft: "#fbe8e8",
+    dangerSoftText: "#b32a2a",
+    dark: {
+        pageBg: "#0f1016",
+        cardBg: "#181a22",
+        border: "#2d2f3d",
+        text: "#edf0f7",
+        muted: "#9397a8",
+        primary: "#8b6ef0",
+        primarySoft: "#221a4a",
+        primarySoftText: "#b8a3ff",
+        accent: "#3ecba8",
+        accentSoft: "#143d32",
+        danger: "#ef6b6b",
+        dangerSoft: "#3d1c1c",
+        dangerSoftText: "#fca5a5",
+    },
 } as const;
 
+const D = C.dark;
+
 const FONT_STACK =
-    "Geist, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+    "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 const MONO_FONT_STACK =
-    "'JetBrains Mono', 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+    "'JetBrains Mono', 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+
+const darkCss = `
+@media (prefers-color-scheme: dark) {
+    .tb-page { background-color: ${D.pageBg} !important; }
+    .tb-card { background-color: ${D.cardBg} !important; border-color: ${D.border} !important; }
+    .tb-text { color: ${D.text} !important; }
+    .tb-muted { color: ${D.muted} !important; }
+    .tb-border { border-color: ${D.border} !important; }
+    .tb-primary-soft { background-color: ${D.primarySoft} !important; border-color: ${D.border} !important; }
+    .tb-primary-soft-text { color: ${D.primarySoftText} !important; }
+    .tb-danger-soft { background-color: ${D.dangerSoft} !important; border-color: ${D.border} !important; }
+    .tb-danger-soft-text { color: ${D.dangerSoftText} !important; }
+    .tb-accent-soft { background-color: ${D.accentSoft} !important; border-color: ${D.border} !important; }
+    .tb-detail-bg { background-color: ${D.cardBg} !important; }
+    .tb-header { color: ${D.muted} !important; }
+    .tb-footer { color: ${D.muted} !important; }
+    .tb-footer-link { color: ${D.primary} !important; }
+}
+`;
 
 const escapeHtml = (value: string): string => {
     return value
@@ -49,16 +87,9 @@ const escapeHtml = (value: string): string => {
 };
 
 const normalizeValue = (value: string | number | null | undefined): string => {
-    if (value === null || value === undefined) {
-        return "Unknown";
-    }
-
+    if (value === null || value === undefined) return "Unknown";
     const normalized = String(value).trim();
-    if (normalized.length === 0) {
-        return "Unknown";
-    }
-
-    return normalized;
+    return normalized.length === 0 ? "Unknown" : normalized;
 };
 
 const safeText = (value: string | number | null | undefined): string => {
@@ -68,20 +99,18 @@ const safeText = (value: string | number | null | undefined): string => {
 const withVersion = (name: string, version: string): string => {
     const normalizedName = normalizeValue(name);
     const normalizedVersion = normalizeValue(version);
-
-    if (normalizedVersion.toLowerCase() === "unknown") {
-        return normalizedName;
-    }
-
+    if (normalizedVersion.toLowerCase() === "unknown") return normalizedName;
     return `${normalizedName} ${normalizedVersion}`.trim();
 };
 
 const actionButton = (action: EmailAction): string => {
     const isDanger = action.tone === "danger";
+    const bg = isDanger ? C.danger : C.primary;
 
     return `
         <a href="${escapeHtml(action.href)}"
-            class="email-action-btn" style="display:inline-block;margin-top:20px;padding:12px 18px;background:${isDanger ? EMAIL_THEME.danger : EMAIL_THEME.primary};color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;border-radius:10px;">
+            class="tb-action-btn"
+            style="display:inline-block;margin-top:20px;padding:13px 26px;background:${bg};color:#ffffff;font-size:14px;font-weight:600;text-decoration:none;border-radius:10px;line-height:1;text-align:center;">
             ${escapeHtml(action.label)}
         </a>
     `;
@@ -89,10 +118,10 @@ const actionButton = (action: EmailAction): string => {
 
 const otpCard = (OTP: string): string => {
     return `
-        <div style="margin:20px 0;padding:18px;border:1px solid ${EMAIL_THEME.border};background:${EMAIL_THEME.primarySoft};border-radius:12px;text-align:center;">
-            <p style="margin:0;color:${EMAIL_THEME.primarySoftText};font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Verification Code</p>
-            <p class="otp-code" style="margin:10px 0 6px;color:${EMAIL_THEME.primary};font-family:${MONO_FONT_STACK};font-size:32px;font-weight:700;letter-spacing:8px;line-height:1;">${safeText(OTP)}</p>
-            <p style="margin:0;color:${EMAIL_THEME.muted};font-size:12px;line-height:18px;">This code expires in 5 minutes.</p>
+        <div class="tb-primary-soft" style="margin:20px 0;padding:20px;border:1px solid ${C.border};background:${C.primarySoft};border-radius:12px;text-align:center;">
+            <p class="tb-primary-soft-text" style="margin:0;color:${C.primarySoftText};font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">Verification Code</p>
+            <p class="tb-otp" style="margin:12px 0 8px;color:${C.primary};font-family:${MONO_FONT_STACK};font-size:34px;font-weight:700;letter-spacing:10px;line-height:1.1;">${safeText(OTP)}</p>
+            <p class="tb-muted" style="margin:0;color:${C.muted};font-size:12px;line-height:18px;">This code expires in 5 minutes.</p>
         </div>
     `;
 };
@@ -102,19 +131,20 @@ const detailsTable = (
     rows: Array<{ label: string; value: string | number | null | undefined }>
 ): string => {
     const detailsRows = rows
-        .map((row) => {
+        .map((row, idx) => {
+            const isEven = idx % 2 === 0;
             return `
                 <tr>
-                    <td class="detail-label" style="padding:8px 0;color:${EMAIL_THEME.muted};font-size:13px;line-height:18px;width:145px;vertical-align:top;">${escapeHtml(row.label)}</td>
-                    <td class="detail-value" style="padding:8px 0;color:${EMAIL_THEME.text};font-size:13px;line-height:18px;font-weight:500;vertical-align:top;">${safeText(row.value)}</td>
+                    <td class="tb-muted" style="padding:7px 10px 7px 0;color:${C.muted};font-size:12px;line-height:18px;width:120px;vertical-align:top;${isEven ? "" : ""}">${escapeHtml(row.label)}</td>
+                    <td class="tb-text" style="padding:7px 0;color:${C.text};font-size:12px;line-height:18px;font-weight:500;vertical-align:top;">${safeText(row.value)}</td>
                 </tr>
             `;
         })
         .join("");
 
     return `
-        <div style="margin:20px 0 0;padding:16px;border:1px solid ${EMAIL_THEME.border};background:#fafafa;border-radius:12px;">
-            <p style="margin:0 0 10px;color:${EMAIL_THEME.text};font-size:14px;font-weight:600;line-height:20px;">${escapeHtml(title)}</p>
+        <div class="tb-detail-bg" style="margin:20px 0 0;padding:16px;border:1px solid ${C.border};background:${C.cardBg};border-radius:12px;">
+            <p class="tb-text" style="margin:0 0 10px;color:${C.text};font-size:13px;font-weight:600;line-height:20px;">${escapeHtml(title)}</p>
             <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
                 ${detailsRows}
             </table>
@@ -124,11 +154,11 @@ const detailsTable = (
 
 const bulletList = (items: string[]): string => {
     const content = items
-        .map((item) => `<li style="margin:0 0 8px;">${escapeHtml(item)}</li>`)
+        .map((item) => `<li style="margin:0 0 6px 0;">${escapeHtml(item)}</li>`)
         .join("");
 
     return `
-        <ul style="margin:12px 0 0 18px;padding:0;color:${EMAIL_THEME.text};font-size:14px;line-height:22px;">
+        <ul style="margin:10px 0 0 16px;padding:0;color:${C.text};font-size:13px;line-height:20px;">
             ${content}
         </ul>
     `;
@@ -150,51 +180,57 @@ const createEmailShell = ({
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="x-apple-disable-message-reformatting">
     <style>
+        ${darkCss}
         @media only screen and (max-width: 480px) {
-            .email-card { padding: 16px !important; border-radius: 10px !important; }
-            .email-card-inner { padding: 16px !important; }
-            .otp-code { font-size: 24px !important; letter-spacing: 6px !important; }
-            .email-action-btn { display: block !important; width: 100% !important; text-align: center !important; box-sizing: border-box !important; }
-            .detail-label { display: block !important; width: 100% !important; padding-bottom: 0 !important; }
-            .detail-value { display: block !important; width: 100% !important; padding-top: 2px !important; }
-            .email-title { font-size: 20px !important; line-height: 26px !important; }
-            .email-footer { padding: 8px 4px 0 !important; }
+            .tb-card { padding: 0 !important; }
+            .tb-card-inner { padding: 20px !important; }
+            .tb-otp { font-size: 26px !important; letter-spacing: 7px !important; }
+            .tb-action-btn { display: block !important; width: 100% !important; text-align: center !important; box-sizing: border-box !important; }
+            .tb-detail-label { display: block !important; width: 100% !important; padding-bottom: 0 !important; }
+            .tb-detail-value { display: block !important; width: 100% !important; padding-top: 2px !important; }
+            .tb-title { font-size: 20px !important; line-height: 26px !important; }
+            .tb-footer-content { padding: 8px 4px 0 !important; }
         }
         @media only screen and (max-width: 360px) {
-            .otp-code { font-size: 20px !important; letter-spacing: 4px !important; }
-            .email-title { font-size: 18px !important; line-height: 24px !important; }
+            .tb-otp { font-size: 22px !important; letter-spacing: 5px !important; }
+            .tb-title { font-size: 18px !important; line-height: 24px !important; }
         }
     </style>
 </head>
-    <body style="margin:0;padding:0;background:${EMAIL_THEME.pageBackground};font-family:${FONT_STACK};">
-        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;background:${EMAIL_THEME.pageBackground};">
+    <body class="tb-page" style="margin:0;padding:0;background:${C.pageBg};font-family:${FONT_STACK};-webkit-font-smoothing:antialiased;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;background:${C.pageBg};">
             <tr>
-                <td align="center" style="padding:24px 12px;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:620px;border-collapse:collapse;">
+                <td align="center" style="padding:32px 12px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:560px;border-collapse:collapse;">
                         <tr>
-                            <td style="padding:0 0 12px 4px;color:${EMAIL_THEME.muted};font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Trimium</td>
+                            <td class="tb-header" style="padding:0 0 16px 4px;color:${C.muted};font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;">Trimium</td>
                         </tr>
                         <tr>
-                            <td class="email-card" style="background:${EMAIL_THEME.cardBackground};border:1px solid ${EMAIL_THEME.border};border-radius:14px;overflow:hidden;">
-                                <div style="height:6px;background:${EMAIL_THEME.primary};"></div>
-                                <div class="email-card-inner" style="padding:26px 24px;">
-                                    <p style="display:inline-block;margin:0 0 14px;padding:6px 10px;border-radius:999px;background:${EMAIL_THEME.primarySoft};color:${EMAIL_THEME.primarySoftText};font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">${escapeHtml(badge)}</p>
-                                    <h1 class="email-title" style="margin:0 0 10px;color:${EMAIL_THEME.text};font-size:24px;line-height:30px;font-weight:700;">${escapeHtml(title)}</h1>
-                                    <p style="margin:0;color:${EMAIL_THEME.muted};font-size:14px;line-height:22px;">${escapeHtml(intro)}</p>
+                            <td class="tb-card" style="background:${C.cardBg};border:1px solid ${C.border};border-radius:14px;overflow:hidden;">
+                                <div style="height:5px;background:${C.primary};"></div>
+                                <div class="tb-card-inner" style="padding:28px 28px 24px;">
+                                    <div style="display:inline-block;margin:0 0 16px;padding:6px 12px;border-radius:999px;background:${C.primarySoft};">
+                                        <span class="tb-primary-soft-text" style="color:${C.primarySoftText};font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">${escapeHtml(badge)}</span>
+                                    </div>
+                                    <h1 class="tb-title tb-text" style="margin:0 0 10px;color:${C.text};font-size:22px;line-height:28px;font-weight:700;">${escapeHtml(title)}</h1>
+                                    <p class="tb-muted" style="margin:0;color:${C.muted};font-size:14px;line-height:22px;">${escapeHtml(intro)}</p>
                                     ${content}
                                     ${action ? actionButton(action) : ""}
                                     ${
                                         outro
-                                            ? `<p style="margin:18px 0 0;color:${EMAIL_THEME.muted};font-size:13px;line-height:20px;">${escapeHtml(outro)}</p>`
+                                            ? `<p class="tb-muted" style="margin:20px 0 0;padding-top:16px;border-top:1px solid ${C.border};color:${C.muted};font-size:12px;line-height:18px;">${escapeHtml(outro)}</p>`
                                             : ""
                                     }
                                 </div>
                             </td>
                         </tr>
                         <tr>
-                            <td class="email-footer" style="padding:12px 6px 0;text-align:center;color:${EMAIL_THEME.muted};font-size:12px;line-height:18px;">
-                                Sent by Trimium · Professional URL management and analytics<br/>
-                                <a href="${escapeHtml(config.FRONTEND_URL)}" style="color:${EMAIL_THEME.primary};text-decoration:none;">Open Trimium</a>
+                            <td class="tb-footer" style="padding:16px 6px 0;text-align:center;color:${C.muted};font-size:12px;line-height:18px;">
+                                <span class="tb-footer-content">
+                                    Sent by <strong style="font-weight:600;">Trimium</strong> &middot; URL management &amp; analytics
+                                </span>
+                                <br/>
+                                <a class="tb-footer-link" href="${escapeHtml(config.FRONTEND_URL)}" style="color:${C.primary};text-decoration:none;">Open Trimium</a>
                             </td>
                         </tr>
                     </table>
@@ -214,7 +250,7 @@ export const emailTemplates = {
             intro: "Use the one-time code below to complete your account setup.",
             content: `
                 ${otpCard(OTP)}
-                <p style="margin:0;color:${EMAIL_THEME.muted};font-size:14px;line-height:22px;">
+                <p class="tb-muted" style="margin:0;color:${C.muted};font-size:13px;line-height:20px;">
                     If you did not start this request, you can safely ignore this email.
                 </p>
             `,
@@ -268,7 +304,7 @@ export const emailTemplates = {
                         value: `${readableDate()} at ${readableTime()}`,
                     },
                 ])}
-                <p style="margin:16px 0 0;color:${EMAIL_THEME.muted};font-size:14px;line-height:22px;">
+                <p class="tb-muted" style="margin:16px 0 0;color:${C.muted};font-size:13px;line-height:20px;">
                     If this wasn't you, do not use the code and reset your password immediately after this message.
                 </p>
             `,
@@ -321,7 +357,7 @@ export const emailTemplates = {
                         value: `${readableDate()} at ${readableTime()}`,
                     },
                 ])}
-                <p style="margin:16px 0 0;color:${EMAIL_THEME.muted};font-size:14px;line-height:22px;">
+                <p class="tb-muted" style="margin:16px 0 0;color:${C.muted};font-size:13px;line-height:20px;">
                     If this was you, no action is required. If not, revoke this session immediately.
                 </p>
             `,
@@ -352,10 +388,10 @@ export const emailTemplates = {
             title: "You've been invited to collaborate",
             intro: "Join your team workspace in Trimium and start managing links together.",
             content: `
-                <div style="margin:20px 0;padding:16px;border:1px solid ${EMAIL_THEME.border};background:${EMAIL_THEME.primarySoft};border-radius:12px;">
-                    <p style="margin:0;color:${EMAIL_THEME.primarySoftText};font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;">Workspace</p>
-                    <p style="margin:8px 0 0;color:${EMAIL_THEME.text};font-size:18px;line-height:24px;font-weight:700;">${safeText(workspaceTitle)}</p>
-                    <p style="margin:8px 0 0;color:${EMAIL_THEME.muted};font-size:14px;line-height:22px;">${safeText(description)}</p>
+                <div class="tb-primary-soft" style="margin:20px 0;padding:18px 20px;border:1px solid ${C.border};background:${C.primarySoft};border-radius:12px;">
+                    <p class="tb-primary-soft-text" style="margin:0;color:${C.primarySoftText};font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;">Workspace</p>
+                    <p class="tb-text" style="margin:8px 0 0;color:${C.text};font-size:17px;line-height:24px;font-weight:700;">${safeText(workspaceTitle)}</p>
+                    <p class="tb-muted" style="margin:6px 0 0;color:${C.muted};font-size:13px;line-height:20px;">${safeText(description)}</p>
                 </div>
                 ${detailsTable("Invitation details", [
                     {
@@ -367,7 +403,7 @@ export const emailTemplates = {
                         value: senderName,
                     },
                 ])}
-                <p style="margin:16px 0 0;color:${EMAIL_THEME.muted};font-size:14px;line-height:22px;">
+                <p class="tb-muted" style="margin:16px 0 0;color:${C.muted};font-size:13px;line-height:20px;">
                     If you do not have an account yet, you will be prompted to create one after opening the invite.
                 </p>
             `,
@@ -409,7 +445,7 @@ export const emailTemplates = {
                         value: `${readableDate()} at ${readableTime()}`,
                     },
                 ])}
-                <p style="margin:16px 0 0;color:${EMAIL_THEME.muted};font-size:14px;line-height:22px;">
+                <p class="tb-muted" style="margin:16px 0 0;color:${C.muted};font-size:13px;line-height:20px;">
                     Our team will review your message and respond as soon as possible.
                 </p>
             `,
@@ -461,8 +497,8 @@ export const emailTemplates = {
                         value: `${readableDate()} at ${readableTime()}`,
                     },
                 ])}
-                <div style="margin:16px 0 0;padding:14px;border-radius:10px;border:1px solid ${EMAIL_THEME.dangerSoft};background:${EMAIL_THEME.dangerSoft};">
-                    <p style="margin:0;color:${EMAIL_THEME.dangerSoftText};font-size:13px;line-height:20px;">
+                <div class="tb-danger-soft" style="margin:16px 0 0;padding:14px;border-radius:10px;border:1px solid ${C.dangerSoft};background:${C.dangerSoft};">
+                    <p class="tb-danger-soft-text" style="margin:0;color:${C.dangerSoftText};font-size:13px;line-height:20px;">
                         If this wasn't you, secure your account immediately by resetting your password.
                     </p>
                 </div>
@@ -517,11 +553,11 @@ export const emailTemplates = {
                         value: `${readableDate()} at ${readableTime()}`,
                     },
                 ])}
-                <p style="margin:16px 0 0;color:${EMAIL_THEME.muted};font-size:14px;line-height:22px;">
+                <p class="tb-muted" style="margin:16px 0 0;color:${C.muted};font-size:13px;line-height:20px;">
                     If this was you, wait for the cooldown and try again with the correct password.
                 </p>
-                <div style="margin:14px 0 0;padding:14px;border-radius:10px;border:1px solid ${EMAIL_THEME.dangerSoft};background:${EMAIL_THEME.dangerSoft};">
-                    <p style="margin:0;color:${EMAIL_THEME.dangerSoftText};font-size:13px;line-height:20px;font-weight:600;">
+                <div class="tb-danger-soft" style="margin:14px 0 0;padding:14px;border-radius:10px;border:1px solid ${C.border};background:${C.dangerSoft};">
+                    <p class="tb-danger-soft-text" style="margin:0;color:${C.dangerSoftText};font-size:13px;line-height:20px;font-weight:600;">
                         If this wasn't you, someone may be trying to access your account.
                     </p>
                     ${bulletList([
