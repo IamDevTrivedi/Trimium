@@ -1,6 +1,6 @@
 # Trimium CI/CD Pipeline Architecture
 
-This document describes the architecture and runtime behavior of Trimium's GitHub Actions CI/CD pipeline, including its gating mechanism, quality checks, change-aware deployment routing, Vercel client delivery, and EC2 server rollout with health-validated rollback protection.
+This document describes the architecture and runtime behavior of Trimium's GitHub Actions CI/CD pipeline, including its gating mechanism, quality checks, change-aware deployment routing, Vercel client delivery, and VPS server rollout with health-validated rollback protection.
 
 ---
 
@@ -14,7 +14,7 @@ The pipeline is built around these design principles:
 - **Monorepo-aware deployment selection** using path filtering via `dorny/paths-filter`
 - **Split deployment strategy** by target platform:
   - client → Vercel prebuilt production deploy
-  - server → EC2 SSH orchestration with PM2 reload and health-validated release switching
+  - server → VPS SSH orchestration with PM2 reload and health-validated release switching
 - **Release safety** through health checks, automatic rollback, and release retention cleanup
 
 ```mermaid
@@ -30,7 +30,7 @@ flowchart LR
     E --> F
 
     F --> G{client paths changed?}
-    F --> H{server paths changed and DEPLOY_TO_EC2 true?}
+    F --> H{server paths changed and DEPLOY_TO_VPS true?}
 
     G -- yes --> I[deploy-client]
     G -- no --> J[skip client deploy]
@@ -39,7 +39,7 @@ flowchart LR
     H -- no --> L[skip server deploy]
 
     I --> M[(Vercel Production)]
-    K --> N[(EC2 + PM2)]
+    K --> N[(VPS + PM2)]
 ```
 
 ---
@@ -81,7 +81,7 @@ flowchart TD
     F -- yes --> H[Run detect-changes]
 
     H --> I{client output == true?}
-    H --> J{server output == true and DEPLOY_TO_EC2 == true?}
+    H --> J{server output == true and DEPLOY_TO_VPS == true?}
 
     I -- yes --> K[Run deploy-client]
     I -- no --> L[Client deploy skipped]
@@ -227,13 +227,13 @@ Failure behavior:
 
 Purpose:
 
-- Deploy backend changes to EC2 with health-validated release switching.
+- Deploy backend changes to a VPS with health-validated release switching.
 
 | Property | Value |
 |---|---|
 | Runner | `ubuntu-latest` |
 | Needs | `detect-changes` |
-| Condition | `needs.detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_EC2 == 'true'` |
+| Condition | `needs.detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_VPS == 'true'` |
 
 Execution model:
 
@@ -368,37 +368,37 @@ Rollback actions:
 ```mermaid
 sequenceDiagram
     participant GH as GitHub Actions
-    participant EC2 as EC2 Host
+    participant VPS as VPS Host
     participant FS as Release Filesystem
     participant PM2 as PM2
     participant API as Health Endpoint
 
-    GH->>EC2: SSH deploy script (with envs)
-    EC2->>FS: Capture previous release dir
-    EC2->>FS: git pull origin main
-    EC2->>FS: Install + build + create releases/{id}
-    EC2->>FS: Point current -> new release
-    EC2->>PM2: reload trimium-api
+    GH->>VPS: SSH deploy script (with envs)
+    VPS->>FS: Capture previous release dir
+    VPS->>FS: git pull origin main
+    VPS->>FS: Install + build + create releases/{id}
+    VPS->>FS: Point current -> new release
+    VPS->>PM2: reload trimium-api
 
     loop up to 10 attempts
-        EC2->>API: GET /api/v1/health
-        API-->>EC2: non-200
+        VPS->>API: GET /api/v1/health
+        API-->>VPS: non-200
     end
 
-    Note over EC2,API: Rollback triggered
+    Note over VPS,API: Rollback triggered
 
-    EC2->>FS: Point current -> previous release
-    EC2->>PM2: reload trimium-api
+    VPS->>FS: Point current -> previous release
+    VPS->>PM2: reload trimium-api
 
     loop up to 10 attempts
-        EC2->>API: GET /api/v1/health
-        API-->>EC2: 200 (rollback healthy)
+        VPS->>API: GET /api/v1/health
+        API-->>VPS: 200 (rollback healthy)
     end
 
-    EC2->>FS: Remove failed release
-    EC2-->>GH: Exit 1 (rollback performed, server healthy)
+    VPS->>FS: Remove failed release
+    VPS-->>GH: Exit 1 (rollback performed, server healthy)
 
-    Note over EC2,GH: If rollback health also fails: Exit 2 (critical)
+    Note over VPS,GH: If rollback health also fails: Exit 2 (critical)
 ```
 
 ### State Machine
@@ -444,7 +444,7 @@ stateDiagram-v2
 | `prettier` | Needs `gate` | Skipped if gate skipped |
 | `detect-changes` | Needs `lint` and `prettier` | Pipeline stops before deployments |
 | `deploy-client` | `detect-changes.outputs.client == 'true'` | Client deploy skipped |
-| `deploy-server` | `detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_EC2 == 'true'` | Server deploy skipped |
+| `deploy-server` | `detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_VPS == 'true'` | Server deploy skipped |
 
 ---
 
@@ -455,17 +455,17 @@ stateDiagram-v2
 | GitHub Secret | `VERCEL_TOKEN` | Authenticate Vercel CLI actions |
 | GitHub Secret | `VERCEL_ORG_ID` | Select Vercel org context |
 | GitHub Secret | `VERCEL_PROJECT_ID` | Select Vercel project context |
-| GitHub Secret | `EC2_HOST` | SSH target host |
-| GitHub Secret | `EC2_USER` | SSH login user |
-| GitHub Secret | `EC2_PRIVATE_KEY` | SSH private key for remote execution |
-| GitHub Variable | `DEPLOY_TO_EC2` | Feature flag to enable/disable server CD |
+| GitHub Secret | `SSH_HOST` | SSH target host |
+| GitHub Secret | `SSH_USER` | SSH login user |
+| GitHub Secret | `SSH_PRIVATE_KEY` | SSH private key for remote execution |
+| GitHub Variable | `DEPLOY_TO_VPS` | Feature flag to enable/disable server CD |
 | GitHub Variable | `SKIP_ACTIONS` | Emergency brake to skip the entire pipeline |
 
 Trust boundary notes:
 
 - GitHub-hosted runners execute CI logic
 - Deployment credentials are injected at runtime from GitHub secrets
-- Server deployment trusts the remote EC2 environment (nvm, pnpm, PM2, filesystem layout)
+- Server deployment trusts the remote VPS environment (nvm, pnpm, PM2, filesystem layout)
 - SSH environment variables (`PROJECT_DIR`, `SERVER_DIR`, etc.) are declared inline in the workflow, not stored as secrets
 
 ---
@@ -490,7 +490,7 @@ This pipeline demonstrates practical release engineering for a full-stack monore
 - **Emergency skip gate** provides a way to halt all CI/CD without modifying the workflow
 - **Strong CI gates** before CD — both linting and formatting must pass
 - **Change-aware deployment selection** reduces unnecessary releases for untouched surfaces
-- **Platform-specific deployment workflows** — Vercel for frontend, EC2 SSH orchestration for backend
+- **Platform-specific deployment workflows** — Vercel for frontend, VPS SSH orchestration for backend
 - **Immutable release directories** with timestamped commit hashes for traceability
 - **Atomic symlink switch** enables near-instantaneous traffic migration
 - **Health-validated rollout** with automatic rollback and rollback health verification
