@@ -76,7 +76,7 @@
 | **Turbopack** | Next.js bundler |
 | **Husky** | Git hooks (pre-push lint + format check) |
 | **ESLint + Prettier** | Code quality & formatting |
-| **GitHub Actions** | CI/CD (Vercel client + EC2 server) |
+| **GitHub Actions** | CI/CD (Vercel client + VPS server) |
 | **Dependabot** | Automated dependency updates |
 | **PM2** | Production server process manager |
 | **Concurrently** | Parallel dev script runner |
@@ -126,7 +126,7 @@ For a full directory breakdown, see [docs/DIRECTORY_STRUCTURE.md](./docs/DIRECTO
 The project uses an automated CI/CD pipeline via GitHub Actions:
 
 - **Client** — Built and deployed to **Vercel** on every push to `main`.
-- **Server** — Deployed to **EC2** with zero-downtime PM2 reload, health check verification, and automatic rollback to the previous release on failure.
+- **Server** — Deployed to a **VPS** with zero-downtime PM2 reload, health check verification, and automatic rollback to the previous release on failure.
 
 ## License
 

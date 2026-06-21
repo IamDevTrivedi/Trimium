@@ -122,15 +122,15 @@ jobs:
   deploy-server:
     runs-on: ubuntu-latest
     needs: detect-changes
-    if: needs.detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_EC2 == 'true'
+    if: needs.detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_VPS == 'true'
 
     steps:
-      - name: Deploy to EC2
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: PROJECT_DIR,SERVER_DIR,RELEASES_DIR,SHARED_DIR,CURRENT_DIR,HEALTH_CHECK_URL,HEALTH_RETRY_COUNT,HEALTH_RETRY_INTERVAL,PM2_APP_NAME,MAX_RELEASES_TO_KEEP
           script: |
             
