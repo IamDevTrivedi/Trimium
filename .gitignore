@@ -70,3 +70,7 @@ Thumbs.db
 releases/
 current-release/
 shared/
+
+# Temp folders
+temp/
+tmp/
