@@ -51,13 +51,10 @@ export function CreateAccountEmail() {
 
         try {
             setEmail(data.email);
-            const { data: resData } = await backend.post(
-                "/api/v1/auth/send-otp-for-create-account",
-                {
-                    email: data.email,
-                    turnstileToken,
-                }
-            );
+            const { data: resData } = await backend.post("/api/v1/auth/otp", {
+                email: data.email,
+                turnstileToken,
+            });
             if (handleResponse(resData)) {
                 router.replace("/create-account/verify");
             }
@@ -165,12 +162,9 @@ export function CreateAccountVerify() {
     const handleResendOTP = async () => {
         try {
             setLoadingResend(true);
-            const { data: resData } = await backend.post(
-                "/api/v1/auth/send-otp-for-create-account",
-                {
-                    email: email,
-                }
-            );
+            const { data: resData } = await backend.post("/api/v1/auth/otp", {
+                email: email,
+            });
 
             if (!resData || !resData.success) {
                 Toast.error(resData?.message || "Failed to resend verification code.", {
@@ -197,13 +191,10 @@ export function CreateAccountVerify() {
         setLoading(true);
 
         try {
-            const { data: resData } = await backend.post(
-                "/api/v1/auth/verify-otp-for-create-account",
-                {
-                    email: email,
-                    OTP: OTP,
-                }
-            );
+            const { data: resData } = await backend.post("/api/v1/auth/otp/verify", {
+                email: email,
+                OTP: OTP,
+            });
 
             if (handleResponse(resData)) {
                 router.replace("/create-account/set-profile");
@@ -335,9 +326,9 @@ export function CreateAccountProfile() {
         try {
             setUsernameStatus("checking");
 
-            const { data: resData } = await backend.post("/api/v1/auth/check-username", {
-                usernameToCheck: usernameToCheck,
-            });
+            const { data: resData } = await backend.get(
+                `/api/v1/auth/check-username/${usernameToCheck}`
+            );
 
             if (!resData || !resData.success) {
                 setUsernameStatus("unavailable");
@@ -559,7 +550,7 @@ export function CreateAccountPassword() {
             setPassword(data.password);
             setConfirmPassword(data.confirmPassword);
 
-            const { data: resData } = await backend.post("/api/v1/auth/create-account", {
+            const { data: resData } = await backend.post("/api/v1/auth/accounts", {
                 email,
                 firstName,
                 lastName,

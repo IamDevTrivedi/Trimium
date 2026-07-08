@@ -145,7 +145,7 @@ export function LoginHistory() {
             setRefreshing(true);
         }
         try {
-            const { data: resData } = await backend.post("/api/v1/auth/login-history");
+            const { data: resData } = await backend.get("/api/v1/auth/login-history");
             if (resData.success) {
                 setHistory(resData.data);
             }
@@ -165,9 +165,7 @@ export function LoginHistory() {
     const handleLogoutSession = async (sessionId: string) => {
         setLoggingOut(sessionId);
         try {
-            const { data: resData } = await backend.post("/api/v1/auth/logout-particular-device", {
-                targetLoginHistoryID: sessionId,
-            });
+            const { data: resData } = await backend.post(`/api/v1/auth/logout/${sessionId}`);
 
             if (handleResponse(resData)) {
                 setHistory((prev) =>
@@ -187,7 +185,7 @@ export function LoginHistory() {
 
     const handleLogoutAllOthers = async () => {
         try {
-            const { data: resData } = await backend.post("/api/v1/auth/logout-all-other-devices");
+            const { data: resData } = await backend.post("/api/v1/auth/logout/all-other");
 
             if (handleResponse(resData)) {
                 setHistory((prev) =>

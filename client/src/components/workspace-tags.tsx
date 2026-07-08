@@ -87,9 +87,7 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
     const fetchTags = React.useCallback(async () => {
         try {
             setLoading(true);
-            const { data: resData } = await backend.post("/api/v1/workspace/get-tags", {
-                workspaceID,
-            });
+            const { data: resData } = await backend.get(`/api/v1/workspace/${workspaceID}/tags`);
 
             if (handleResponse(resData, true)) {
                 setTags(resData.data || []);
@@ -121,8 +119,7 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
 
         try {
             setCreateLoading(true);
-            const { data: resData } = await backend.post("/api/v1/workspace/create-tag", {
-                workspaceID,
+            const { data: resData } = await backend.post(`/api/v1/workspace/${workspaceID}/tags`, {
                 tag: newTagName,
                 tagID: newTagColorID,
             });
@@ -171,8 +168,7 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
 
         try {
             setEditLoading(true);
-            const { data: resData } = await backend.post("/api/v1/workspace/update-tag", {
-                workspaceID,
+            const { data: resData } = await backend.patch(`/api/v1/workspace/${workspaceID}/tags`, {
                 oldTag: editingTag.tag,
                 ...(hasNameChange && { newTag: editTagName }),
                 ...(hasColorChange && { newTagID: editTagColorID }),
@@ -201,10 +197,9 @@ export function WorkspaceTags({ workspaceID, isAdmin, permission }: WorkspaceTag
     const handleDeleteTag = async (tagName: string) => {
         try {
             setDeleteLoading(tagName);
-            const { data: resData } = await backend.post("/api/v1/workspace/delete-tag", {
-                workspaceID,
-                tag: tagName,
-            });
+            const { data: resData } = await backend.delete(
+                `/api/v1/workspace/${workspaceID}/tags/${tagName}`
+            );
 
             if (handleResponse(resData)) {
                 Toast.success("Tag deleted successfully");

@@ -29,7 +29,7 @@ export function WorkspaceList() {
         const fetcher = async () => {
             try {
                 setLoading(true);
-                const { data: resData } = await backend.post("/api/v1/workspace/my-workspaces");
+                const { data: resData } = await backend.get("/api/v1/workspace");
                 if (handleResponse(resData, true)) {
                     setWorkspaceData(resData.data);
                 }

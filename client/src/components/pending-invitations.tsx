@@ -26,9 +26,7 @@ export function PendingInvitations() {
         const fetcher = async () => {
             try {
                 setLoading(true);
-                const { data: resData } = await backend.post(
-                    "/api/v1/workspace/get-all-invitations"
-                );
+                const { data: resData } = await backend.get("/api/v1/workspace/invitations");
                 if (handleResponse(resData, true)) {
                     setInvitationData(resData.data);
                 }
@@ -44,10 +42,9 @@ export function PendingInvitations() {
 
     const handleDecision = async (invitationId: string, accept: boolean) => {
         try {
-            const { data: resData } = await backend.post(
-                "/api/v1/workspace/accept-or-decline-invitation",
+            const { data: resData } = await backend.patch(
+                `/api/v1/workspace/invitations/${invitationId}`,
                 {
-                    invitationID: invitationId,
                     accept: accept,
                 }
             );

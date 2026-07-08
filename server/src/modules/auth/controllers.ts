@@ -899,7 +899,7 @@ export const controllers = {
                 targetLoginHistoryID: z.string().length(24),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -1000,7 +1000,7 @@ export const controllers = {
                 })
                 .optional();
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.query);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -1076,10 +1076,10 @@ export const controllers = {
     checkUsernameAvailability: async (req: Request, res: Response) => {
         try {
             const schema = z.object({
-                usernameToCheck: z.string().regex(USERNAME),
+                username: z.string().regex(USERNAME),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -1089,10 +1089,10 @@ export const controllers = {
                 });
             }
 
-            const { usernameToCheck } = result.data;
+            const { username } = result.data;
 
             const existingUser = await User.findOne({
-                username: usernameToCheck,
+                username,
             }).select("_id");
 
             if (existingUser) {

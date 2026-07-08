@@ -63,7 +63,7 @@ export function ResetPasswordEmail() {
         try {
             setIdentity(data.identity);
 
-            const { data: resData } = await backend.post("/api/v1/auth/reset-password/send-otp", {
+            const { data: resData } = await backend.post("/api/v1/auth/otp/reset-password", {
                 identity: data.identity,
                 turnstileToken,
             });
@@ -167,7 +167,7 @@ export function ResetPasswordVerify() {
         try {
             setOTP(OTP);
 
-            const { data: resData } = await backend.post("/api/v1/auth/reset-password/verify-otp", {
+            const { data: resData } = await backend.post("/api/v1/auth/otp/reset-password/verify", {
                 identity,
                 OTP,
             });
@@ -186,7 +186,7 @@ export function ResetPasswordVerify() {
     const handleResendCode = async () => {
         try {
             setLoadingResend(true);
-            const { data: resData } = await backend.post("/api/v1/auth/reset-password/send-otp", {
+            const { data: resData } = await backend.post("/api/v1/auth/otp/reset-password", {
                 identity: identity,
             });
             handleResponse(resData);
@@ -332,13 +332,10 @@ export function ResetPasswordPassword() {
             setPassword(data.password);
             setConfirmPassword(data.confirmPassword);
 
-            const { data: resData } = await backend.post(
-                "/api/v1/auth/reset-password/set-new-password",
-                {
-                    identity,
-                    password: data.password,
-                }
-            );
+            const { data: resData } = await backend.patch("/api/v1/auth/accounts/password", {
+                identity,
+                password: data.password,
+            });
 
             if (handleResponse(resData)) {
                 router.replace("/login");

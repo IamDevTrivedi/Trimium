@@ -16,7 +16,7 @@ export function ProtectPage({ children }: { children: React.ReactNode }) {
         const fetcher = async () => {
             try {
                 setLoading(true);
-                const { data: resData } = await backend.post("/api/v1/auth/me");
+                const { data: resData } = await backend.get("/api/v1/auth/me");
                 if (resData.success) {
                     setUser(resData.data);
                 } else {

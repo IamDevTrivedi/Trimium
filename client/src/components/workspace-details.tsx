@@ -123,12 +123,7 @@ export function WorkspaceDetails() {
         const fetcher = async () => {
             try {
                 setLoading(true);
-                const { data: resData } = await backend.post(
-                    "/api/v1/workspace/get-workspace-details",
-                    {
-                        workspaceID,
-                    }
-                );
+                const { data: resData } = await backend.get(`/api/v1/workspace/${workspaceID}`);
 
                 if (handleResponse(resData, true)) {
                     setWorkspaceData(resData.workspaceDetails);
@@ -201,14 +196,10 @@ export function WorkspaceDetails() {
                 }
             });
 
-            const { data: resData } = await backend.post(
-                "/api/v1/workspace/sudo-update-workspace",
-                {
-                    workspaceID: workspaceID,
-                    membersToUpdate,
-                    membersToRemove,
-                }
-            );
+            const { data: resData } = await backend.patch(`/api/v1/workspace/${workspaceID}`, {
+                membersToUpdate,
+                membersToRemove,
+            });
 
             if (handleResponse(resData)) {
                 setOriginalMembers(members);
@@ -223,9 +214,7 @@ export function WorkspaceDetails() {
 
     const handleLeaveWorkspace = async () => {
         try {
-            const { data: resData } = await backend.post("/api/v1/workspace/leave-workspace", {
-                workspaceID: workspaceID,
-            });
+            const { data: resData } = await backend.post(`/api/v1/workspace/${workspaceID}/leave`);
 
             if (handleResponse(resData)) {
                 router.push("/w");
@@ -237,13 +226,7 @@ export function WorkspaceDetails() {
 
     const handleDeleteWorkspace = async () => {
         try {
-            const { data: resData } = await backend.post(
-                "/api/v1/workspace/sudo-update-workspace",
-                {
-                    workspaceID: workspaceID,
-                    deleteWorkspace: true,
-                }
-            );
+            const { data: resData } = await backend.delete(`/api/v1/workspace/${workspaceID}`);
 
             if (handleResponse(resData)) {
                 router.push("/w");
@@ -261,18 +244,14 @@ export function WorkspaceDetails() {
 
         try {
             setInviteLoading(true);
-            const { data: resData } = await backend.post(
-                "/api/v1/workspace/sudo-update-workspace",
-                {
-                    workspaceID: workspaceID,
-                    membersToAdd: [
-                        {
-                            email: inviteEmail,
-                            permission: invitePermission,
-                        },
-                    ],
-                }
-            );
+            const { data: resData } = await backend.patch(`/api/v1/workspace/${workspaceID}`, {
+                membersToAdd: [
+                    {
+                        email: inviteEmail,
+                        permission: invitePermission,
+                    },
+                ],
+            });
             handleResponse(resData);
         } catch (error) {
             toastError(error);

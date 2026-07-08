@@ -172,7 +172,7 @@ export function CreateRedirectForm() {
 
         try {
             setLoading(true);
-            const { data: resData } = await backend.post("/api/v1/url/create-shortcode", payload);
+            const { data: resData } = await backend.post("/api/v1/url", payload);
 
             if (handleResponse(resData)) {
                 reset();
@@ -206,9 +206,7 @@ export function CreateRedirectForm() {
 
         try {
             setShortcodeStatus("checking");
-            const { data: resData } = await backend.post("/api/v1/url/is-shortcode-available", {
-                shortCode: code,
-            });
+            const { data: resData } = await backend.get(`/api/v1/url/check/${code}`);
 
             if (resData?.success) {
                 setShortcodeStatus(resData.available ? "available" : "unavailable");

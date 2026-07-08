@@ -93,9 +93,7 @@ export function EditRedirectForm() {
             try {
                 setLoadingInfo(true);
 
-                const { data: resData } = await backend.post("/api/v1/url/get-shortcode-info", {
-                    shortCode,
-                });
+                const { data: resData } = await backend.get(`/api/v1/url/${shortCode}`);
 
                 if (!handleResponse(resData, true)) {
                     router.push(`/w/${workspaceID}/`);
@@ -155,8 +153,6 @@ export function EditRedirectForm() {
         }
 
         const payload = {
-            shortCode: shortCode,
-
             title:
                 shortCodeInfo?.title === updateShortCodeInfo?.title
                     ? undefined
@@ -190,7 +186,7 @@ export function EditRedirectForm() {
 
         try {
             setIsSubmitting(true);
-            const { data: resData } = await backend.post("/api/v1/url/edit-shortcode", payload);
+            const { data: resData } = await backend.patch(`/api/v1/url/${shortCode}`, payload);
             if (handleResponse(resData)) {
                 router.push(`/w/${workspaceID}/${shortCode}`);
             }

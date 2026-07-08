@@ -134,7 +134,7 @@ export const controllers = {
                 username: z.string().regex(USERNAME, USERNAME_NOTICE),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {

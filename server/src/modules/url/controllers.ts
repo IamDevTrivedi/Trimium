@@ -1,4 +1,11 @@
-import { PASSWORD, PASSWORD_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
+import {
+    PASSWORD,
+    PASSWORD_NOTICE,
+    SHORTCODE,
+    SHORTCODE_NOTICE,
+    TAGS,
+    TAGS_NOTICE,
+} from "@/constants/regex";
 import { HASH_OPTIONS } from "@config/argon2";
 import { URL } from "@/models/url";
 import { logger } from "@utils/logger";
@@ -21,7 +28,7 @@ export const controllers = {
                 }),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -258,7 +265,7 @@ export const controllers = {
                 }),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -316,11 +323,25 @@ export const controllers = {
 
     editShortCode: async (req: Request, res: Response) => {
         try {
-            const schema = z.object({
+            const paramSchema = z.object({
                 shortCode: z.string().regex(SHORTCODE, {
                     error: SHORTCODE_NOTICE,
                 }),
+            });
 
+            const paramResult = paramSchema.safeParse(req.params);
+            if (!paramResult.success) {
+                return sendResponse(res, {
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    success: false,
+                    message: "Invalid shortcode",
+                    errors: z.treeifyError(paramResult.error),
+                });
+            }
+
+            const { shortCode } = paramResult.data;
+
+            const schema = z.object({
                 title: z.string().min(1).max(255).optional(),
                 description: z.string().min(1).max(1024).optional(),
 
@@ -366,7 +387,6 @@ export const controllers = {
             }
 
             const {
-                shortCode,
                 title,
                 description,
                 originalURL,
@@ -588,7 +608,7 @@ export const controllers = {
                     return sendResponse(res, {
                         statusCode: StatusCodes.OK,
                         success: true,
-                        message: "Shortcode has expired",
+                        message: "URL is expired",
                         verdict: "EXPIRED" as VERDICT,
                     });
                 }
@@ -599,7 +619,7 @@ export const controllers = {
                     return sendResponse(res, {
                         statusCode: StatusCodes.OK,
                         success: true,
-                        message: "Maximum transfer limit reached",
+                        message: "Max transfer limit reached",
                         verdict: "MAX_TRANSFER_REACHED" as VERDICT,
                     });
                 }
@@ -742,7 +762,7 @@ export const controllers = {
                 }),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -834,7 +854,7 @@ export const controllers = {
                 }),
             });
 
-            const result = schema.safeParse(req.body);
+            const result = schema.safeParse(req.params);
 
             if (!result.success) {
                 return sendResponse(res, {
@@ -1200,6 +1220,220 @@ export const controllers = {
             return sendResponse(res, {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 success: false,
+                message: "Internal Server Error",
+            });
+        }
+    },
+
+    getShortCodeTags: async (req: Request, res: Response) => {
+        try {
+            const paramSchema = z.object({
+                shortCode: z.string().regex(SHORTCODE, SHORTCODE_NOTICE),
+            });
+
+            const paramResult = paramSchema.safeParse(req.params);
+            if (!paramResult.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid shortcode",
+                    errors: z.treeifyError(paramResult.error),
+                });
+            }
+
+            const { shortCode } = paramResult.data;
+            const { userID } = res.locals;
+
+            const existingURL = await URL.findOne({ shortCode }).select("workspaceID tags").lean();
+
+            if (!existingURL) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "URL not found",
+                });
+            }
+
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID)
+                .select("tags members")
+                .lean();
+
+            if (!existingWorkspace) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found",
+                });
+            }
+
+            const member = existingWorkspace.members.find((m) => m.userID.toString() === userID);
+
+            if (!member) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You do not have access to this workspace",
+                });
+            }
+
+            return sendResponse(res, {
+                success: true,
+                statusCode: StatusCodes.OK,
+                message: "Tags fetched successfully",
+                data: existingURL.tags.map((tag) => {
+                    return {
+                        tag,
+                        tagID: existingWorkspace.tags[tag],
+                    };
+                }),
+            });
+        } catch (error) {
+            logger.error("Error in getShortCodeTags controller:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+                message: "Internal Server Error",
+            });
+        }
+    },
+
+    setShortCodeTags: async (req: Request, res: Response) => {
+        try {
+            const paramSchema = z.object({
+                shortCode: z.string().regex(SHORTCODE, SHORTCODE_NOTICE),
+            });
+
+            const paramResult = paramSchema.safeParse(req.params);
+            if (!paramResult.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid shortcode",
+                    errors: z.treeifyError(paramResult.error),
+                });
+            }
+
+            const { shortCode } = paramResult.data;
+
+            const bodySchema = z
+                .object({
+                    tagsToAdd: z.string().regex(TAGS, TAGS_NOTICE).array().optional(),
+                    tagsToRemove: z.string().regex(TAGS, TAGS_NOTICE).array().optional(),
+                })
+                .refine(
+                    (data) => {
+                        return data.tagsToAdd?.length || data.tagsToRemove?.length;
+                    },
+                    {
+                        message: "At least one of tagsToAdd or tagsToRemove must be provided",
+                    }
+                );
+
+            const bodyResult = bodySchema.safeParse(req.body);
+
+            if (!bodyResult.success) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.BAD_REQUEST,
+                    message: "Invalid request data",
+                    errors: z.treeifyError(bodyResult.error),
+                });
+            }
+
+            const { tagsToAdd, tagsToRemove } = bodyResult.data;
+            const { userID } = res.locals;
+
+            const existingURL = await URL.findOne({ shortCode });
+
+            if (!existingURL) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "URL not found",
+                });
+            }
+
+            const existingWorkspace = await Workspace.findById(existingURL.workspaceID).select(
+                "tags members"
+            );
+
+            if (!existingWorkspace) {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.NOT_FOUND,
+                    message: "Workspace not found",
+                });
+            }
+
+            const member = existingWorkspace.members.find((m) => m.userID.equals(userID));
+
+            if (!member || member.permission === "viewer") {
+                return sendResponse(res, {
+                    success: false,
+                    statusCode: StatusCodes.FORBIDDEN,
+                    message: "You do not have permission to modify tags in this workspace",
+                });
+            }
+
+            const alreadyPresentTags = new Set(existingURL.tags);
+            if (typeof tagsToAdd !== "undefined") {
+                for (const tag of tagsToAdd) {
+                    if (alreadyPresentTags.has(tag)) {
+                        return sendResponse(res, {
+                            success: false,
+                            statusCode: StatusCodes.CONFLICT,
+                            message: `Tag "${tag}" already exists on this shortcode`,
+                        });
+                    } else if (existingWorkspace.tags.has(tag) === false) {
+                        return sendResponse(res, {
+                            success: false,
+                            statusCode: StatusCodes.BAD_REQUEST,
+                            message: `Tag "${tag}" does not exist in the workspace`,
+                        });
+                    } else {
+                        alreadyPresentTags.add(tag);
+                        existingURL.tags.push(tag);
+                    }
+                }
+            }
+
+            if (typeof tagsToRemove !== "undefined") {
+                for (const tag of tagsToRemove) {
+                    if (!alreadyPresentTags.has(tag)) {
+                        return sendResponse(res, {
+                            success: false,
+                            statusCode: StatusCodes.NOT_FOUND,
+                            message: `Tag "${tag}" does not exist on this shortcode`,
+                        });
+                    } else if (existingWorkspace.tags.has(tag) === false) {
+                        return sendResponse(res, {
+                            success: false,
+                            statusCode: StatusCodes.BAD_REQUEST,
+                            message: `Tag "${tag}" does not exist in the workspace`,
+                        });
+                    } else {
+                        alreadyPresentTags.delete(tag);
+                        existingURL.tags = existingURL.tags.filter((t) => t !== tag);
+                    }
+                }
+            }
+
+            await existingURL.save();
+
+            return sendResponse(res, {
+                success: true,
+                statusCode: StatusCodes.OK,
+                message: "Tags updated successfully",
+            });
+        } catch (error) {
+            logger.error("Error in setShortCodeTags controller:");
+            logger.error(error);
+
+            return sendResponse(res, {
+                success: false,
+                statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 message: "Internal Server Error",
             });
         }

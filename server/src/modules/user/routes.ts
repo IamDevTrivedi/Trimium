@@ -17,8 +17,94 @@ const passwordChangeLimiter = createRateLimiter({
     prefix: "rl:user:password",
 });
 
-router.post("/change-name", protectRoute, profileChangeLimiter, controllers.changeName);
-router.post("/change-password", protectRoute, passwordChangeLimiter, controllers.changePassword);
-router.post("/change-username", protectRoute, profileChangeLimiter, controllers.changeUsername);
+/**
+ * @openapi
+ * /api/v1/user/name:
+ *   patch:
+ *     tags: [User]
+ *     summary: Update name
+ *     description: Update the authenticated user's first and last name.
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [firstName, lastName]
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Name updated successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.patch("/name", protectRoute, profileChangeLimiter, controllers.changeName);
+
+/**
+ * @openapi
+ * /api/v1/user/password:
+ *   patch:
+ *     tags: [User]
+ *     summary: Update password
+ *     description: Change the authenticated user's password. Requires the current password for verification.
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [currentPassword, newPassword]
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: The current password
+ *               newPassword:
+ *                 type: string
+ *                 description: The new password (min 8 chars, uppercase, lowercase, digit, special char)
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *       400:
+ *         description: Invalid current password
+ *       401:
+ *         description: Unauthorized
+ */
+router.patch("/password", protectRoute, passwordChangeLimiter, controllers.changePassword);
+
+/**
+ * @openapi
+ * /api/v1/user/username:
+ *   patch:
+ *     tags: [User]
+ *     summary: Update username
+ *     description: Update the authenticated user's username.
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [newUsername]
+ *             properties:
+ *               newUsername:
+ *                 type: string
+ *                 description: New username (alphanumeric, underscores, min 3 chars)
+ *     responses:
+ *       200:
+ *         description: Username updated successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.patch("/username", protectRoute, profileChangeLimiter, controllers.changeUsername);
 
 export default router;
