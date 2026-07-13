@@ -38,7 +38,7 @@
     "dependencies": {
         "argon2": "^0.44.0",
         "axios": "^1.18.1",
-        "bullmq": "^5.79.3",
+        "bullmq": "^5.80.2",
         "cloudinary": "^2.10.0",
         "cookie-parser": "^1.4.7",
         "cors": "^2.8.5",
