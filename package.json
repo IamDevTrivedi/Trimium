@@ -4,8 +4,8 @@
     "description": "Monorepo for Trimium, a full-stack URL shortener, QR generator, and analytics platform.",
     "type": "module",
     "scripts": {
-        "format": "prettier --write \"**/*.{js,ts,tsx,json,css}\"",
-        "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css}\"",
+        "format": "prettier --write \"**/*.{js,ts,tsx,json,css,md}\"",
+        "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css,md}\"",
         "lint": "eslint . --ext .js,.ts,.tsx",
         "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
         "check": "pnpm lint && pnpm format:check",

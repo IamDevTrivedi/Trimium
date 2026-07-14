@@ -13,8 +13,8 @@ The pipeline is built around these design principles:
 - **Mandatory quality gates** (lint + format) before any deployment path is evaluated
 - **Monorepo-aware deployment selection** using path filtering via `dorny/paths-filter`
 - **Split deployment strategy** by target platform:
-  - client → Vercel prebuilt production deploy
-  - server → VPS SSH orchestration with PM2 reload and health-validated release switching
+    - client → Vercel prebuilt production deploy
+    - server → VPS SSH orchestration with PM2 reload and health-validated release switching
 - **Release safety** through health checks, automatic rollback, and release retention cleanup
 
 ```mermaid
@@ -100,11 +100,11 @@ Purpose:
 
 - Control gate to allow skipping the entire pipeline via a GitHub Actions variable.
 
-| Property | Value |
-|---|---|
-| Runner | `ubuntu-latest` |
+| Property  | Value                         |
+| --------- | ----------------------------- |
+| Runner    | `ubuntu-latest`               |
 | Condition | `vars.SKIP_ACTIONS != 'true'` |
-| Steps | Single echo confirmation |
+| Steps     | Single echo confirmation      |
 
 Why it matters architecturally:
 
@@ -121,10 +121,10 @@ Purpose:
 
 - Enforce static code quality before any release logic.
 
-| Property | Value |
-|---|---|
-| Runner | `ubuntu-latest` |
-| Needs | `gate` |
+| Property | Value           |
+| -------- | --------------- |
+| Runner   | `ubuntu-latest` |
+| Needs    | `gate`          |
 
 Execution steps:
 
@@ -145,10 +145,10 @@ Purpose:
 
 - Enforce formatting consistency as a second quality gate.
 
-| Property | Value |
-|---|---|
-| Runner | `ubuntu-latest` |
-| Needs | `gate` |
+| Property | Value           |
+| -------- | --------------- |
+| Runner   | `ubuntu-latest` |
+| Needs    | `gate`          |
 
 Execution steps:
 
@@ -169,23 +169,23 @@ Purpose:
 
 - Compute deployment scope in a monorepo by detecting changed paths.
 
-| Property | Value |
-|---|---|
-| Runner | `ubuntu-latest` |
-| Needs | `lint`, `prettier` |
+| Property | Value              |
+| -------- | ------------------ |
+| Runner   | `ubuntu-latest`    |
+| Needs    | `lint`, `prettier` |
 
 Execution steps:
 
 1. Checkout repository
 2. Run `dorny/paths-filter@v4` with filters:
-   - `client`: `client/**`
-   - `server`: `server/**` and `package.json`
+    - `client`: `client/**`
+    - `server`: `server/**` and `package.json`
 3. Publish outputs: `steps.changes.outputs.client` and `steps.changes.outputs.server`
 
 Output contract:
 
-| Output | Meaning | Used by |
-|---|---|---|
+| Output   | Meaning                              | Used by                   |
+| -------- | ------------------------------------ | ------------------------- |
 | `client` | Whether client-related paths changed | `deploy-client` condition |
 | `server` | Whether server-related paths changed | `deploy-server` condition |
 
@@ -195,10 +195,10 @@ Purpose:
 
 - Build and deploy the frontend to Vercel production.
 
-| Property | Value |
-|---|---|
-| Runner | `ubuntu-latest` |
-| Needs | `detect-changes` |
+| Property  | Value                                           |
+| --------- | ----------------------------------------------- |
+| Runner    | `ubuntu-latest`                                 |
+| Needs     | `detect-changes`                                |
 | Condition | `needs.detect-changes.outputs.client == 'true'` |
 
 Execution steps:
@@ -212,10 +212,10 @@ Execution steps:
 
 Secrets and environment contract:
 
-| Secret | Env passed to step | Purpose |
-|---|---|---|
-| `VERCEL_TOKEN` | — | Authenticate Vercel CLI |
-| `VERCEL_ORG_ID` | `VERCEL_ORG_ID` | Select Vercel org context |
+| Secret              | Env passed to step  | Purpose                       |
+| ------------------- | ------------------- | ----------------------------- |
+| `VERCEL_TOKEN`      | —                   | Authenticate Vercel CLI       |
+| `VERCEL_ORG_ID`     | `VERCEL_ORG_ID`     | Select Vercel org context     |
 | `VERCEL_PROJECT_ID` | `VERCEL_PROJECT_ID` | Select Vercel project context |
 
 Failure behavior:
@@ -229,10 +229,10 @@ Purpose:
 
 - Deploy backend changes to a VPS with health-validated release switching.
 
-| Property | Value |
-|---|---|
-| Runner | `ubuntu-latest` |
-| Needs | `detect-changes` |
+| Property  | Value                                                                           |
+| --------- | ------------------------------------------------------------------------------- |
+| Runner    | `ubuntu-latest`                                                                 |
+| Needs     | `detect-changes`                                                                |
 | Condition | `needs.detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_VPS == 'true'` |
 
 Execution model:
@@ -243,18 +243,18 @@ Execution model:
 
 Environment variables passed to the remote session:
 
-| Variable | Value |
-|---|---|
-| `PROJECT_DIR` | `/projects/Trimium` |
-| `SERVER_DIR` | `$PROJECT_DIR/server` |
-| `RELEASES_DIR` | `$SERVER_DIR/releases` |
-| `SHARED_DIR` | `$SERVER_DIR/shared` |
-| `CURRENT_DIR` | `$SERVER_DIR/current` |
-| `HEALTH_CHECK_URL` | `http://localhost:5003/api/v1/health` |
-| `HEALTH_RETRY_COUNT` | `10` |
-| `HEALTH_RETRY_INTERVAL` | `5` (seconds) |
-| `PM2_APP_NAME` | `trimium-api` |
-| `MAX_RELEASES_TO_KEEP` | `54` |
+| Variable                | Value                                 |
+| ----------------------- | ------------------------------------- |
+| `PROJECT_DIR`           | `/projects/Trimium`                   |
+| `SERVER_DIR`            | `$PROJECT_DIR/server`                 |
+| `RELEASES_DIR`          | `$SERVER_DIR/releases`                |
+| `SHARED_DIR`            | `$SERVER_DIR/shared`                  |
+| `CURRENT_DIR`           | `$SERVER_DIR/current`                 |
+| `HEALTH_CHECK_URL`      | `http://localhost:5003/api/v1/health` |
+| `HEALTH_RETRY_COUNT`    | `10`                                  |
+| `HEALTH_RETRY_INTERVAL` | `5` (seconds)                         |
+| `PM2_APP_NAME`          | `trimium-api`                         |
+| `MAX_RELEASES_TO_KEEP`  | `54`                                  |
 
 ---
 
@@ -290,8 +290,8 @@ Environment variables passed to the remote session:
 - Create release directory: `$RELEASES_DIR/$RELEASE_ID`
 - Move compiled `dist/` into the release directory
 - Symlink shared resources into the release:
-  - `$SHARED_DIR/logs` → `$RELEASE_DIR/logs`
-  - `$SHARED_DIR/.env.production` → `$RELEASE_DIR/.env.production`
+    - `$SHARED_DIR/logs` → `$RELEASE_DIR/logs`
+    - `$SHARED_DIR/.env.production` → `$RELEASE_DIR/.env.production`
 
 ### 6. Atomic Traffic Switch
 
@@ -313,11 +313,11 @@ Environment variables passed to the remote session:
 ### 9. Rollback Path
 
 - If a previous release exists and is a valid directory:
-  - Restore `$CURRENT_DIR` symlink to `$PREVIOUS_RELEASE`
-  - Reload PM2 to restore previous code
-  - Run a **second health check loop** to verify the rollback was successful
-  - If rollback health passes: delete the failed release, exit with code 1
-  - If rollback health also fails: exit with code 2 (critical — server may be down)
+    - Restore `$CURRENT_DIR` symlink to `$PREVIOUS_RELEASE`
+    - Reload PM2 to restore previous code
+    - Run a **second health check loop** to verify the rollback was successful
+    - If rollback health passes: delete the failed release, exit with code 1
+    - If rollback health also fails: exit with code 2 (critical — server may be down)
 - If no previous release exists: exit with code 2 (critical)
 
 ---
@@ -437,29 +437,29 @@ stateDiagram-v2
 
 ## Conditions and Routing Matrix
 
-| Job | Condition | Result if false |
-|---|---|---|
-| `gate` | Always runs (implicit) | Not applicable |
-| `lint` | Needs `gate` | Skipped if gate skipped |
-| `prettier` | Needs `gate` | Skipped if gate skipped |
-| `detect-changes` | Needs `lint` and `prettier` | Pipeline stops before deployments |
-| `deploy-client` | `detect-changes.outputs.client == 'true'` | Client deploy skipped |
-| `deploy-server` | `detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_VPS == 'true'` | Server deploy skipped |
+| Job              | Condition                                                                 | Result if false                   |
+| ---------------- | ------------------------------------------------------------------------- | --------------------------------- |
+| `gate`           | Always runs (implicit)                                                    | Not applicable                    |
+| `lint`           | Needs `gate`                                                              | Skipped if gate skipped           |
+| `prettier`       | Needs `gate`                                                              | Skipped if gate skipped           |
+| `detect-changes` | Needs `lint` and `prettier`                                               | Pipeline stops before deployments |
+| `deploy-client`  | `detect-changes.outputs.client == 'true'`                                 | Client deploy skipped             |
+| `deploy-server`  | `detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_VPS == 'true'` | Server deploy skipped             |
 
 ---
 
 ## Secrets, Variables, and Trust Boundaries
 
-| Scope | Name | Purpose |
-|---|---|---|
-| GitHub Secret | `VERCEL_TOKEN` | Authenticate Vercel CLI actions |
-| GitHub Secret | `VERCEL_ORG_ID` | Select Vercel org context |
-| GitHub Secret | `VERCEL_PROJECT_ID` | Select Vercel project context |
-| GitHub Secret | `SSH_HOST` | SSH target host |
-| GitHub Secret | `SSH_USER` | SSH login user |
-| GitHub Secret | `SSH_PRIVATE_KEY` | SSH private key for remote execution |
-| GitHub Variable | `DEPLOY_TO_VPS` | Feature flag to enable/disable server CD |
-| GitHub Variable | `SKIP_ACTIONS` | Emergency brake to skip the entire pipeline |
+| Scope           | Name                | Purpose                                     |
+| --------------- | ------------------- | ------------------------------------------- |
+| GitHub Secret   | `VERCEL_TOKEN`      | Authenticate Vercel CLI actions             |
+| GitHub Secret   | `VERCEL_ORG_ID`     | Select Vercel org context                   |
+| GitHub Secret   | `VERCEL_PROJECT_ID` | Select Vercel project context               |
+| GitHub Secret   | `SSH_HOST`          | SSH target host                             |
+| GitHub Secret   | `SSH_USER`          | SSH login user                              |
+| GitHub Secret   | `SSH_PRIVATE_KEY`   | SSH private key for remote execution        |
+| GitHub Variable | `DEPLOY_TO_VPS`     | Feature flag to enable/disable server CD    |
+| GitHub Variable | `SKIP_ACTIONS`      | Emergency brake to skip the entire pipeline |
 
 Trust boundary notes:
 
@@ -472,14 +472,14 @@ Trust boundary notes:
 
 ## Failure Domains and Recovery Characteristics
 
-| Failure Domain | Recovery |
-|---|---|
-| Quality gate failure (lint/format) | Blocks all deployments; preserves production |
-| Client deploy failure | Isolated to Vercel job; server deploy unaffected |
-| Server deploy failure (health fails) | Automatic rollback to previous release + rollback health verification |
-| Server deploy failure (no prior release) | Exit code 2 — critical, manual intervention required |
-| Rollback health failure | Exit code 2 — server may be down, manual intervention required |
-| Skip gate active | Entire pipeline halted; no jobs execute |
+| Failure Domain                           | Recovery                                                              |
+| ---------------------------------------- | --------------------------------------------------------------------- |
+| Quality gate failure (lint/format)       | Blocks all deployments; preserves production                          |
+| Client deploy failure                    | Isolated to Vercel job; server deploy unaffected                      |
+| Server deploy failure (health fails)     | Automatic rollback to previous release + rollback health verification |
+| Server deploy failure (no prior release) | Exit code 2 — critical, manual intervention required                  |
+| Rollback health failure                  | Exit code 2 — server may be down, manual intervention required        |
+| Skip gate active                         | Entire pipeline halted; no jobs execute                               |
 
 ---
 

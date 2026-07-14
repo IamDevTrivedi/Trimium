@@ -8,16 +8,16 @@ A comprehensive guide to set up and run the Trimium application locally.
 
 Ensure the following tools and services are installed before proceeding:
 
-| Requirement | Version | Notes |
-|---|---|---|
-| Node.js | v18+ | Required |
-| pnpm | Latest | Required for workspace scripts |
-| Git | Latest | Required for Husky pre-push hooks |
-| MongoDB | Latest | Local or cloud (e.g., MongoDB Atlas) |
-| Redis | Latest | Local or cloud (e.g., Redis Cloud) |
-| MaxMind GeoLite2 | Latest | Optional, enhances location services |
-| Brevo account | Latest | Required for transactional emails |
-| Cloudinary account | Latest | Required for media uploads |
+| Requirement        | Version | Notes                                |
+| ------------------ | ------- | ------------------------------------ |
+| Node.js            | v18+    | Required                             |
+| pnpm               | Latest  | Required for workspace scripts       |
+| Git                | Latest  | Required for Husky pre-push hooks    |
+| MongoDB            | Latest  | Local or cloud (e.g., MongoDB Atlas) |
+| Redis              | Latest  | Local or cloud (e.g., Redis Cloud)   |
+| MaxMind GeoLite2   | Latest  | Optional, enhances location services |
+| Brevo account      | Latest  | Required for transactional emails    |
+| Cloudinary account | Latest  | Required for media uploads           |
 
 ---
 
@@ -48,12 +48,12 @@ Trimium uses environment files in multiple locations. Each is loaded based on th
 
 ### 3.1 Environment Files Quick Map
 
-| File Name | Location | Purpose | Required |
-|---|---|---|---|
-| `.env` | Project root (`./.env`) | Root scripts (MaxMind downloader) | Optional |
-| `.env.development` | `server/.env.development` | Backend development config | Yes (dev) |
-| `.env.production` | `server/.env.production` | Backend production config | Yes (prod) |
-| `.env` | `client/.env` | Frontend public config | Yes |
+| File Name          | Location                  | Purpose                           | Required   |
+| ------------------ | ------------------------- | --------------------------------- | ---------- |
+| `.env`             | Project root (`./.env`)   | Root scripts (MaxMind downloader) | Optional   |
+| `.env.development` | `server/.env.development` | Backend development config        | Yes (dev)  |
+| `.env.production`  | `server/.env.production`  | Backend production config         | Yes (prod) |
+| `.env`             | `client/.env`             | Frontend public config            | Yes        |
 
 > All environment files are gitignored (`.env`, `.env.*`). They will never be committed.
 
@@ -61,8 +61,8 @@ Trimium uses environment files in multiple locations. Each is loaded based on th
 
 Used by `scripts/update-geolite2.js` to download the GeoIP database.
 
-| Variable | Required | Description |
-|---|---|---|
+| Variable              | Required | Description                                                                                                                                              |
+| --------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `MAXMIND_LICENSE_KEY` | Optional | License key to download `GeoLite2-City.mmdb` automatically. Obtain from [MaxMind license page](https://www.maxmind.com/en/accounts/current/license-key). |
 
 ### 3.3 Server Environment (`server/.env.development`, `server/.env.production`)
@@ -71,28 +71,28 @@ The server loads the appropriate file based on `NODE_ENV` (see `server/src/confi
 
 Create both files using `server/.env.example`, then set environment-specific values.
 
-| Variable | Required | Description |
-|---|---|---|
-| `PORT` | Yes | API server port (e.g., `5000`) |
-| `BACKEND_URL_DEV` | Yes | Development backend URL (e.g., `http://localhost:5000`) |
-| `BACKEND_URL_PROD` | Yes | Production backend URL (your deployed domain) |
-| `FRONTEND_URL_DEV` | Yes | Development frontend URL (e.g., `http://localhost:3000`) |
-| `FRONTEND_URL_PROD` | Yes | Production frontend URL (your deployed domain) |
-| `MONGODB_URI` | Yes | MongoDB connection string |
-| `REDIS_USERNAME` | Yes | Redis username |
-| `REDIS_PASSWORD` | Yes | Redis password |
-| `REDIS_HOST` | Yes | Redis host |
-| `REDIS_PORT` | Yes | Redis port (default `6379`) |
-| `SENDER_EMAIL` | Yes | Verified sender email in Brevo |
-| `BREVO_API_KEY` | Yes | Brevo API key for transactional emails |
-| `JWT_KEY` | Yes | JWT signing secret (min 32 chars). Generate via `openssl rand -hex 32` |
-| `TURNSTILE_SECRET_KEY` | Yes | Cloudflare Turnstile secret key |
-| `PoW_SECRET` | Yes | Proof-of-Work secret (min 32 chars). Generate via `openssl rand -hex 32` |
-| `PoW_DIFFICULTY` | Yes | Proof-of-Work difficulty (1–6). Recommended `3` for development |
-| `CLOUDINARY_CLOUD_NAME` | Yes | Cloudinary cloud identifier |
-| `CLOUDINARY_API_KEY` | Yes | Cloudinary API key |
-| `CLOUDINARY_API_SECRET` | Yes | Cloudinary API secret |
-| `EMAIL_LOGOUT_SIGNING_KEY` | Yes | Signed email logout token secret (min 32 chars). Generate via `openssl rand -hex 48` |
+| Variable                   | Required | Description                                                                          |
+| -------------------------- | -------- | ------------------------------------------------------------------------------------ |
+| `PORT`                     | Yes      | API server port (e.g., `5000`)                                                       |
+| `BACKEND_URL_DEV`          | Yes      | Development backend URL (e.g., `http://localhost:5000`)                              |
+| `BACKEND_URL_PROD`         | Yes      | Production backend URL (your deployed domain)                                        |
+| `FRONTEND_URL_DEV`         | Yes      | Development frontend URL (e.g., `http://localhost:3000`)                             |
+| `FRONTEND_URL_PROD`        | Yes      | Production frontend URL (your deployed domain)                                       |
+| `MONGODB_URI`              | Yes      | MongoDB connection string                                                            |
+| `REDIS_USERNAME`           | Yes      | Redis username                                                                       |
+| `REDIS_PASSWORD`           | Yes      | Redis password                                                                       |
+| `REDIS_HOST`               | Yes      | Redis host                                                                           |
+| `REDIS_PORT`               | Yes      | Redis port (default `6379`)                                                          |
+| `SENDER_EMAIL`             | Yes      | Verified sender email in Brevo                                                       |
+| `BREVO_API_KEY`            | Yes      | Brevo API key for transactional emails                                               |
+| `JWT_KEY`                  | Yes      | JWT signing secret (min 32 chars). Generate via `openssl rand -hex 32`               |
+| `TURNSTILE_SECRET_KEY`     | Yes      | Cloudflare Turnstile secret key                                                      |
+| `PoW_SECRET`               | Yes      | Proof-of-Work secret (min 32 chars). Generate via `openssl rand -hex 32`             |
+| `PoW_DIFFICULTY`           | Yes      | Proof-of-Work difficulty (1–6). Recommended `3` for development                      |
+| `CLOUDINARY_CLOUD_NAME`    | Yes      | Cloudinary cloud identifier                                                          |
+| `CLOUDINARY_API_KEY`       | Yes      | Cloudinary API key                                                                   |
+| `CLOUDINARY_API_SECRET`    | Yes      | Cloudinary API secret                                                                |
+| `EMAIL_LOGOUT_SIGNING_KEY` | Yes      | Signed email logout token secret (min 32 chars). Generate via `openssl rand -hex 48` |
 
 > [!IMPORTANT]
 > Generate unique, strong secrets for `JWT_KEY`, `PoW_SECRET`, and `EMAIL_LOGOUT_SIGNING_KEY`. Never reuse secrets across environments.
@@ -104,13 +104,13 @@ Use `client/.env.example` as reference.
 > [!CAUTION]
 > Variables prefixed with `NEXT_PUBLIC_` are exposed to browser clients. Never place private secrets here.
 
-| Variable | Required | Description |
-|---|---|---|
-| `NEXT_PUBLIC_BACKEND_URL_DEV` | Yes | Backend URL used in development |
-| `NEXT_PUBLIC_BACKEND_URL_PROD` | Yes | Backend URL used in production |
-| `NEXT_PUBLIC_FRONTEND_URL_DEV` | Yes | Frontend URL used in development |
-| `NEXT_PUBLIC_FRONTEND_URL_PROD` | Yes | Frontend URL used in production |
-| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Yes | Cloudflare Turnstile site key |
+| Variable                         | Required | Description                      |
+| -------------------------------- | -------- | -------------------------------- |
+| `NEXT_PUBLIC_BACKEND_URL_DEV`    | Yes      | Backend URL used in development  |
+| `NEXT_PUBLIC_BACKEND_URL_PROD`   | Yes      | Backend URL used in production   |
+| `NEXT_PUBLIC_FRONTEND_URL_DEV`   | Yes      | Frontend URL used in development |
+| `NEXT_PUBLIC_FRONTEND_URL_PROD`  | Yes      | Frontend URL used in production  |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Yes      | Cloudflare Turnstile site key    |
 
 ### 3.5 Recommended Setup Steps
 
@@ -160,9 +160,9 @@ ls -la server/.env.development server/.env.production client/.env .env
 1. Sign up for a free account at [MaxMind](https://www.maxmind.com/en/geolite2/signup)
 2. Download the GeoLite2 City database from the [MaxMind Downloads](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data) page
 3. Extract the archive and place `GeoLite2-City.mmdb` at:
-   ```
-   server/src/constants/GeoLite2-City.mmdb
-   ```
+    ```
+    server/src/constants/GeoLite2-City.mmdb
+    ```
 
 ### Option B: Automated Download
 
@@ -170,28 +170,28 @@ ls -la server/.env.development server/.env.production client/.env .env
 
 2. Add it to root `./.env`:
 
-   ```env
-   MAXMIND_LICENSE_KEY=your_license_key_here
-   ```
+    ```env
+    MAXMIND_LICENSE_KEY=your_license_key_here
+    ```
 
-   Or set it via environment variable:
+    Or set it via environment variable:
 
-   ```bash
-   # Linux / macOS
-   export MAXMIND_LICENSE_KEY=your_license_key_here
+    ```bash
+    # Linux / macOS
+    export MAXMIND_LICENSE_KEY=your_license_key_here
 
-   # Windows (Command Prompt)
-   set MAXMIND_LICENSE_KEY=your_license_key_here
+    # Windows (Command Prompt)
+    set MAXMIND_LICENSE_KEY=your_license_key_here
 
-   # Windows (PowerShell)
-   $env:MAXMIND_LICENSE_KEY="your_license_key_here"
-   ```
+    # Windows (PowerShell)
+    $env:MAXMIND_LICENSE_KEY="your_license_key_here"
+    ```
 
 3. Run the update script:
 
-   ```bash
-   node ./scripts/update-geolite2.js
-   ```
+    ```bash
+    node ./scripts/update-geolite2.js
+    ```
 
 4. Verify the file exists at `server/src/constants/GeoLite2-City.mmdb`
 
@@ -215,10 +215,10 @@ This starts both the client and server concurrently.
 
 ### Access the Application
 
-| Service | URL |
-|---|---|
-| Client | http://localhost:3000 |
-| Server | http://localhost:`PORT` (as defined in `server/.env.development`) |
+| Service | URL                                                               |
+| ------- | ----------------------------------------------------------------- |
+| Client  | http://localhost:3000                                             |
+| Server  | http://localhost:`PORT` (as defined in `server/.env.development`) |
 
 ---
 
@@ -273,16 +273,16 @@ pnpm run prepare
 
 ## Troubleshooting
 
-| Issue | Solution |
-|---|---|
-| Server won't start | Verify all required environment variables are set correctly |
-| MongoDB connection failed | Confirm MongoDB is running and the connection string is correct |
-| Redis connection failed | Confirm Redis is running and the connection details are accurate |
-| GeoLite2 not working | Ensure the `.mmdb` file is placed in `server/src/constants/` |
-| Push blocked by pre-push hook | Run `pnpm run check`, fix issues, then push again |
-| Husky hook not triggering | Run `pnpm run prepare` and verify `core.hooksPath` returns `.husky/_` |
-| Invalid environment configuration | Start the server in dev mode and check the Zod validation output |
-| Client cannot reach backend | Verify `client/.env` API URLs and restart the client dev server |
+| Issue                             | Solution                                                              |
+| --------------------------------- | --------------------------------------------------------------------- |
+| Server won't start                | Verify all required environment variables are set correctly           |
+| MongoDB connection failed         | Confirm MongoDB is running and the connection string is correct       |
+| Redis connection failed           | Confirm Redis is running and the connection details are accurate      |
+| GeoLite2 not working              | Ensure the `.mmdb` file is placed in `server/src/constants/`          |
+| Push blocked by pre-push hook     | Run `pnpm run check`, fix issues, then push again                     |
+| Husky hook not triggering         | Run `pnpm run prepare` and verify `core.hooksPath` returns `.husky/_` |
+| Invalid environment configuration | Start the server in dev mode and check the Zod validation output      |
+| Client cannot reach backend       | Verify `client/.env` API URLs and restart the client dev server       |
 
 > [!NOTE]
 > The server follows a **fail-fast** principle — it will not start if environment variables are missing or misconfigured. Validation details are printed to the console.

@@ -125,28 +125,28 @@ createRateLimiter({ windowMs, max, prefix?: string })
 
 Key configuration applied to every instance:
 
-| Property | Value | Purpose |
-|---|---|---|
-| `store` | `RedisStore` with `sendCommand` | Redis-backed counter storage |
-| `max` | `Infinity` in dev, `max` in production | Development bypass |
-| `standardHeaders` | `true` | Emit `RateLimit-*` headers |
-| `legacyHeaders` | `false` | Suppress deprecated `X-RateLimit-*` headers |
-| `skipFailedRequests` | `false` | Count failed requests toward the limit |
-| `skipSuccessfulRequests` | `false` | Count successful requests toward the limit |
-| `keyGenerator` | `visitorID = res.locals.clientIP` | Bind counter to client IP |
+| Property                 | Value                                  | Purpose                                     |
+| ------------------------ | -------------------------------------- | ------------------------------------------- |
+| `store`                  | `RedisStore` with `sendCommand`        | Redis-backed counter storage                |
+| `max`                    | `Infinity` in dev, `max` in production | Development bypass                          |
+| `standardHeaders`        | `true`                                 | Emit `RateLimit-*` headers                  |
+| `legacyHeaders`          | `false`                                | Suppress deprecated `X-RateLimit-*` headers |
+| `skipFailedRequests`     | `false`                                | Count failed requests toward the limit      |
+| `skipSuccessfulRequests` | `false`                                | Count successful requests toward the limit  |
+| `keyGenerator`           | `visitorID = res.locals.clientIP`      | Bind counter to client IP                   |
 
 ### `globalRateLimiter`
 
 A default instance applied globally:
 
 ```typescript
-createRateLimiter({ windowMs: 60000, max: 1000, prefix: "rl:global" })
+createRateLimiter({ windowMs: 60000, max: 1000, prefix: "rl:global" });
 ```
 
-| Property | Value |
-|---|---|
-| Window | 60 seconds |
-| Max requests | 1,000 |
+| Property         | Value       |
+| ---------------- | ----------- |
+| Window           | 60 seconds  |
+| Max requests     | 1,000       |
 | Redis key prefix | `rl:global` |
 
 ---
@@ -181,12 +181,12 @@ flowchart LR
 
 **RPM thresholds:**
 
-| RPM | Bonus | Example endpoint |
-|---|---|---|
-| ≤ 5 | +3 | OTP endpoints (5 req/15min ≈ 0.33 RPM) |
-| ≤ 20 | +2 | Login (10 req/15min ≈ 0.67 RPM) |
-| ≤ 100 | +1 | Auth general (60 req/min) |
-| > 100 | +0 | Global limiter (1000 req/min) |
+| RPM   | Bonus | Example endpoint                       |
+| ----- | ----- | -------------------------------------- |
+| ≤ 5   | +3    | OTP endpoints (5 req/15min ≈ 0.33 RPM) |
+| ≤ 20  | +2    | Login (10 req/15min ≈ 0.67 RPM)        |
+| ≤ 100 | +1    | Auth general (60 req/min)              |
+| > 100 | +0    | Global limiter (1000 req/min)          |
 
 **Short window bonus:** If `windowMs ≤ 30s`, an additional +1 is added.
 
@@ -210,12 +210,12 @@ The token is a base64-encoded string of the pipe-delimited fields:
 base64("{difficulty}|{expiry}|{salt}|{integrity}")
 ```
 
-| Field | Description |
-|---|---|
-| `difficulty` | Adaptive difficulty (integer) |
-| `expiry` | `Date.now() + 60_000` (1 minute window) |
-| `salt` | `crypto.randomBytes(16).toString("hex")` |
-| `integrity` | `HMAC-SHA256(PoW_SECRET, difficulty\|expiry\|salt)` as hex |
+| Field        | Description                                                |
+| ------------ | ---------------------------------------------------------- |
+| `difficulty` | Adaptive difficulty (integer)                              |
+| `expiry`     | `Date.now() + 60_000` (1 minute window)                    |
+| `salt`       | `crypto.randomBytes(16).toString("hex")`                   |
+| `integrity`  | `HMAC-SHA256(PoW_SECRET, difficulty\|expiry\|salt)` as hex |
 
 ### Client-Side Solver (`solvePow`)
 
@@ -234,11 +234,11 @@ solvePow(powToken: string, difficulty: number): number
 **Expected work:**
 
 | Difficulty | Expected attempts | Approx client time (est.) |
-|---|---|---|
-| 3 | 4,096 | Instant |
-| 4 | 65,536 | < 1s |
-| 5 | 1,048,576 | ~1-2s |
-| 6 | 16,777,216 | ~10-30s |
+| ---------- | ----------------- | ------------------------- |
+| 3          | 4,096             | Instant                   |
+| 4          | 65,536            | < 1s                      |
+| 5          | 1,048,576         | ~1-2s                     |
+| 6          | 16,777,216        | ~10-30s                   |
 
 ### Token Verification (`verifyPoWAndRespond`)
 
@@ -309,11 +309,13 @@ sequenceDiagram
 In large workspaces, one IP can represent many human users behind NAT or a corporate VPN.
 
 **Without PoW:**
+
 - One user spamming requests can saturate the shared IP quota
 - The entire organization behind that IP gets blocked together
 - Legitimate users experience hard failures even when their own behavior is normal
 
 **With PoW fallback:**
+
 - Over-limit traffic is not blindly denied
 - Each additional request requires computational work proportional to endpoint pressure
 - Legitimate users can still proceed by solving a bounded challenge
@@ -323,13 +325,13 @@ In large workspaces, one IP can represent many human users behind NAT or a corpo
 
 ## Rate Limiter Reference
 
-| Rate Limiter | Window | Max | Redis Prefix | PoW Difficulty Bonus |
-|---|---|---|---|---|
-| `globalRateLimiter` | 60s | 1,000 | `rl:global` | +0 |
-| `loginLimiter` | 15 min | 10 | `rl:auth:login` | +2 |
-| `otpLimiter` | 15 min | 5 | `rl:auth:otp` | +3 |
-| `authGeneralLimiter` | 60s | 60 | `rl:auth:general` | +1 |
-| `usernameCheckLimiter` | 60s | 30 | `rl:auth:username` | +1 |
+| Rate Limiter           | Window | Max   | Redis Prefix       | PoW Difficulty Bonus |
+| ---------------------- | ------ | ----- | ------------------ | -------------------- |
+| `globalRateLimiter`    | 60s    | 1,000 | `rl:global`        | +0                   |
+| `loginLimiter`         | 15 min | 10    | `rl:auth:login`    | +2                   |
+| `otpLimiter`           | 15 min | 5     | `rl:auth:otp`      | +3                   |
+| `authGeneralLimiter`   | 60s    | 60    | `rl:auth:general`  | +1                   |
+| `usernameCheckLimiter` | 60s    | 30    | `rl:auth:username` | +1                   |
 
 ---
 
@@ -345,11 +347,11 @@ In large workspaces, one IP can represent many human users behind NAT or a corpo
 
 ## Related Files
 
-| File | Role |
-|---|---|
+| File                                    | Role                                                                          |
+| --------------------------------------- | ----------------------------------------------------------------------------- |
 | `server/src/middlewares/rateLimiter.ts` | Server-side rate limiter middleware, PoW challenge issuance, and verification |
-| `client/src/config/backend.ts` | Axios instance with PoW solver response interceptor |
-| `client/src/config/env.ts` | Client environment configuration |
+| `client/src/config/backend.ts`          | Axios instance with PoW solver response interceptor                           |
+| `client/src/config/env.ts`              | Client environment configuration                                              |
 
 ---
 

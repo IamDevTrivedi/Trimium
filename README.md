@@ -1,21 +1,21 @@
 <div align="center">
   <img src="./client/public/favicon.png" alt="Trimium" height="64" />
 
-  # Trimium
+# Trimium
 
-  [![Live](https://img.shields.io/badge/Live-trimium.vercel.app-22c55e?style=flat-square)](https://trimium.vercel.app/)
-  [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
-  [![CI/CD](https://img.shields.io/github/actions/workflow/status/IamDevTrivedi/Trimium/ci.yml?style=flat-square&label=CI%2FCD)](https://github.com/IamDevTrivedi/Trimium/actions)
-  <br>
-  ![pnpm](https://img.shields.io/badge/pnpm-10.28.0-F69220?style=flat-square&logo=pnpm)
-  ![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=next.js)
-  ![Express](https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express)
-  ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
-  ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb)
-  ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis)
-  ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss)
+[![Live](https://img.shields.io/badge/Live-trimium.vercel.app-22c55e?style=flat-square)](https://trimium.vercel.app/)
+[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+[![CI/CD](https://img.shields.io/github/actions/workflow/status/IamDevTrivedi/Trimium/ci.yml?style=flat-square&label=CI%2FCD)](https://github.com/IamDevTrivedi/Trimium/actions)
+<br>
+![pnpm](https://img.shields.io/badge/pnpm-10.28.0-F69220?style=flat-square&logo=pnpm)
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=next.js)
+![Express](https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss)
 
-  A professional URL shortener and link management platform. Create short URLs, generate QR codes, manage team workspaces, and gain deep insights with analytics.
+A professional URL shortener and link management platform. Create short URLs, generate QR codes, manage team workspaces, and gain deep insights with analytics.
 
 </div>
 
@@ -37,49 +37,49 @@
 
 ### Frontend
 
-| Technology | Purpose |
-|---|---|
-| **Next.js 16** (App Router) | React framework |
-| **React 19** | UI library |
-| **TypeScript** | Type safety |
-| **Tailwind CSS 4** | Utility-first CSS |
-| **shadcn/ui** + @base-ui/react | Accessible component library |
-| **Zustand** | State management |
-| **React Hook Form + Zod** | Form handling & validation |
-| **Recharts** | Data visualization (analytics charts) |
-| **Axios** | HTTP client (with PoW challenge solver) |
+| Technology                     | Purpose                                 |
+| ------------------------------ | --------------------------------------- |
+| **Next.js 16** (App Router)    | React framework                         |
+| **React 19**                   | UI library                              |
+| **TypeScript**                 | Type safety                             |
+| **Tailwind CSS 4**             | Utility-first CSS                       |
+| **shadcn/ui** + @base-ui/react | Accessible component library            |
+| **Zustand**                    | State management                        |
+| **React Hook Form + Zod**      | Form handling & validation              |
+| **Recharts**                   | Data visualization (analytics charts)   |
+| **Axios**                      | HTTP client (with PoW challenge solver) |
 
 ### Backend
 
-| Technology | Purpose |
-|---|---|
-| **Express 5** | Web framework |
-| **TypeScript** | Type safety |
-| **MongoDB + Mongoose** | Database & ODM |
-| **Redis** (ioredis) | Caching, rate limiting, job queues |
-| **BullMQ** | Background job queues (email, activity updates) |
-| **JWT** | Authentication tokens with token versioning |
-| **Argon2** | Password hashing |
-| **Zod** | Request & environment validation |
-| **Brevo API** (Sendinblue) | Transactional email delivery |
-| **Cloudinary** | Image & file upload management |
-| **MaxMind GeoIP** | IP geolocation (country, city) |
-| **ua-parser-js** | User-agent parsing |
-| **Pino** | Structured logging |
-| **express-rate-limit + rate-limit-redis** | Rate limiting |
+| Technology                                | Purpose                                         |
+| ----------------------------------------- | ----------------------------------------------- |
+| **Express 5**                             | Web framework                                   |
+| **TypeScript**                            | Type safety                                     |
+| **MongoDB + Mongoose**                    | Database & ODM                                  |
+| **Redis** (ioredis)                       | Caching, rate limiting, job queues              |
+| **BullMQ**                                | Background job queues (email, activity updates) |
+| **JWT**                                   | Authentication tokens with token versioning     |
+| **Argon2**                                | Password hashing                                |
+| **Zod**                                   | Request & environment validation                |
+| **Brevo API** (Sendinblue)                | Transactional email delivery                    |
+| **Cloudinary**                            | Image & file upload management                  |
+| **MaxMind GeoIP**                         | IP geolocation (country, city)                  |
+| **ua-parser-js**                          | User-agent parsing                              |
+| **Pino**                                  | Structured logging                              |
+| **express-rate-limit + rate-limit-redis** | Rate limiting                                   |
 
 ### DevOps & Tooling
 
-| Technology | Purpose |
-|---|---|
-| **pnpm** | package manager |
-| **Turbopack** | Next.js bundler |
-| **Husky** | Git hooks (pre-push lint + format check) |
-| **ESLint + Prettier** | Code quality & formatting |
-| **GitHub Actions** | CI/CD (Vercel client + VPS server) |
-| **Dependabot** | Automated dependency updates |
-| **PM2** | Production server process manager |
-| **Concurrently** | Parallel dev script runner |
+| Technology            | Purpose                                  |
+| --------------------- | ---------------------------------------- |
+| **pnpm**              | package manager                          |
+| **Turbopack**         | Next.js bundler                          |
+| **Husky**             | Git hooks (pre-push lint + format check) |
+| **ESLint + Prettier** | Code quality & formatting                |
+| **GitHub Actions**    | CI/CD (Vercel client + VPS server)       |
+| **Dependabot**        | Automated dependency updates             |
+| **PM2**               | Production server process manager        |
+| **Concurrently**      | Parallel dev script runner               |
 
 ## Architecture
 

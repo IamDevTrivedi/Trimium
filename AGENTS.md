@@ -9,12 +9,12 @@ Live at **trimium.vercel.app**.
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
+| Layer      | Technology                                                                 |
+| ---------- | -------------------------------------------------------------------------- |
 | **Client** | Next.js 16 (App Router), React 19, TypeScript 5, Tailwind CSS 4, shadcn/ui |
-| **Server** | Express 5, TypeScript 5, MongoDB + Mongoose, Redis (ioredis), BullMQ |
-| **Auth** | JWT (cookie-based) with token versioning, Argon2 hashing |
-| **Infra** | Vercel (client deploy), VPS + PM2 (server deploy), GitHub Actions CI/CD |
+| **Server** | Express 5, TypeScript 5, MongoDB + Mongoose, Redis (ioredis), BullMQ       |
+| **Auth**   | JWT (cookie-based) with token versioning, Argon2 hashing                   |
+| **Infra**  | Vercel (client deploy), VPS + PM2 (server deploy), GitHub Actions CI/CD    |
 
 ---
 
@@ -58,8 +58,8 @@ sendResponse(res, {
     success: boolean,
     statusCode: StatusCodes,
     message: string,
-    ...other
-})
+    ...other,
+});
 ```
 
 ### Validation
@@ -84,28 +84,28 @@ BullMQ queues (email + activity updates), processed by workers.
 
 ### Import Aliases (server)
 
-| Alias | Path |
-|---|---|
-| `@/` | `server/src/` |
-| `@config/` | `server/src/config/` |
-| `@utils/` | `server/src/utils/` |
+| Alias           | Path                      |
+| --------------- | ------------------------- |
+| `@/`            | `server/src/`             |
+| `@config/`      | `server/src/config/`      |
+| `@utils/`       | `server/src/utils/`       |
 | `@middlewares/` | `server/src/middlewares/` |
-| `@modules/` | `server/src/modules/` |
-| `@db/` | `server/src/db/` |
+| `@modules/`     | `server/src/modules/`     |
+| `@db/`          | `server/src/db/`          |
 
 ---
 
 ## Conventions
 
-| Rule | Detail |
-|---|---|
-| **TypeScript** | Strict mode everywhere |
-| **Controllers** | Exported as `controllers` object |
-| **Routes** | Exported as `router` |
-| **Models** | One file per model in `server/src/models/` |
-| **UI components** | shadcn/ui in `client/src/components/ui/` |
-| **Styling** | Tailwind + `cn()` from `client/src/lib/utils.ts` |
-| **Formatting** | Prettier (tabWidth 4, singleQuote false, printWidth 100) |
+| Rule              | Detail                                                   |
+| ----------------- | -------------------------------------------------------- |
+| **TypeScript**    | Strict mode everywhere                                   |
+| **Controllers**   | Exported as `controllers` object                         |
+| **Routes**        | Exported as `router`                                     |
+| **Models**        | One file per model in `server/src/models/`               |
+| **UI components** | shadcn/ui in `client/src/components/ui/`                 |
+| **Styling**       | Tailwind + `cn()` from `client/src/lib/utils.ts`         |
+| **Formatting**    | Prettier (tabWidth 4, singleQuote false, printWidth 100) |
 
 ---
 
@@ -113,32 +113,32 @@ BullMQ queues (email + activity updates), processed by workers.
 
 ### Root
 
-| Command | Description |
-|---|---|
-| `pnpm dev` | Run client + server concurrently |
-| `pnpm lint` | ESLint check |
-| `pnpm lint:fix` | Auto-fix ESLint issues |
-| `pnpm format` | Auto-format with Prettier |
-| `pnpm format:check` | Prettier check |
-| `pnpm check` | lint + format:check combined |
-| `pnpm install:all` | Install all workspace dependencies |
-| `pnpm download:geoip` | Download GeoIP database |
+| Command               | Description                        |
+| --------------------- | ---------------------------------- |
+| `pnpm dev`            | Run client + server concurrently   |
+| `pnpm lint`           | ESLint check                       |
+| `pnpm lint:fix`       | Auto-fix ESLint issues             |
+| `pnpm format`         | Auto-format with Prettier          |
+| `pnpm format:check`   | Prettier check                     |
+| `pnpm check`          | lint + format:check combined       |
+| `pnpm install:all`    | Install all workspace dependencies |
+| `pnpm download:geoip` | Download GeoIP database            |
 
 ### Server (run from `server/`)
 
-| Command | Description |
-|---|---|
+| Command      | Description                                           |
+| ------------ | ----------------------------------------------------- |
 | `pnpm build` | TypeScript compile + `tsc-alias` (type check + build) |
-| `pnpm dev` | Dev watch mode with `tsx` |
-| `pnpm start` | Production start from `dist/` |
+| `pnpm dev`   | Dev watch mode with `tsx`                             |
+| `pnpm start` | Production start from `dist/`                         |
 
 ### Client (run from `client/`)
 
-| Command | Description |
-|---|---|
+| Command      | Description               |
+| ------------ | ------------------------- |
 | `pnpm build` | Next.js build to `.next/` |
-| `pnpm dev` | Next.js dev server |
-| `pnpm start` | Production start |
+| `pnpm dev`   | Next.js dev server        |
+| `pnpm start` | Production start          |
 
 ---
 
