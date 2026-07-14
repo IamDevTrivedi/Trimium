@@ -1,0 +1,10 @@
+printf '%s\n' '[husky][pre-commit] Starting quality checks...'
+printf '%s\n' '[husky][pre-commit] Running: pnpm check'
+
+if pnpm check; then
+	printf '%s\n' '[husky][pre-commit] All checks passed. Commit allowed.'
+else
+	status=$?
+	printf '%s\n' "[husky][pre-commit] Checks failed (exit code: $status). Commit blocked."
+	exit "$status"
+fi
