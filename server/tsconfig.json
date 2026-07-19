@@ -2,23 +2,23 @@
     "compilerOptions": {
         "target": "ES2020",
         "module": "CommonJS",
-        "moduleResolution": "Node",
+        "moduleResolution": "bundler",
         "rootDir": "./src",
         "outDir": "./dist",
-        "baseUrl": "./src",
         "paths": {
-            "@config/*": ["config/*"],
-            "@db/*": ["db/*"],
-            "@utils/*": ["utils/*"],
-            "@/*": ["*"],
-            "@modules/*": ["modules/*"],
-            "@middlewares/*": ["middlewares/*"],
-            "@constants/*": ["constants/*"],
-            "@models/*": ["models/*"]
+            "@config/*": ["./src/config/*"],
+            "@db/*": ["./src/db/*"],
+            "@utils/*": ["./src/utils/*"],
+            "@/*": ["./src/*"],
+            "@modules/*": ["./src/modules/*"],
+            "@middlewares/*": ["./src/middlewares/*"],
+            "@constants/*": ["./src/constants/*"],
+            "@models/*": ["./src/models/*"]
         },
         "strict": true,
         "esModuleInterop": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "types": ["node"]
     },
     "include": ["src/**/*"]
 }
