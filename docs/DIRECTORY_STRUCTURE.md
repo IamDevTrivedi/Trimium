@@ -2,84 +2,12 @@
 
 ```
 .
-├── .agents
-│   └── skills
-│       ├── architecture-blueprint-generator
-│       │   └── SKILL.md
-│       ├── brainstorming
-│       │   ├── scripts
-│       │   │   ├── frame-template.html
-│       │   │   ├── helper.js
-│       │   │   ├── server.cjs
-│       │   │   ├── start-server.sh
-│       │   │   └── stop-server.sh
-│       │   ├── SKILL.md
-│       │   ├── spec-document-reviewer-prompt.md
-│       │   └── visual-companion.md
-│       ├── create-readme
-│       │   └── SKILL.md
-│       ├── documentation-writer
-│       │   └── SKILL.md
-│       ├── shadcn
-│       │   ├── agents
-│       │   │   └── openai.yml
-│       │   ├── assets
-│       │   │   ├── shadcn.png
-│       │   │   └── shadcn-small.png
-│       │   ├── cli.md
-│       │   ├── customization.md
-│       │   ├── evals
-│       │   │   └── evals.json
-│       │   ├── mcp.md
-│       │   ├── rules
-│       │   │   ├── base-vs-radix.md
-│       │   │   ├── composition.md
-│       │   │   ├── forms.md
-│       │   │   ├── icons.md
-│       │   │   └── styling.md
-│       │   └── SKILL.md
-│       └── ui-ux-pro-max
-│           ├── data
-│           │   ├── charts.csv
-│           │   ├── colors.csv
-│           │   ├── icons.csv
-│           │   ├── landing.csv
-│           │   ├── products.csv
-│           │   ├── react-performance.csv
-│           │   ├── stacks
-│           │   │   ├── astro.csv
-│           │   │   ├── flutter.csv
-│           │   │   ├── html-tailwind.csv
-│           │   │   ├── jetpack-compose.csv
-│           │   │   ├── nextjs.csv
-│           │   │   ├── nuxtjs.csv
-│           │   │   ├── nuxt-ui.csv
-│           │   │   ├── react.csv
-│           │   │   ├── react-native.csv
-│           │   │   ├── shadcn.csv
-│           │   │   ├── svelte.csv
-│           │   │   ├── swiftui.csv
-│           │   │   └── vue.csv
-│           │   ├── styles.csv
-│           │   ├── typography.csv
-│           │   ├── ui-reasoning.csv
-│           │   ├── ux-guidelines.csv
-│           │   └── web-interface.csv
-│           ├── scripts
-│           │   ├── core.py
-│           │   ├── design_system.py
-│           │   ├── __pycache__
-│           │   │   ├── core.cpython-314.pyc
-│           │   │   ├── design_system.cpython-314.pyc
-│           │   │   └── search.cpython-314.pyc
-│           │   └── search.py
-│           └── SKILL.md
+├── AGENTS.md
+├── LICENSE
+├── README.md
 ├── client
 │   ├── components.json
-│   ├── .env
-│   ├── .env.example
 │   ├── next.config.ts
-│   ├── next-env.d.ts
 │   ├── package.json
 │   ├── pnpm-lock.yaml
 │   ├── postcss.config.mjs
@@ -127,18 +55,15 @@
 │   │   │   │       │   └── page.tsx
 │   │   │   │       └── verify
 │   │   │   │           └── page.tsx
-│   │   │   ├── favicon.ico
-│   │   │   ├── features
-│   │   │   │   ├── layout.tsx
-│   │   │   │   └── page.tsx
-│   │   │   ├── globals.css
-│   │   │   ├── layout.tsx
 │   │   │   ├── (legal)
 │   │   │   │   ├── about
+│   │   │   │   │   ├── about-content.tsx
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── contact-us
+│   │   │   │   │   ├── contact-page-client.tsx
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── layout.tsx
+│   │   │   │   ├── legal-content.tsx
 │   │   │   │   ├── privacy-policy
 │   │   │   │   │   └── page.tsx
 │   │   │   │   └── terms-of-service
@@ -150,9 +75,6 @@
 │   │   │   │   └── t
 │   │   │   │       └── [username]
 │   │   │   │           └── page.tsx
-│   │   │   ├── loading.tsx
-│   │   │   ├── not-found.tsx
-│   │   │   ├── page.tsx
 │   │   │   ├── (redirecting)
 │   │   │   │   ├── layout.tsx
 │   │   │   │   └── r
@@ -162,23 +84,35 @@
 │   │   │   │   ├── layout.tsx
 │   │   │   │   └── qr-generator
 │   │   │   │       └── page.tsx
-│   │   │   └── (workspaces)
-│   │   │       ├── layout.tsx
-│   │   │       └── w
-│   │   │           ├── new
-│   │   │           │   └── page.tsx
-│   │   │           ├── page.tsx
-│   │   │           └── [workspaceID]
-│   │   │               ├── bulk-upload
-│   │   │               │   └── page.tsx
-│   │   │               ├── create-url
-│   │   │               │   └── page.tsx
-│   │   │               ├── layout.tsx
-│   │   │               ├── page.tsx
-│   │   │               └── [shortCode]
-│   │   │                   ├── edit
-│   │   │                   │   └── page.tsx
-│   │   │                   └── page.tsx
+│   │   │   ├── (workspaces)
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── w
+│   │   │   │       ├── [workspaceID]
+│   │   │   │       │   ├── [shortCode]
+│   │   │   │       │   │   ├── edit
+│   │   │   │       │   │   │   └── page.tsx
+│   │   │   │       │   │   └── page.tsx
+│   │   │   │       │   ├── bulk-upload
+│   │   │   │       │   │   └── page.tsx
+│   │   │   │       │   ├── create-url
+│   │   │   │       │   │   └── page.tsx
+│   │   │   │       │   ├── layout.tsx
+│   │   │   │       │   └── page.tsx
+│   │   │   │       ├── new
+│   │   │   │       │   └── page.tsx
+│   │   │   │       └── page.tsx
+│   │   │   ├── favicon.ico
+│   │   │   ├── features
+│   │   │   │   ├── features-page-client.tsx
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── globals.css
+│   │   │   ├── home-page-client.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── loading.tsx
+│   │   │   ├── not-found-client.tsx
+│   │   │   ├── not-found.tsx
+│   │   │   └── page.tsx
 │   │   ├── components
 │   │   │   ├── account-page.tsx
 │   │   │   ├── auth-turnstile.tsx
@@ -291,63 +225,28 @@
 │   │       ├── login-store.ts
 │   │       ├── reset-password-store.ts
 │   │       └── user-store.ts
-│   ├── tsconfig.json
-│   └── tsconfig.tsbuildinfo
+│   └── tsconfig.json
 ├── docs
+│   ├── DIRECTORY_STRUCTURE.md
+│   ├── SETUP.md
 │   ├── architecture
 │   │   ├── AUTHENTICATION_AND_SESSION_MANAGEMENT_ARCHITECTURE.md
 │   │   ├── CI_CD_PIPELINE_ARCHITECTURE.md
 │   │   └── RATE_LIMITER_ARCHITECTURE.md
-│   ├── DIRECTORY_STRUCTURE.md
-│   └── SETUP.md
-├── .editorconfig
-├── .env
+│   └── diagrams
+│       ├── trimium-architecture-dark.png
+│       └── trimium-architecture.png
 ├── eslint.config.ts
-├── .github
-│   ├── dependabot.yml
-│   └── workflows
-│       └── ci.yml
-├── .gitignore
-├── .husky
-│   ├── _
-│   │   ├── applypatch-msg
-│   │   ├── commit-msg
-│   │   ├── .gitignore
-│   │   ├── h
-│   │   ├── husky.sh
-│   │   ├── post-applypatch
-│   │   ├── post-checkout
-│   │   ├── post-commit
-│   │   ├── post-merge
-│   │   ├── post-rewrite
-│   │   ├── pre-applypatch
-│   │   ├── pre-auto-gc
-│   │   ├── pre-commit
-│   │   ├── pre-merge-commit
-│   │   ├── prepare-commit-msg
-│   │   ├── pre-push
-│   │   └── pre-rebase
-│   └── pre-push
-├── LICENSE
+├── opencode.json
 ├── package.json
 ├── pnpm-lock.yaml
-├── .prettierignore
-├── .prettierrc
-├── public
-│   └── preview.png
-├── README.md
 ├── scripts
 │   ├── clean-all.js
+│   ├── generate-architecture.py
 │   ├── install-all.js
 │   ├── reset-all.js
 │   └── update-geolite2.js
 ├── server
-│   ├── .env.development
-│   ├── .env.example
-│   ├── .env.production
-│   ├── logs
-│   │   ├── app-development.log
-│   │   └── error-development.log
 │   ├── package.json
 │   ├── pnpm-lock.yaml
 │   ├── src
@@ -356,11 +255,10 @@
 │   │   │   ├── checkEnv.ts
 │   │   │   ├── cloudinary.ts
 │   │   │   ├── env.ts
-│   │   │   └── mailer.ts
+│   │   │   ├── mailer.ts
+│   │   │   └── swagger.ts
 │   │   ├── constants
 │   │   │   ├── app.ts
-│   │   │   ├── GeoLite2-City.mmdb
-│   │   │   ├── GeoLite2-City.mmdb.backup
 │   │   │   ├── regex.ts
 │   │   │   └── tags.ts
 │   │   ├── db
@@ -368,12 +266,12 @@
 │   │   │   └── connectRedis.ts
 │   │   ├── index.ts
 │   │   ├── middlewares
-│   │   │   ├── httpLogger.ts
 │   │   │   ├── IP.ts
+│   │   │   ├── UAParser.ts
+│   │   │   ├── httpLogger.ts
 │   │   │   ├── location.ts
 │   │   │   ├── protectRoute.ts
 │   │   │   ├── rateLimiter.ts
-│   │   │   ├── UAParser.ts
 │   │   │   ├── upload.ts
 │   │   │   └── verifyTurnstile.ts
 │   │   ├── models
@@ -431,11 +329,7 @@
 │   │       ├── sendResponse.ts
 │   │       └── tags.ts
 │   └── tsconfig.json
-├── skills-lock.json
-├── .vercel
-│   ├── project.json
-│   └── README.txt
-└── .vercelignore
+└── skills-lock.json
 
-96 directories, 339 files
+73 directories, 256 files
 ```
