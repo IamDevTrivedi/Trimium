@@ -1,6 +1,6 @@
-import { Options } from "argon2";
+import { HashOptions } from "argon2";
 
-export const HASH_OPTIONS: Options = Object.freeze({
+export const HASH_OPTIONS: HashOptions = Object.freeze({
     type: 2,
     memoryCost: 65536,
     timeCost: 3,
