@@ -148,7 +148,7 @@ jobs:
             HEALTH_RETRY_COUNT=10
             HEALTH_RETRY_INTERVAL=5
             PM2_APP_NAME="trimium-api"
-            MAX_RELEASES_TO_KEEP=54
+            MAX_RELEASES_TO_KEEP=5
 
             # ── Exit trap ─────────────────────────────────────────────
             DEPLOY_START=$(date +%s)
