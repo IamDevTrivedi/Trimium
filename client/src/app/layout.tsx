@@ -62,6 +62,9 @@ export const metadata: Metadata = {
             "Shorten, track, and optimize your links with Trimium. Create powerful short URLs, generate custom QR codes, and gain deep insights with advanced analytics.",
         images: ["/og-home.png"],
     },
+    icons: {
+        icon: "/favicon.png",
+    },
     robots: {
         index: true,
         follow: true,
