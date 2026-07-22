@@ -225,6 +225,7 @@
 │   │       ├── login-store.ts
 │   │       ├── reset-password-store.ts
 │   │       └── user-store.ts
+│   ├── trigger
 │   └── tsconfig.json
 ├── docs
 │   ├── DIRECTORY_STRUCTURE.md
@@ -331,5 +332,5 @@
 │   └── tsconfig.json
 └── skills-lock.json
 
-73 directories, 256 files
+73 directories, 257 files
 ```
