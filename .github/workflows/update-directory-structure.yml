@@ -21,7 +21,7 @@ jobs:
 
             - name: Generate directory tree
               run: |
-                  tree --gitignore > /tmp/tree_output.txt
+                  git ls-files | tree --fromfile --dirsfirst > /tmp/tree_output.txt
 
             - name: Assemble markdown file
               run: |
