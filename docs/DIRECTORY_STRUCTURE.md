@@ -2,15 +2,93 @@
 
 ```
 .
-├── AGENTS.md
-├── LICENSE
-├── README.md
+├── .agents
+│   └── skills
+│       ├── architecture-blueprint-generator
+│       │   └── SKILL.md
+│       ├── aws-diagrams-skill
+│       │   ├── references
+│       │   │   ├── center_nodes.py
+│       │   │   └── template.py
+│       │   ├── SKILL.md
+│       │   └── gotchas.md
+│       ├── brainstorming
+│       │   ├── scripts
+│       │   │   ├── frame-template.html
+│       │   │   ├── helper.js
+│       │   │   ├── server.cjs
+│       │   │   ├── start-server.sh
+│       │   │   └── stop-server.sh
+│       │   ├── SKILL.md
+│       │   ├── spec-document-reviewer-prompt.md
+│       │   └── visual-companion.md
+│       ├── create-readme
+│       │   └── SKILL.md
+│       ├── documentation-writer
+│       │   └── SKILL.md
+│       ├── shadcn
+│       │   ├── agents
+│       │   │   └── openai.yml
+│       │   ├── assets
+│       │   │   ├── shadcn-small.png
+│       │   │   └── shadcn.png
+│       │   ├── evals
+│       │   │   └── evals.json
+│       │   ├── rules
+│       │   │   ├── base-vs-radix.md
+│       │   │   ├── composition.md
+│       │   │   ├── forms.md
+│       │   │   ├── icons.md
+│       │   │   └── styling.md
+│       │   ├── SKILL.md
+│       │   ├── cli.md
+│       │   ├── customization.md
+│       │   └── mcp.md
+│       └── ui-ux-pro-max
+│           ├── data
+│           │   ├── stacks
+│           │   │   ├── astro.csv
+│           │   │   ├── flutter.csv
+│           │   │   ├── html-tailwind.csv
+│           │   │   ├── jetpack-compose.csv
+│           │   │   ├── nextjs.csv
+│           │   │   ├── nuxt-ui.csv
+│           │   │   ├── nuxtjs.csv
+│           │   │   ├── react-native.csv
+│           │   │   ├── react.csv
+│           │   │   ├── shadcn.csv
+│           │   │   ├── svelte.csv
+│           │   │   ├── swiftui.csv
+│           │   │   └── vue.csv
+│           │   ├── charts.csv
+│           │   ├── colors.csv
+│           │   ├── icons.csv
+│           │   ├── landing.csv
+│           │   ├── products.csv
+│           │   ├── react-performance.csv
+│           │   ├── styles.csv
+│           │   ├── typography.csv
+│           │   ├── ui-reasoning.csv
+│           │   ├── ux-guidelines.csv
+│           │   └── web-interface.csv
+│           ├── scripts
+│           │   ├── __pycache__
+│           │   │   ├── core.cpython-314.pyc
+│           │   │   ├── design_system.cpython-314.pyc
+│           │   │   └── search.cpython-314.pyc
+│           │   ├── core.py
+│           │   ├── design_system.py
+│           │   └── search.py
+│           └── SKILL.md
+├── .github
+│   ├── workflows
+│   │   ├── ci.yml
+│   │   ├── opencode.yml
+│   │   └── update-directory-structure.yml
+│   └── dependabot.yml
+├── .husky
+│   └── pre-commit
 ├── client
-│   ├── components.json
-│   ├── next.config.ts
-│   ├── package.json
-│   ├── pnpm-lock.yaml
-│   ├── postcss.config.mjs
 │   ├── public
 │   │   ├── brand.png
 │   │   ├── favicon.png
@@ -34,27 +112,27 @@
 │   │   │   │   └── layout.tsx
 │   │   │   ├── (auth)
 │   │   │   │   ├── create-account
-│   │   │   │   │   ├── page.tsx
 │   │   │   │   │   ├── set-password
 │   │   │   │   │   │   └── page.tsx
 │   │   │   │   │   ├── set-profile
 │   │   │   │   │   │   └── page.tsx
-│   │   │   │   │   └── verify
-│   │   │   │   │       └── page.tsx
+│   │   │   │   │   ├── verify
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   └── page.tsx
 │   │   │   │   ├── email-logout
 │   │   │   │   │   ├── layout.tsx
 │   │   │   │   │   └── page.tsx
-│   │   │   │   ├── layout.tsx
 │   │   │   │   ├── login
 │   │   │   │   │   └── page.tsx
 │   │   │   │   ├── logout
 │   │   │   │   │   └── page.tsx
-│   │   │   │   └── reset-password
-│   │   │   │       ├── page.tsx
-│   │   │   │       ├── set-password
-│   │   │   │       │   └── page.tsx
-│   │   │   │       └── verify
-│   │   │   │           └── page.tsx
+│   │   │   │   ├── reset-password
+│   │   │   │   │   ├── set-password
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── verify
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── layout.tsx
 │   │   │   ├── (legal)
 │   │   │   │   ├── about
 │   │   │   │   │   ├── about-content.tsx
@@ -62,12 +140,12 @@
 │   │   │   │   ├── contact-us
 │   │   │   │   │   ├── contact-page-client.tsx
 │   │   │   │   │   └── page.tsx
-│   │   │   │   ├── layout.tsx
-│   │   │   │   ├── legal-content.tsx
 │   │   │   │   ├── privacy-policy
 │   │   │   │   │   └── page.tsx
-│   │   │   │   └── terms-of-service
-│   │   │   │       └── page.tsx
+│   │   │   │   ├── terms-of-service
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── layout.tsx
+│   │   │   │   └── legal-content.tsx
 │   │   │   ├── (linkhub)
 │   │   │   │   ├── linkhub-editor
 │   │   │   │   │   ├── layout.tsx
@@ -76,36 +154,36 @@
 │   │   │   │       └── [username]
 │   │   │   │           └── page.tsx
 │   │   │   ├── (redirecting)
-│   │   │   │   ├── layout.tsx
-│   │   │   │   └── r
-│   │   │   │       └── [shortCode]
-│   │   │   │           └── page.tsx
+│   │   │   │   ├── r
+│   │   │   │   │   └── [shortCode]
+│   │   │   │   │       └── page.tsx
+│   │   │   │   └── layout.tsx
 │   │   │   ├── (tools)
-│   │   │   │   ├── layout.tsx
-│   │   │   │   └── qr-generator
-│   │   │   │       └── page.tsx
+│   │   │   │   ├── qr-generator
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── layout.tsx
 │   │   │   ├── (workspaces)
-│   │   │   │   ├── layout.tsx
-│   │   │   │   └── w
-│   │   │   │       ├── [workspaceID]
-│   │   │   │       │   ├── [shortCode]
-│   │   │   │       │   │   ├── edit
-│   │   │   │       │   │   │   └── page.tsx
-│   │   │   │       │   │   └── page.tsx
-│   │   │   │       │   ├── bulk-upload
-│   │   │   │       │   │   └── page.tsx
-│   │   │   │       │   ├── create-url
-│   │   │   │       │   │   └── page.tsx
-│   │   │   │       │   ├── layout.tsx
-│   │   │   │       │   └── page.tsx
-│   │   │   │       ├── new
-│   │   │   │       │   └── page.tsx
-│   │   │   │       └── page.tsx
-│   │   │   ├── favicon.ico
+│   │   │   │   ├── w
+│   │   │   │   │   ├── [workspaceID]
+│   │   │   │   │   │   ├── [shortCode]
+│   │   │   │   │   │   │   ├── edit
+│   │   │   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   │   ├── bulk-upload
+│   │   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   │   ├── create-url
+│   │   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   │   ├── layout.tsx
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   ├── new
+│   │   │   │   │   │   └── page.tsx
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── layout.tsx
 │   │   │   ├── features
 │   │   │   │   ├── features-page-client.tsx
 │   │   │   │   ├── layout.tsx
 │   │   │   │   └── page.tsx
+│   │   │   ├── favicon.ico
 │   │   │   ├── globals.css
 │   │   │   ├── home-page-client.tsx
 │   │   │   ├── layout.tsx
@@ -114,36 +192,6 @@
 │   │   │   ├── not-found.tsx
 │   │   │   └── page.tsx
 │   │   ├── components
-│   │   │   ├── account-page.tsx
-│   │   │   ├── auth-turnstile.tsx
-│   │   │   ├── bulk-upload-urls.tsx
-│   │   │   ├── card-footer.tsx
-│   │   │   ├── contact-form.tsx
-│   │   │   ├── create-account-forms.tsx
-│   │   │   ├── create-redirect-form.tsx
-│   │   │   ├── create-workspace-dialog.tsx
-│   │   │   ├── create-workspace-form.tsx
-│   │   │   ├── custom-qr-generator.tsx
-│   │   │   ├── edit-redirect-form.tsx
-│   │   │   ├── footer.tsx
-│   │   │   ├── linkhub-editor.tsx
-│   │   │   ├── loading.tsx
-│   │   │   ├── login-forms.tsx
-│   │   │   ├── login-history.tsx
-│   │   │   ├── markdown-content.tsx
-│   │   │   ├── mode-toggle.tsx
-│   │   │   ├── navbar.tsx
-│   │   │   ├── pending-invitations.tsx
-│   │   │   ├── protect-page.tsx
-│   │   │   ├── protect-workspace.tsx
-│   │   │   ├── qr-code-generator.tsx
-│   │   │   ├── reset-password-forms.tsx
-│   │   │   ├── service-worker-register.tsx
-│   │   │   ├── shortcode-performance.tsx
-│   │   │   ├── shortcode-tags.tsx
-│   │   │   ├── theme-provider.tsx
-│   │   │   ├── toast.tsx
-│   │   │   ├── top-back-button.tsx
 │   │   │   ├── ui
 │   │   │   │   ├── accordion.tsx
 │   │   │   │   ├── alert-dialog.tsx
@@ -197,6 +245,36 @@
 │   │   │   │   ├── toggle-group.tsx
 │   │   │   │   ├── toggle.tsx
 │   │   │   │   └── tooltip.tsx
+│   │   │   ├── account-page.tsx
+│   │   │   ├── auth-turnstile.tsx
+│   │   │   ├── bulk-upload-urls.tsx
+│   │   │   ├── card-footer.tsx
+│   │   │   ├── contact-form.tsx
+│   │   │   ├── create-account-forms.tsx
+│   │   │   ├── create-redirect-form.tsx
+│   │   │   ├── create-workspace-dialog.tsx
+│   │   │   ├── create-workspace-form.tsx
+│   │   │   ├── custom-qr-generator.tsx
+│   │   │   ├── edit-redirect-form.tsx
+│   │   │   ├── footer.tsx
+│   │   │   ├── linkhub-editor.tsx
+│   │   │   ├── loading.tsx
+│   │   │   ├── login-forms.tsx
+│   │   │   ├── login-history.tsx
+│   │   │   ├── markdown-content.tsx
+│   │   │   ├── mode-toggle.tsx
+│   │   │   ├── navbar.tsx
+│   │   │   ├── pending-invitations.tsx
+│   │   │   ├── protect-page.tsx
+│   │   │   ├── protect-workspace.tsx
+│   │   │   ├── qr-code-generator.tsx
+│   │   │   ├── reset-password-forms.tsx
+│   │   │   ├── service-worker-register.tsx
+│   │   │   ├── shortcode-performance.tsx
+│   │   │   ├── shortcode-tags.tsx
+│   │   │   ├── theme-provider.tsx
+│   │   │   ├── toast.tsx
+│   │   │   ├── top-back-button.tsx
 │   │   │   ├── workspace-details.tsx
 │   │   │   ├── workspace-list.tsx
 │   │   │   ├── workspace-page-tabs.tsx
@@ -225,22 +303,23 @@
 │   │       ├── login-store.ts
 │   │       ├── reset-password-store.ts
 │   │       └── user-store.ts
+│   ├── components.json
+│   ├── next.config.ts
+│   ├── package.json
+│   ├── pnpm-lock.yaml
+│   ├── postcss.config.mjs
 │   ├── trigger
 │   └── tsconfig.json
 ├── docs
-│   ├── DIRECTORY_STRUCTURE.md
-│   ├── SETUP.md
 │   ├── architecture
 │   │   ├── AUTHENTICATION_AND_SESSION_MANAGEMENT_ARCHITECTURE.md
 │   │   ├── CI_CD_PIPELINE_ARCHITECTURE.md
 │   │   └── RATE_LIMITER_ARCHITECTURE.md
-│   └── diagrams
-│       ├── trimium-architecture-dark.png
-│       └── trimium-architecture.png
-├── eslint.config.ts
-├── opencode.json
-├── package.json
-├── pnpm-lock.yaml
+│   ├── diagrams
+│   │   ├── trimium-architecture-dark.png
+│   │   └── trimium-architecture.png
+│   ├── DIRECTORY_STRUCTURE.md
+│   └── SETUP.md
 ├── scripts
 │   ├── clean-all.js
 │   ├── generate-architecture.py
@@ -248,8 +327,6 @@
 │   ├── reset-all.js
 │   └── update-geolite2.js
 ├── server
-│   ├── package.json
-│   ├── pnpm-lock.yaml
 │   ├── src
 │   │   ├── config
 │   │   │   ├── argon2.ts
@@ -265,7 +342,6 @@
 │   │   ├── db
 │   │   │   ├── connectMongo.ts
 │   │   │   └── connectRedis.ts
-│   │   ├── index.ts
 │   │   ├── middlewares
 │   │   │   ├── IP.ts
 │   │   │   ├── UAParser.ts
@@ -298,10 +374,10 @@
 │   │   │   │   ├── controllers.ts
 │   │   │   │   └── routes.ts
 │   │   │   ├── queue
-│   │   │   │   ├── index.ts
 │   │   │   │   ├── processors
 │   │   │   │   │   ├── sendEmail.ts
 │   │   │   │   │   └── updateLastActivity.ts
+│   │   │   │   ├── index.ts
 │   │   │   │   ├── queues.ts
 │   │   │   │   ├── redisConfig.ts
 │   │   │   │   └── workers.ts
@@ -317,20 +393,35 @@
 │   │   │   └── workspace
 │   │   │       ├── controllers.ts
 │   │   │       └── routes.ts
-│   │   └── utils
-│   │       ├── date.ts
-│   │       ├── emailTemplates.ts
-│   │       ├── generateOTP.ts
-│   │       ├── generateShortCode.ts
-│   │       ├── getWorkspacePerformance.ts
-│   │       ├── hash.ts
-│   │       ├── logger.ts
-│   │       ├── loginThrottle.ts
-│   │       ├── normalizeEmail.ts
-│   │       ├── sendResponse.ts
-│   │       └── tags.ts
+│   │   ├── utils
+│   │   │   ├── date.ts
+│   │   │   ├── emailTemplates.ts
+│   │   │   ├── generateOTP.ts
+│   │   │   ├── generateShortCode.ts
+│   │   │   ├── getWorkspacePerformance.ts
+│   │   │   ├── hash.ts
+│   │   │   ├── logger.ts
+│   │   │   ├── loginThrottle.ts
+│   │   │   ├── normalizeEmail.ts
+│   │   │   ├── sendResponse.ts
+│   │   │   └── tags.ts
+│   │   └── index.ts
+│   ├── package.json
+│   ├── pnpm-lock.yaml
 │   └── tsconfig.json
+├── .editorconfig
+├── .gitignore
+├── .prettierignore
+├── .prettierrc
+├── .vercelignore
+├── AGENTS.md
+├── LICENSE
+├── README.md
+├── eslint.config.ts
+├── opencode.json
+├── package.json
+├── pnpm-lock.yaml
 └── skills-lock.json
 
-73 directories, 257 files
+95 directories, 326 files
 ```
