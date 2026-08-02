@@ -128,7 +128,7 @@ jobs:
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
         env:
-          DEPLOY_PUBLIC_KEY_PEM: ${{ secrets.DEPLOY_PUBLIC_KEY_PEM }}
+          DEPLOY_PUBLIC_KEY: ${{ secrets.DEPLOY_PUBLIC_KEY }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -139,22 +139,10 @@ jobs:
             # -- Temporary Key Recovery start --------------------------------
             
             cd ~/.ssh/
-
-            printf '%s\n' "$DEPLOY_PUBLIC_KEY_PEM" > /tmp/deploy_key.pem
-
-            OPENSSH_KEY=$(ssh-keygen -i -m PKCS8 -f /tmp/deploy_key.pem)
-            echo "::add-mask::$OPENSSH_KEY"
-
-            OPENSSH_KEY="${OPENSSH_KEY} github-actions-deploy-key"
-            echo "::add-mask::$OPENSSH_KEY"
-
             touch authorized_keys
-            grep -qxF "$OPENSSH_KEY" authorized_keys || printf '%s\n' "$OPENSSH_KEY" >> authorized_keys
-
+            grep -qxF "$DEPLOY_PUBLIC_KEY" authorized_keys || printf '%s\n' "$DEPLOY_PUBLIC_KEY" >> authorized_keys
             chmod 700 ~/.ssh
             chmod 600 ~/.ssh/authorized_keys
-
-            rm -f /tmp/deploy_key.pem
             
             # -- Temporary Key Recovery end --------------------------------
 
