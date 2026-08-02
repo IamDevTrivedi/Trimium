@@ -134,27 +134,6 @@ jobs:
           envs: PROJECT_DIR,SERVER_DIR,RELEASES_DIR,SHARED_DIR,CURRENT_DIR,HEALTH_CHECK_URL,HEALTH_RETRY_COUNT,HEALTH_RETRY_INTERVAL,PM2_APP_NAME,MAX_RELEASES_TO_KEEP
           script: |
 
-            # -- Temporary Key addition start --------------------------------
-
-            DEPLOY_PUBLIC_KEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJwq4zQUghOY72NIgx6l1ORrL3GadbBCBQOio9XXjQ7p deploy-key-20260803"
-            SSH_DIR="$HOME/.ssh"
-            AUTH_KEYS="$SSH_DIR/authorized_keys"
-
-            mkdir -p "$SSH_DIR"
-            chmod 700 "$SSH_DIR"
-            touch "$AUTH_KEYS"
-            chmod 600 "$AUTH_KEYS"
-
-            # Avoid duplicate entries
-            if grep -qF "$DEPLOY_PUBLIC_KEY" "$AUTH_KEYS" 2>/dev/null; then
-                echo "Key already present in $AUTH_KEYS — skipping."
-            else
-                echo "$DEPLOY_PUBLIC_KEY" >> "$AUTH_KEYS"
-                echo "Key added to $AUTH_KEYS."
-            fi
-
-            # -- Temporary Key addition end ----------------------------------
-
             # ── Setup environment ─────────────────────────────────────
             source ~/.bashrc
             source ~/.nvm/nvm.sh
