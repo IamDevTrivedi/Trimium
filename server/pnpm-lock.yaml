@@ -12,8 +12,8 @@ importers:
         specifier: ^0.45.1
         version: 0.45.1
       axios:
-        specifier: ^1.18.1
-        version: 1.18.1
+        specifier: ^1.19.0
+        version: 1.19.0
       bullmq:
         specifier: ^5.81.2
         version: 5.81.2(redis@5.12.1)
@@ -45,8 +45,8 @@ importers:
         specifier: ^5.0.6
         version: 5.0.6
       mongoose:
-        specifier: ^9.8.0
-        version: 9.8.0
+        specifier: ^9.9.0
+        version: 9.9.0
       multer:
         specifier: ^2.2.0
         version: 2.2.0
@@ -625,8 +625,8 @@ packages:
     resolution: {integrity: sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ==}
     engines: {node: '>=8.0.0'}
 
-  axios@1.18.1:
-    resolution: {integrity: sha512-3nTvFlvpn9Zu/RkHUqtc7/+al4UpRW5az71ap5zccp6e8RAYEzhMTecX8Dz1wWDYrPpUoB1HAQEGEAEvUr7S9g==}
+  axios@1.19.0:
+    resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
 
   balanced-match@4.0.4:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
@@ -751,6 +751,7 @@ packages:
   cron-parser@4.9.0:
     resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
     engines: {node: '>=12.0.0'}
+    deprecated: v4 is no longer maintained, upgrade to v5
 
   cross-env@10.1.0:
     resolution: {integrity: sha512-GsYosgnACZTADcmEyJctkJIoqAhHjttw7RsFrVoJNXbsWWqaq6Ym+7kZjq6mS45O0jij6vtiReppKQEtqWy6Dw==}
@@ -1187,8 +1188,8 @@ packages:
       socks:
         optional: true
 
-  mongoose@9.8.0:
-    resolution: {integrity: sha512-PDGx3XACxrBQyWf4YT+5s1Xsx19x84UWGlRVIza4i9RG6qKjGcoG7odotT6uquR6YoaDMTZ6ZZc/jMXLrNPyyA==}
+  mongoose@9.9.0:
+    resolution: {integrity: sha512-xtBH8CU5oRK16F14rC8/KlRHeuPGP+w/URjDdwHV0oyN7otVuqglLje1FePX9+SaSBGj0/QiM65Tg86R7iNbPg==}
     engines: {node: '>=20.19.0'}
 
   mpath@0.9.0:
@@ -1951,7 +1952,7 @@ snapshots:
 
   atomic-sleep@1.0.0: {}
 
-  axios@1.18.1:
+  axios@1.19.0:
     dependencies:
       follow-redirects: 1.16.0
       form-data: 4.0.6
@@ -2525,7 +2526,7 @@ snapshots:
       bson: 7.3.1
       mongodb-connection-string-url: 7.0.2
 
-  mongoose@9.8.0:
+  mongoose@9.9.0:
     dependencies:
       '@standard-schema/spec': 1.1.0
       kareem: 3.3.0
