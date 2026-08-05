@@ -37,7 +37,7 @@
     },
     "dependencies": {
         "argon2": "^0.45.1",
-        "axios": "^1.18.1",
+        "axios": "^1.19.0",
         "bullmq": "^5.81.2",
         "cloudinary": "^2.10.0",
         "cookie-parser": "^1.4.7",
@@ -48,7 +48,7 @@
         "http-status-codes": "^2.3.0",
         "jsonwebtoken": "^9.0.3",
         "maxmind": "^5.0.6",
-        "mongoose": "^9.8.0",
+        "mongoose": "^9.9.0",
         "multer": "^2.2.0",
         "pino": "^10.1.0",
         "pino-http": "^11.0.0",
