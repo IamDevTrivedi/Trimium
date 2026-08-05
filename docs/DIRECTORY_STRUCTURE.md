@@ -87,7 +87,8 @@
 │   │   └── update-directory-structure.yml
 │   └── dependabot.yml
 ├── .husky
-│   └── pre-commit
+│   ├── pre-commit
+│   └── _
 ├── client
 │   ├── public
 │   │   ├── brand.png
@@ -306,7 +307,6 @@
 │   ├── components.json
 │   ├── next.config.ts
 │   ├── package.json
-│   ├── pnpm-lock.yaml
 │   ├── postcss.config.mjs
 │   ├── trigger
 │   └── tsconfig.json
@@ -322,6 +322,7 @@
 │   └── SETUP.md
 ├── scripts
 │   ├── clean-all.js
+│   ├── dev.js
 │   ├── generate-architecture.py
 │   ├── install-all.js
 │   ├── reset-all.js
@@ -407,7 +408,7 @@
 │   │   │   └── tags.ts
 │   │   └── index.ts
 │   ├── package.json
-│   ├── pnpm-lock.yaml
+│   ├── dist
 │   └── tsconfig.json
 ├── .editorconfig
 ├── .gitignore
@@ -415,12 +416,12 @@
 ├── .prettierrc
 ├── .vercelignore
 ├── AGENTS.md
+├── bun.lock
 ├── LICENSE
 ├── README.md
 ├── eslint.config.ts
 ├── opencode.json
 ├── package.json
-├── pnpm-lock.yaml
 └── skills-lock.json
 
 95 directories, 326 files

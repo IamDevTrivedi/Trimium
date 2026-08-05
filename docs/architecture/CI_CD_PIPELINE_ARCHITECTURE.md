@@ -129,10 +129,9 @@ Purpose:
 Execution steps:
 
 1. Checkout repository state for the pushed commit
-2. Install pnpm tooling (`pnpm/action-setup@v5`)
-3. Install Node.js 22 with pnpm cache enabled
-4. Install dependencies at repository root with lockfile strictness (`--frozen-lockfile`)
-5. Execute `pnpm run lint`
+2. Setup Bun (`oven-sh/setup-bun@v2`)
+3. Install dependencies at repository root with lockfile strictness (`--frozen-lockfile`)
+4. Execute `bun run lint`
 
 Failure behavior:
 
@@ -153,10 +152,9 @@ Purpose:
 Execution steps:
 
 1. Checkout repository
-2. Setup pnpm
-3. Setup Node.js 22 with pnpm cache
-4. Install root dependencies with frozen lockfile
-5. Run `pnpm run format:check`
+2. Setup Bun (`oven-sh/setup-bun@v2`)
+3. Install root dependencies with frozen lockfile
+4. Run `bun run format:check`
 
 Failure behavior:
 
@@ -204,7 +202,7 @@ Purpose:
 Execution steps:
 
 1. Checkout repository
-2. Setup pnpm and Node.js 22
+2. Setup Bun (`oven-sh/setup-bun@v2`)
 3. Install Vercel CLI globally
 4. Pull production environment metadata using Vercel token and org/project IDs
 5. Build prebuilt output with `vercel build --prod`
@@ -268,7 +266,8 @@ Environment variables passed to the remote session:
 
 ### 2. Environment Preparation
 
-- Load bash profile and nvm (`source ~/.nvm/nvm.sh`)
+- Load bash profile and Bun (`source ~/.bun/_bun 2>/dev/null || true`)
+- Ensure Bun is in PATH (`export PATH="$HOME/.bun/bin:$PATH"`)
 - Capture previous release before any changes occur by finding the last directory in `$RELEASES_DIR` by sort order
 
 ### 3. Source Synchronization
@@ -278,10 +277,10 @@ Environment variables passed to the remote session:
 
 ### 4. Dependency Installation and Build
 
-- Install root dependencies with frozen lockfile
-- Install server dependencies with frozen lockfile
-- Build server with `pnpm run build`
-- Download GeoIP database via `pnpm run download:geoip`
+- Install root dependencies with frozen lockfile (`bun install --frozen-lockfile`)
+- Install server dependencies with frozen lockfile (`bun install --frozen-lockfile`)
+- Build server with `bun run build`
+- Download GeoIP database via `bun run download:geoip`
 
 ### 5. Release Creation
 
@@ -465,7 +464,7 @@ Trust boundary notes:
 
 - GitHub-hosted runners execute CI logic
 - Deployment credentials are injected at runtime from GitHub secrets
-- Server deployment trusts the remote VPS environment (nvm, pnpm, PM2, filesystem layout)
+- Server deployment trusts the remote VPS environment (Bun, PM2, filesystem layout)
 - SSH environment variables (`PROJECT_DIR`, `SERVER_DIR`, etc.) are declared inline in the workflow, not stored as secrets
 
 ---
@@ -495,3 +494,4 @@ This pipeline demonstrates practical release engineering for a full-stack monore
 - **Atomic symlink switch** enables near-instantaneous traffic migration
 - **Health-validated rollout** with automatic rollback and rollback health verification
 - **Controlled release retention** (54 releases kept) balances history depth with disk hygiene
+- **Bun-native tooling** — single `oven-sh/setup-bun@v2` action replaces separate Node.js and pnpm setup

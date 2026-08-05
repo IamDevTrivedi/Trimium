@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![CI/CD](https://img.shields.io/github/actions/workflow/status/IamDevTrivedi/Trimium/ci.yml?style=flat-square&label=CI%2FCD)](https://github.com/IamDevTrivedi/Trimium/actions)
 <br>
-![pnpm](https://img.shields.io/badge/pnpm-10.28.0-F69220?style=flat-square&logo=pnpm)
+![Bun](https://img.shields.io/badge/Bun-1.1+-000000?style=flat-square&logo=bun)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=next.js)
 ![Express](https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
@@ -70,20 +70,19 @@ A professional URL shortener and link management platform. Create short URLs, ge
 
 ### DevOps & Tooling
 
-| Technology            | Purpose                                  |
-| --------------------- | ---------------------------------------- |
-| **pnpm**              | package manager                          |
-| **Turbopack**         | Next.js bundler                          |
-| **Husky**             | Git hooks (pre-push lint + format check) |
-| **ESLint + Prettier** | Code quality & formatting                |
-| **GitHub Actions**    | CI/CD (Vercel client + VPS server)       |
-| **Dependabot**        | Automated dependency updates             |
-| **PM2**               | Production server process manager        |
-| **Concurrently**      | Parallel dev script runner               |
+| Technology            | Purpose                                    |
+| --------------------- | ------------------------------------------ |
+| **Bun** (v1.1+)       | Runtime, package manager, bundler          |
+| **Turbopack**         | Next.js bundler                            |
+| **Husky**             | Git hooks (pre-commit lint + format check) |
+| **ESLint + Prettier** | Code quality & formatting                  |
+| **GitHub Actions**    | CI/CD (Vercel client + VPS server)         |
+| **Dependabot**        | Automated dependency updates               |
+| **PM2**               | Production server process manager          |
 
 ## Architecture
 
-Trimium follows a **monorepo structure** with two packages managed by pnpm workspaces:
+Trimium follows a **monorepo structure** with two packages managed by Bun workspaces:
 
 ```
 Trimium/
@@ -109,8 +108,7 @@ The server uses a **feature-based modular architecture** — each domain (`auth`
 
 ### Prerequisites
 
-- **Node.js** >= 20
-- **pnpm** 10.28+
+- **Bun** >= 1.1
 - **MongoDB** instance (local or Atlas)
 - **Redis** instance (local or cloud)
 - **MaxMind GeoLite2** license key (for geo-analytics)
