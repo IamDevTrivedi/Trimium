@@ -37,15 +37,15 @@
     },
     "command": {
         "check": {
-            "template": "Run pnpm check (lint + format) and fix any issues",
-            "description": "Run lint and format check"
+            "template": "Run the strict quality gates at the repository root: `pnpm run lint` then `pnpm run format:check`. Fix any issues they surface and re-run until both pass.",
+            "description": "Run strict lint and format checks"
         },
         "build-server": {
-            "template": "Build the server with `pnpm --filter trimium-server build`",
+            "template": "Build the server strictly: run `pnpm run build` from the `server/` directory (TypeScript compile + tsc-alias, output to `server/dist/`). Fix any errors and re-build until it passes.",
             "description": "Build server to /server/dist/"
         },
         "build-client": {
-            "template": "Build the client with `pnpm --filter trimium-client build`",
+            "template": "Build the client strictly: run `pnpm run build` from the `client/` directory (Next.js production build to `client/.next/`). Fix any errors and re-build until it passes.",
             "description": "Build Next.js app to /client/.next/"
         }
     }

@@ -146,6 +146,13 @@ BullMQ queues (email + activity updates), processed by workers.
 
 - NEVER make git commits, git pushes, or GitHub PR changes without explicit user permission or confirmation
 - Always ask before committing, pushing, or creating/modifying pull requests
+- When starting work on a NEW feature, always ASK the user whether to create a new branch (suggest a name like `feat/XYZ`) or continue working on the current branch — never assume
+- Builds are STRICTLY verified before considering any change complete:
+    - Client build: run `pnpm run build` from the `client/` directory
+    - Server build: run `pnpm run build` from the `server/` directory
+- Quality gates are STRICTLY enforced at the repository root:
+    - Lint: run `pnpm run lint`
+    - Prettier: run `pnpm run format:check`
 
 ## Important Notes
 
