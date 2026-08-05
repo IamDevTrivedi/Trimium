@@ -9,13 +9,13 @@ Live at **trimium.vercel.app**.
 
 ## Tech Stack
 
-| Layer      | Technology                                                                 |
-| ---------- | -------------------------------------------------------------------------- |
-| **Client** | Next.js 16 (App Router), React 19, TypeScript 5, Tailwind CSS 4, shadcn/ui |
-| **Server** | Express 5, TypeScript 5, MongoDB + Mongoose, Redis (ioredis), BullMQ       |
-| **Auth**   | JWT (cookie-based) with token versioning, Argon2 hashing                   |
-| **Infra**  | Vercel (client deploy), VPS + PM2 (server deploy), GitHub Actions CI/CD    |
-| **Runtime**| Bun (v1.1+)                                                                |
+| Layer       | Technology                                                                 |
+| ----------- | -------------------------------------------------------------------------- |
+| **Client**  | Next.js 16 (App Router), React 19, TypeScript 5, Tailwind CSS 4, shadcn/ui |
+| **Server**  | Express 5, TypeScript 5, MongoDB + Mongoose, Redis (ioredis), BullMQ       |
+| **Auth**    | JWT (cookie-based) with token versioning, Argon2 hashing                   |
+| **Infra**   | Vercel (client deploy), VPS + PM2 (server deploy), GitHub Actions CI/CD    |
+| **Runtime** | Bun (v1.1+)                                                                |
 
 ---
 
@@ -114,33 +114,33 @@ BullMQ queues (email + activity updates), processed by workers.
 
 ### Root
 
-| Command               | Description                        |
-| --------------------- | ---------------------------------- |
-| `bun dev`             | Run client + server concurrently   |
-| `bun run lint`        | ESLint check                       |
-| `bun run lint:fix`    | Auto-fix ESLint issues             |
-| `bun run format`      | Auto-format with Prettier          |
-| `bun run format:check`| Prettier check                     |
-| `bun run check`       | lint + format:check combined       |
-| `bun run install:all` | Install all workspace dependencies |
+| Command                  | Description                        |
+| ------------------------ | ---------------------------------- |
+| `bun dev`                | Run client + server concurrently   |
+| `bun run lint`           | ESLint check                       |
+| `bun run lint:fix`       | Auto-fix ESLint issues             |
+| `bun run format`         | Auto-format with Prettier          |
+| `bun run format:check`   | Prettier check                     |
+| `bun run check`          | lint + format:check combined       |
+| `bun run install:all`    | Install all workspace dependencies |
 | `bun run download:geoip` | Download GeoIP database            |
 
 ### Server (run from `server/`)
 
-| Command      | Description                              |
-| ------------ | ---------------------------------------- |
-| `bun run build` | Bun build (TypeScript + bundle)         |
-| `bun run dev`   | Dev watch mode with Bun                 |
-| `bun run start` | Production start from `dist/`           |
-| `bun run preview` | Build + start                          |
+| Command           | Description                     |
+| ----------------- | ------------------------------- |
+| `bun run build`   | Bun build (TypeScript + bundle) |
+| `bun run dev`     | Dev watch mode with Bun         |
+| `bun run start`   | Production start from `dist/`   |
+| `bun run preview` | Build + start                   |
 
 ### Client (run from `client/`)
 
-| Command      | Description               |
-| ------------ | ------------------------- |
-| `bun run build` | Next.js build to `.next/` |
-| `bun run dev`   | Next.js dev server        |
-| `bun run start` | Production start          |
+| Command           | Description                |
+| ----------------- | -------------------------- |
+| `bun run build`   | Next.js build to `.next/`  |
+| `bun run dev`     | Next.js dev server         |
+| `bun run start`   | Production start           |
 | `bun run preview` | Build + start on port 3001 |
 
 ---
