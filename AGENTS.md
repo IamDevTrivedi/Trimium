@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-pnpm monorepo with two packages: `client/` (Next.js 16) and `server/` (Express 5).
+Bun monorepo with two packages: `client/` (Next.js 16) and `server/` (Express 5).
 Live at **trimium.vercel.app**.
 
 ---
@@ -15,6 +15,7 @@ Live at **trimium.vercel.app**.
 | **Server** | Express 5, TypeScript 5, MongoDB + Mongoose, Redis (ioredis), BullMQ       |
 | **Auth**   | JWT (cookie-based) with token versioning, Argon2 hashing                   |
 | **Infra**  | Vercel (client deploy), VPS + PM2 (server deploy), GitHub Actions CI/CD    |
+| **Runtime**| Bun (v1.1+)                                                                |
 
 ---
 
@@ -115,30 +116,32 @@ BullMQ queues (email + activity updates), processed by workers.
 
 | Command               | Description                        |
 | --------------------- | ---------------------------------- |
-| `pnpm dev`            | Run client + server concurrently   |
-| `pnpm lint`           | ESLint check                       |
-| `pnpm lint:fix`       | Auto-fix ESLint issues             |
-| `pnpm format`         | Auto-format with Prettier          |
-| `pnpm format:check`   | Prettier check                     |
-| `pnpm check`          | lint + format:check combined       |
-| `pnpm install:all`    | Install all workspace dependencies |
-| `pnpm download:geoip` | Download GeoIP database            |
+| `bun dev`             | Run client + server concurrently   |
+| `bun run lint`        | ESLint check                       |
+| `bun run lint:fix`    | Auto-fix ESLint issues             |
+| `bun run format`      | Auto-format with Prettier          |
+| `bun run format:check`| Prettier check                     |
+| `bun run check`       | lint + format:check combined       |
+| `bun run install:all` | Install all workspace dependencies |
+| `bun run download:geoip` | Download GeoIP database            |
 
 ### Server (run from `server/`)
 
-| Command      | Description                                           |
-| ------------ | ----------------------------------------------------- |
-| `pnpm build` | TypeScript compile + `tsc-alias` (type check + build) |
-| `pnpm dev`   | Dev watch mode with `tsx`                             |
-| `pnpm start` | Production start from `dist/`                         |
+| Command      | Description                              |
+| ------------ | ---------------------------------------- |
+| `bun run build` | Bun build (TypeScript + bundle)         |
+| `bun run dev`   | Dev watch mode with Bun                 |
+| `bun run start` | Production start from `dist/`           |
+| `bun run preview` | Build + start                          |
 
 ### Client (run from `client/`)
 
 | Command      | Description               |
 | ------------ | ------------------------- |
-| `pnpm build` | Next.js build to `.next/` |
-| `pnpm dev`   | Next.js dev server        |
-| `pnpm start` | Production start          |
+| `bun run build` | Next.js build to `.next/` |
+| `bun run dev`   | Next.js dev server        |
+| `bun run start` | Production start          |
+| `bun run preview` | Build + start on port 3001 |
 
 ---
 
@@ -148,16 +151,18 @@ BullMQ queues (email + activity updates), processed by workers.
 - Always ask before committing, pushing, or creating/modifying pull requests
 - When starting work on a NEW feature, always ASK the user whether to create a new branch (suggest a name like `feat/XYZ`) or continue working on the current branch — never assume
 - Builds are STRICTLY verified before considering any change complete:
-    - Client build: run `pnpm run build` from the `client/` directory
-    - Server build: run `pnpm run build` from the `server/` directory
+    - Client build: run `bun run build` from the `client/` directory
+    - Server build: run `bun run build` from the `server/` directory
 - Quality gates are STRICTLY enforced at the repository root:
-    - Lint: run `pnpm run lint`
-    - Prettier: run `pnpm run format:check`
+    - Lint: run `bun run lint`
+    - Prettier: run `bun run format:check`
 
 ## Important Notes
 
-- Husky pre-push hook runs `pnpm check` automatically
+- Husky pre-push hook runs `bun run check` automatically
 - Client build output: `client/.next/`
 - Server build output: `server/dist/`
 - Server env files (`.env.development`, `.env.production`) are gitignored; use `.env.example` as template
 - Client env file (`.env`) are gitignored; use `.env.example` as template
+- Lockfile: `bun.lock` (replaces pnpm-lock.yaml)
+- Package manager: Bun (v1.1+)

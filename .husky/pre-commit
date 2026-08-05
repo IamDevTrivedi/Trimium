@@ -1,7 +1,7 @@
 printf '%s\n' '[husky][pre-commit] Starting quality checks...'
-printf '%s\n' '[husky][pre-commit] Running: pnpm check'
+printf '%s\n' '[husky][pre-commit] Running: bun run check'
 
-if pnpm check; then
+if bun run check; then
 	printf '%s\n' '[husky][pre-commit] All checks passed. Commit allowed.'
 else
 	status=$?

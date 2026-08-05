@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "target": "ES2020",
-        "module": "CommonJS",
+        "target": "ESNext",
+        "module": "ESNext",
         "moduleResolution": "bundler",
         "rootDir": "./src",
         "outDir": "./dist",
@@ -18,7 +18,13 @@
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "types": ["node"]
+        "types": ["bun"],
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"]
 }

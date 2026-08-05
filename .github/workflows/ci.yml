@@ -20,20 +20,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "24"
-          cache: pnpm
+          bun-version: latest
 
       - name: Install root dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Run lint check
-        run: pnpm run lint
+        run: bun run lint
 
   prettier:
     runs-on: ubuntu-latest
@@ -43,20 +39,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "24"
-          cache: pnpm
+          bun-version: latest
 
       - name: Install root dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Run Prettier formatting check
-        run: pnpm run format:check
+        run: bun run format:check
 
   detect-changes:
     runs-on: ubuntu-latest
@@ -89,14 +81,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "24"
-          cache: pnpm
+          bun-version: latest
 
       - name: Install Vercel CLI
         run: npm install -g vercel
@@ -136,7 +124,11 @@ jobs:
 
             # ── Setup environment ─────────────────────────────────────
             source ~/.bashrc
-            source ~/.nvm/nvm.sh
+            source ~/.bun/_bun 2>/dev/null || true
+
+            # Ensure bun is in PATH
+            export PATH="$HOME/.bun/bin:$PATH"
+            export BUN_INSTALL="$HOME/.bun"
 
             # ── Constants ────────────────────────────────────────────
             PROJECT_DIR="/projects/Trimium"
@@ -180,18 +172,18 @@ jobs:
             # ── Install and build ─────────────────────────────────────
             log "Installing root dependencies..."
             cd "$PROJECT_DIR"
-            pnpm install --frozen-lockfile
+            bun install --frozen-lockfile
 
             log "Installing server dependencies..."
             cd "$SERVER_DIR"
-            pnpm install --frozen-lockfile
+            bun install --frozen-lockfile
 
             log "Building server..."
-            pnpm run build
+            bun run build
 
             cd "$PROJECT_DIR"
             log "Downloading GeoIP database..."
-            pnpm run download:geoip
+            bun run download:geoip
 
             # ── Prepare release directory ─────────────────────────────
             cd "$SERVER_DIR"

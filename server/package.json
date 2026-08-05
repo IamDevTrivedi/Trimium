@@ -4,10 +4,10 @@
     "description": "Express and TypeScript backend for Trimium authentication, URL routing, analytics, and team workspaces.",
     "main": "dist/index.js",
     "scripts": {
-        "build": "tsc && tsc-alias",
-        "start": "cross-env NODE_ENV=production node dist/index.js",
-        "dev": "cross-env NODE_ENV=development tsx watch --clear-screen=true src src/index.ts",
-        "preview": "pnpm run build && pnpm start"
+        "build": "bun build src/index.ts --outdir dist --target node --external:mongo --external:redis",
+        "start": "bun dist/index.js",
+        "dev": "NODE_ENV=development bun --watch src/index.ts",
+        "preview": "bun run build && bun run start"
     },
     "keywords": [],
     "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
@@ -19,7 +19,7 @@
     },
     "homepage": "https://github.com/IamDevTrivedi/Trimium/tree/main/server",
     "license": "MIT",
-    "packageManager": "pnpm@10.28.0",
+    "packageManager": "bun@1.1.0",
     "devDependencies": {
         "@types/cookie-parser": "^1.4.10",
         "@types/cors": "^2.8.19",
@@ -30,9 +30,6 @@
         "@types/node": "^25.9.1",
         "@types/swagger-jsdoc": "^6.0.4",
         "@types/swagger-ui-express": "^4.1.8",
-        "cross-env": "^10.1.0",
-        "tsc-alias": "^1.9.1",
-        "tsx": "^4.23.1",
         "typescript": "^7.0.2"
     },
     "dependencies": {

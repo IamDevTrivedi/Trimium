@@ -11,6 +11,7 @@ const itemsToDelete = [
     { path: "./server/dist", type: "dir" },
     { path: "./client/build", type: "dir" },
     { path: "./client/.next", type: "dir" },
+    { path: "./.bun", type: "dir" },
 ];
 
 itemsToDelete.forEach((item) => {

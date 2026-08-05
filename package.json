@@ -8,13 +8,13 @@
         "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css,md}\"",
         "lint": "eslint . --ext .js,.ts,.tsx",
         "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
-        "check": "pnpm lint && pnpm format:check",
+        "check": "bun run lint && bun run format:check",
         "prepare": "husky",
-        "install:all": "node ./scripts/install-all.js",
-        "clean:all": "node ./scripts/clean-all.js",
-        "reset:all": "node ./scripts/reset-all.js",
-        "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"pnpm --filter trimium-client dev\" \"pnpm --filter trimium-server dev\"",
-        "download:geoip": "node ./scripts/update-geolite2.js"
+        "install:all": "bun scripts/install-all.js",
+        "clean:all": "bun scripts/clean-all.js",
+        "reset:all": "bun scripts/reset-all.js",
+        "dev": "bun scripts/dev.js",
+        "download:geoip": "bun scripts/update-geolite2.js"
     },
     "keywords": [],
     "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
@@ -28,13 +28,12 @@
     },
     "homepage": "https://github.com/IamDevTrivedi/Trimium#readme",
     "license": "MIT",
-    "packageManager": "pnpm@10.28.0",
+    "packageManager": "bun@1.1.0",
     "dependencies": {
         "prettier": "^3.9.6"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.4",
-        "concurrently": "^9.2.1",
         "dotenv": "^16.6.1",
         "eslint": "^10.8.0",
         "globals": "^16.5.0",
@@ -42,5 +41,9 @@
         "jiti": "^2.7.0",
         "tar": "^7.5.22",
         "typescript-eslint": "^8.65.0"
-    }
+    },
+    "workspaces": [
+        "client",
+        "server"
+    ]
 }
