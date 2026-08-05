@@ -13,24 +13,29 @@ export function ProtectPage({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
+        let cancelled = false;
         const fetcher = async () => {
             try {
                 setLoading(true);
                 const { data: resData } = await backend.get("/api/v1/auth/me");
+                if (cancelled) return;
                 if (resData.success) {
                     setUser(resData.data);
+                    setLoading(false);
                 } else {
                     reset();
                     router.replace("/login");
                 }
             } catch (error) {
+                if (cancelled) return;
                 reset();
                 router.replace("/login");
-            } finally {
-                setLoading(false);
             }
         };
         fetcher();
+        return () => {
+            cancelled = true;
+        };
     }, [pathname]);
 
     if (loading) {

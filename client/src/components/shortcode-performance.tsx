@@ -169,6 +169,7 @@ export function ShortCodePerformance() {
     };
 
     React.useEffect(() => {
+        let cancelled = false;
         const fetcher = async () => {
             try {
                 setLoadingData(true);
@@ -177,17 +178,21 @@ export function ShortCodePerformance() {
                 if (handleResponse(resData, true)) {
                     setShortCodeData(resData.data);
                     setPermission(resData.permission);
+                    if (cancelled) return;
                     setLoadingData(false);
                 } else {
                     router.back();
                 }
             } catch (error) {
+                if (cancelled) return;
                 toastError(error);
-            } finally {
-                setLoadingData(false);
+                router.back();
             }
         };
         fetcher();
+        return () => {
+            cancelled = true;
+        };
     }, [shortCode, router]);
 
     const copyShortUrl = React.useCallback(async () => {

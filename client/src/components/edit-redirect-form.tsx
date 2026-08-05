@@ -90,6 +90,7 @@ export function EditRedirectForm() {
     }, [updateShortCodeInfo, password]);
 
     React.useEffect(() => {
+        let cancelled = false;
         const fetcher = async () => {
             try {
                 setLoadingInfo(true);
@@ -101,15 +102,19 @@ export function EditRedirectForm() {
                 } else {
                     setShortCodeInfo(resData.data);
                     setUpdateShortCodeInfo(resData.data);
+                    if (cancelled) return;
+                    setLoadingInfo(false);
                 }
             } catch (error) {
+                if (cancelled) return;
                 router.push(`/w/${workspaceID}/`);
                 toastError(error);
-            } finally {
-                setLoadingInfo(false);
             }
         };
         fetcher();
+        return () => {
+            cancelled = true;
+        };
     }, [workspaceID, shortCode]);
 
     const validator = () => {

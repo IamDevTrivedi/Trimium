@@ -148,12 +148,12 @@ export function LoginHistory() {
             const { data: resData } = await backend.get("/api/v1/auth/login-history");
             if (resData.success) {
                 setHistory(resData.data);
+                setLoadingPage(false);
             }
         } catch (error) {
             toastError(error);
             router.push("/account");
         } finally {
-            setLoadingPage(false);
             setRefreshing(false);
         }
     }, []);

@@ -120,6 +120,7 @@ export function WorkspaceDetails() {
     }, [members, originalMembers]);
 
     React.useEffect(() => {
+        let cancelled = false;
         const fetcher = async () => {
             try {
                 setLoading(true);
@@ -139,6 +140,8 @@ export function WorkspaceDetails() {
                     }
                     if (currentUser) {
                         setPermission(currentUser.permission);
+                        if (cancelled) return;
+                        setLoading(false);
                     } else {
                         router.push("/w");
                     }
@@ -146,13 +149,15 @@ export function WorkspaceDetails() {
                     router.push("/w");
                 }
             } catch (error) {
+                if (cancelled) return;
                 router.push("/w");
                 toastError(error);
-            } finally {
-                setLoading(false);
             }
         };
         fetcher();
+        return () => {
+            cancelled = true;
+        };
     }, [workspaceID, myUserID, router]);
 
     const handlePermissionChange = (

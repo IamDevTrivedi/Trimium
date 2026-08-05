@@ -12,6 +12,7 @@ export function ProtectWorkspace({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
+        let cancelled = false;
         const fetcher = async () => {
             try {
                 setLoading(true);
@@ -19,8 +20,6 @@ export function ProtectWorkspace({ children }: { children: React.ReactNode }) {
                     router.replace("/w");
                     return;
                 }
-
-                // BUG: this is begin called 3 times when person is a viewer
 
                 const { data: resData } = await backend.get(
                     `/api/v1/workspace/${workspaceID}/permission`
@@ -43,17 +42,21 @@ export function ProtectWorkspace({ children }: { children: React.ReactNode }) {
                     requiresEditorPermission(pathname, workspaceID as string)
                 ) {
                     router.replace(`/w/${workspaceID}`);
-                    await new Promise((resolve) => setTimeout(resolve, 500));
                     return;
                 }
-            } catch (error) {
-                router.replace("/w");
-            } finally {
+
+                if (cancelled) return;
                 setLoading(false);
+            } catch (error) {
+                if (cancelled) return;
+                router.replace("/w");
             }
         };
 
         fetcher();
+        return () => {
+            cancelled = true;
+        };
     }, [pathname, workspaceID, router]);
 
     if (loading) {
