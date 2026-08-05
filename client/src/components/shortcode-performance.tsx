@@ -46,6 +46,8 @@ import {
 } from "lucide-react";
 import TopBackButton from "./top-back-button";
 import { ShortcodeTags } from "./shortcode-tags";
+import { useShortcutAction } from "@/components/shortcuts-provider";
+import { toast } from "sonner";
 
 export interface ShortCodePerformanceData {
     title: string;
@@ -187,6 +189,23 @@ export function ShortCodePerformance() {
         };
         fetcher();
     }, [shortCode, router]);
+
+    const copyShortUrl = React.useCallback(async () => {
+        if (!shortCodeData) return;
+        await navigator.clipboard.writeText(
+            `${config.PUBLIC_FRONTEND_URL}/r/${shortCodeData.shortCode}`
+        );
+        toast.success("Short URL copied");
+    }, [shortCodeData]);
+
+    const copyOriginalUrl = React.useCallback(async () => {
+        if (!shortCodeData) return;
+        await navigator.clipboard.writeText(shortCodeData.originalURL);
+        toast.success("Original URL copied");
+    }, [shortCodeData]);
+
+    useShortcutAction("copy-short-url", copyShortUrl);
+    useShortcutAction("copy-original-url", copyOriginalUrl);
 
     if (loadingData) {
         return <LoadingPage />;

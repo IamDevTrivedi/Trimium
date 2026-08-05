@@ -27,6 +27,7 @@ import { Toast } from "./toast";
 import { handleResponse } from "@/lib/handle-response";
 import { useParams, useRouter } from "next/navigation";
 import TopBackButton from "./top-back-button";
+import { useShortcutAction } from "@/components/shortcuts-provider";
 
 interface formErrors {
     title?: string;
@@ -184,6 +185,8 @@ export function CreateRedirectForm() {
             setLoading(false);
         }
     };
+
+    useShortcutAction("save-form", handleSubmit);
 
     const checkShortcodeAvailability = async (code: string): Promise<shortCodeAvailability> => {
         if (code.trim().length <= 4) {

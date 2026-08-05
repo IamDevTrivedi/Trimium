@@ -27,6 +27,7 @@ import {
     Link2,
 } from "lucide-react";
 import { Separator } from "./ui/separator";
+import { useShortcutAction } from "@/components/shortcuts-provider";
 
 // Types
 interface QRCodeOptions {
@@ -282,6 +283,8 @@ export function CustomQRCodeGenerator() {
             console.error("Failed to copy:", error);
         }
     };
+
+    useShortcutAction("download-qr", () => downloadQRCode("png"));
 
     // Apply color preset
     const applyColorPreset = (fg: string, bg: string) => {
