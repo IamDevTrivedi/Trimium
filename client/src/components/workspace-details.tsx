@@ -561,11 +561,13 @@ export function WorkspaceDetails() {
                 )}
 
                 {/* Workspace Tags Section */}
-                <WorkspaceTags
-                    workspaceID={workspaceID}
-                    isAdmin={isAdmin}
-                    permission={permission}
-                />
+                <div id="workspace-tags">
+                    <WorkspaceTags
+                        workspaceID={workspaceID}
+                        isAdmin={isAdmin}
+                        permission={permission}
+                    />
+                </div>
 
                 <Separator />
 

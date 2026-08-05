@@ -18,6 +18,7 @@ import { Separator } from "./ui/separator";
 import config from "@/config/env";
 import { z } from "zod";
 import { PASSWORD, PASSWORD_NOTICE } from "@/constants/regex";
+import { useShortcutAction } from "@/components/shortcuts-provider";
 import TopBackButton from "./top-back-button";
 
 interface FormErrors {
@@ -196,6 +197,8 @@ export function EditRedirectForm() {
             setIsSubmitting(false);
         }
     };
+
+    useShortcutAction("save-form", handleSubmit);
 
     if (loadingInfo || !shortCodeInfo) {
         return <LoadingPage />;

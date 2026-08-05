@@ -21,6 +21,7 @@ import { handleResponse } from "@/lib/handle-response";
 import { useRouter } from "next/navigation";
 import { EMAIL } from "@/constants/regex";
 import TopBackButton from "./top-back-button";
+import { useShortcutAction } from "@/components/shortcuts-provider";
 
 interface Member {
     id: string;
@@ -117,6 +118,8 @@ export function CreateWorkspaceForm() {
             setIsSubmitting(false);
         }
     };
+
+    useShortcutAction("save-form", handleSubmit);
 
     return (
         <div>

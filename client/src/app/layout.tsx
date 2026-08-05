@@ -8,6 +8,7 @@ import config from "@/config/env";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
+import { ShortcutsProvider } from "@/components/shortcuts-provider";
 
 const firaSans = Fira_Sans({
     variable: "--font-sans",
@@ -97,7 +98,7 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <ServiceWorkerRegister />
-                    {children}
+                    <ShortcutsProvider>{children}</ShortcutsProvider>
                     <Toaster />
                     {config.PUBLIC_isProduction && <Analytics />}
                 </ThemeProvider>
