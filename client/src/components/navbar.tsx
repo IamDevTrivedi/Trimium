@@ -17,7 +17,7 @@ import {
 export function Navbar() {
     const { isLoggedIn } = useUserStore();
 
-    let navItems = [
+    const navItems = [
         {
             name: "Home",
             link: "/",
@@ -33,45 +33,42 @@ export function Navbar() {
             link: "/qr-generator",
             icon: <QrCodeIcon className="size-4" />,
         },
-        {
-            name: "LinkHub",
-            link: "/linkhub-editor",
-            icon: <SparklesIcon className="size-4" />,
-        },
-        {
-            name: "Account",
-            link: "/account",
-            icon: <UserIcon className="size-4" />,
-        },
-        {
-            name: "Login",
-            link: "/login",
-            icon: <LogInIcon className="size-4" />,
-        },
-        {
-            name: "Create Account",
-            link: "/create-account",
-            icon: <UserPlusIcon className="size-4" />,
-        },
+        ...(isLoggedIn
+            ? [
+                  {
+                      name: "LinkHub",
+                      link: "/linkhub-editor",
+                      icon: <SparklesIcon className="size-4" />,
+                  },
+                  {
+                      name: "Account",
+                      link: "/account",
+                      icon: <UserIcon className="size-4" />,
+                  },
+                  {
+                      name: "Workspaces",
+                      link: "/w",
+                      icon: <LayoutDashboardIcon className="size-4" />,
+                  },
+                  {
+                      name: "Logout",
+                      link: "/logout",
+                      icon: <LogOutIcon className="size-4" />,
+                  },
+              ]
+            : [
+                  {
+                      name: "Login",
+                      link: "/login",
+                      icon: <LogInIcon className="size-4" />,
+                  },
+                  {
+                      name: "Create Account",
+                      link: "/create-account",
+                      icon: <UserPlusIcon className="size-4" />,
+                  },
+              ]),
     ];
-
-    if (isLoggedIn) {
-        navItems = navItems.filter(
-            (item) => item.name !== "Login" && item.name !== "Create Account"
-        );
-        navItems.push(
-            {
-                name: "Workspaces",
-                link: "/w",
-                icon: <LayoutDashboardIcon className="size-4" />,
-            },
-            {
-                name: "Logout",
-                link: "/logout",
-                icon: <LogOutIcon className="size-4" />,
-            }
-        );
-    }
 
     return (
         <>
