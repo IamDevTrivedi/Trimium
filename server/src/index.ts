@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { createServer } from "http";
 
 import { checkEnv } from "@config/checkEnv";
 import { connectMongo } from "@db/connectMongo";
@@ -19,6 +20,7 @@ import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "@config/swagger";
 
 import "@modules/queue";
+import { setupGracefulShutdown } from "@/utils/shutdown";
 
 const init = async () => {
     checkEnv();
@@ -40,11 +42,6 @@ const init = async () => {
                 }
 
                 if (origin === config.FRONTEND_URL) {
-                    return callback(null, true);
-                }
-
-                const previewURL = /^https:\/\/trimium(-[a-z0-9-]+)?\.vercel\.app$/;
-                if (previewURL.test(origin)) {
                     return callback(null, true);
                 }
 
@@ -84,8 +81,11 @@ const init = async () => {
     app.use("/api/v1/contact", contactRoutes);
     app.use("/api/v1/linkhub", linkhubRoutes);
 
-    app.listen(config.PORT, () => {
-        logger.info(`Envrionment: ${config.NODE_ENV}`);
+    const server = createServer(app);
+    setupGracefulShutdown(server);
+
+    server.listen(config.PORT, () => {
+        logger.info(`Environment: ${config.NODE_ENV}`);
         logger.info(`Server is running on ${config.BACKEND_URL}`);
     });
 };
