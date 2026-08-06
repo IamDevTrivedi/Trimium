@@ -270,6 +270,7 @@ export default function RedirectPage() {
                                 <div className="space-y-2">
                                     <Input
                                         type="password"
+                                        maxLength={128}
                                         placeholder="Enter secure password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}

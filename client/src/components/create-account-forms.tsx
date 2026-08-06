@@ -485,7 +485,7 @@ export function CreateAccountPassword() {
         .object({
             password: z.string().regex(PASSWORD, {
                 message:
-                    "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.",
+                    "Password must be 8-128 characters long and include uppercase, lowercase, number, and special character.",
             }),
             confirmPassword: z.string().min(1, {
                 message: "Please confirm your password.",
@@ -515,8 +515,8 @@ export function CreateAccountPassword() {
 
     const passwordRequirements = [
         {
-            label: "At least 8 characters",
-            met: passwordValue.length >= 8,
+            label: "8-128 characters",
+            met: passwordValue.length >= 8 && passwordValue.length <= 128,
         },
         {
             label: "At least one uppercase letter",
@@ -579,6 +579,7 @@ export function CreateAccountPassword() {
                     <Input
                         id="password"
                         type="password"
+                        maxLength={128}
                         placeholder="Enter your password"
                         className={`${errors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
                         {...register("password")}
@@ -651,6 +652,7 @@ export function CreateAccountPassword() {
                     <Input
                         id="confirmPassword"
                         type="password"
+                        maxLength={128}
                         placeholder="Confirm your password"
                         className={`${errors.confirmPassword ? "border-destructive focus-visible:ring-destructive" : ""}`}
                         {...register("confirmPassword")}

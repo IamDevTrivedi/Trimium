@@ -35,7 +35,7 @@ export function LoginFormEmail() {
             }),
         password: z.string().min(1, { message: "Password is required." }).regex(PASSWORD, {
             message:
-                "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.",
+                "Password must be 8-128 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.",
         }),
     });
 
@@ -129,6 +129,7 @@ export function LoginFormEmail() {
                     <Input
                         id="password"
                         type="password"
+                        maxLength={128}
                         placeholder="Your secure password"
                         className={
                             errors.password

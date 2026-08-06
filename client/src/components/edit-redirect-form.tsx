@@ -425,6 +425,7 @@ export function EditRedirectForm() {
                             <Input
                                 id="password"
                                 type="password"
+                                maxLength={128}
                                 placeholder="••••••••"
                                 className="max-w-[300px]"
                                 disabled={!updateShortCodeInfo?.passwordProtect.isEnabled}
