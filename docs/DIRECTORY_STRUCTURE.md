@@ -272,6 +272,8 @@
 │   │   │   ├── service-worker-register.tsx
 │   │   │   ├── shortcode-performance.tsx
 │   │   │   ├── shortcode-tags.tsx
+│   │   │   ├── shortcut-palette.tsx
+│   │   │   ├── shortcuts-provider.tsx
 │   │   │   ├── theme-provider.tsx
 │   │   │   ├── toast.tsx
 │   │   │   ├── top-back-button.tsx
@@ -286,9 +288,11 @@
 │   │   ├── constants
 │   │   │   ├── linkhub-themes.ts
 │   │   │   ├── regex.ts
+│   │   │   ├── shortcuts.ts
 │   │   │   ├── socials.tsx
 │   │   │   └── tags.ts
 │   │   ├── hooks
+│   │   │   ├── use-hotkey.ts
 │   │   │   └── use-mobile.tsx
 │   │   ├── lib
 │   │   │   ├── date.ts
@@ -308,7 +312,6 @@
 │   ├── package.json
 │   ├── pnpm-lock.yaml
 │   ├── postcss.config.mjs
-│   ├── trigger
 │   └── tsconfig.json
 ├── docs
 │   ├── architecture
@@ -318,6 +321,9 @@
 │   ├── diagrams
 │   │   ├── trimium-architecture-dark.png
 │   │   └── trimium-architecture.png
+│   ├── superpowers
+│   │   └── specs
+│   │       └── 2026-08-05-keyboard-shortcuts-design.md
 │   ├── DIRECTORY_STRUCTURE.md
 │   └── SETUP.md
 ├── scripts
@@ -423,5 +429,5 @@
 ├── pnpm-lock.yaml
 └── skills-lock.json
 
-95 directories, 326 files
+97 directories, 330 files
 ```
