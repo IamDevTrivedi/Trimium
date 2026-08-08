@@ -354,7 +354,7 @@ export const controllers = {
                 password: z
                     .string()
                     .regex(PASSWORD, PASSWORD_NOTICE)
-                    .max(128, { message: "Password must not exceed 128 characters" })
+                    .max(128, { error: "Password must not exceed 128 characters" })
                     .optional(),
 
                 schedule: z
