@@ -220,7 +220,7 @@ export const controllers = {
                 }),
                 username: z.string().regex(USERNAME),
                 password: z.string().regex(PASSWORD, {
-                    error: "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                    error: "Password must be 8-128 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character",
                 }),
             });
 
@@ -510,7 +510,7 @@ export const controllers = {
             const schema = z.object({
                 identity: z.union([z.email(), z.string().regex(USERNAME)]),
                 password: z.string().regex(PASSWORD, {
-                    error: "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                    error: "Password must be 8-128 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character",
                 }),
             });
 

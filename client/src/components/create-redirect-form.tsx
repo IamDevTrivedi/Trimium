@@ -432,6 +432,7 @@ export function CreateRedirectForm() {
                             <Input
                                 id="password"
                                 type="password"
+                                maxLength={128}
                                 placeholder="••••••••"
                                 className="max-w-[300px]"
                                 value={password}

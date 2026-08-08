@@ -259,7 +259,7 @@ export function AccountPage() {
         if (!PASSWORD.test(passwordState.current)) {
             setFormError({
                 currentPassword:
-                    "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.",
+                    "Password must be 8-128 characters long and include uppercase, lowercase, number, and special character.",
             });
             return;
         }
@@ -267,7 +267,7 @@ export function AccountPage() {
         if (!PASSWORD.test(passwordState.new)) {
             setFormError({
                 newPassword:
-                    "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.",
+                    "Password must be 8-128 characters long and include uppercase, lowercase, number, and special character.",
             });
             return;
         }
@@ -456,6 +456,7 @@ export function AccountPage() {
                                     <Input
                                         id="currentPassword"
                                         type={passwordState.showCurrent ? "text" : "password"}
+                                        maxLength={128}
                                         value={passwordState.current}
                                         onChange={(e) => {
                                             setPasswordState((prev) => ({
@@ -496,6 +497,7 @@ export function AccountPage() {
                                     <Input
                                         id="newPassword"
                                         type={passwordState.showNew ? "text" : "password"}
+                                        maxLength={128}
                                         value={passwordState.new}
                                         onChange={(e) => {
                                             setPasswordState((prev) => ({
@@ -536,6 +538,7 @@ export function AccountPage() {
                                     <Input
                                         id="confirmPassword"
                                         type={passwordState.showConfirm ? "text" : "password"}
+                                        maxLength={128}
                                         value={passwordState.confirm}
                                         onChange={(e) => {
                                             setPasswordState((prev) => ({

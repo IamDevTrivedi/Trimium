@@ -91,6 +91,7 @@ export const controllers = {
                     .regex(PASSWORD, {
                         error: PASSWORD_NOTICE,
                     })
+                    .max(128, { error: "Password must not exceed 128 characters" })
                     .optional(),
 
                 maxTransfers: z.int().optional(),
@@ -350,7 +351,11 @@ export const controllers = {
 
                 maxTransfers: z.int().nonnegative().optional(),
 
-                password: z.string().regex(PASSWORD, PASSWORD_NOTICE).optional(),
+                password: z
+                    .string()
+                    .regex(PASSWORD, PASSWORD_NOTICE)
+                    .max(128, { error: "Password must not exceed 128 characters" })
+                    .optional(),
 
                 schedule: z
                     .object({
@@ -512,6 +517,7 @@ export const controllers = {
                     .regex(PASSWORD, {
                         error: PASSWORD_NOTICE,
                     })
+                    .max(128, { error: "Password must not exceed 128 characters" })
                     .optional(),
             });
 
@@ -1013,7 +1019,11 @@ export const controllers = {
                 originalURL: z.url(),
                 title: z.string().min(1).max(255),
                 description: z.string().max(1024).optional(),
-                password: z.string().regex(PASSWORD, { error: PASSWORD_NOTICE }).optional(),
+                password: z
+                    .string()
+                    .regex(PASSWORD, { error: PASSWORD_NOTICE })
+                    .max(128, { error: "Password must not exceed 128 characters" })
+                    .optional(),
                 maxTransfers: z.int().nonnegative().optional(),
                 schedule: z
                     .object({
