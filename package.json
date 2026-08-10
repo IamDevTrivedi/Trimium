@@ -41,6 +41,6 @@
         "husky": "^9.1.7",
         "jiti": "^2.7.0",
         "tar": "^7.5.22",
-        "typescript-eslint": "^8.65.0"
+        "typescript-eslint": "^8.66.0"
     }
 }
