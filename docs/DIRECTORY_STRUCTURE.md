@@ -417,6 +417,7 @@
 │   ├── pnpm-lock.yaml
 │   └── tsconfig.json
 ├── .editorconfig
+├── .env.example
 ├── .gitignore
 ├── .prettierignore
 ├── .prettierrc
@@ -430,5 +431,5 @@
 ├── pnpm-lock.yaml
 └── skills-lock.json
 
-97 directories, 331 files
+97 directories, 332 files
 ```
