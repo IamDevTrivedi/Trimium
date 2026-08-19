@@ -144,6 +144,7 @@ BullMQ queues (email + activity updates), processed by workers.
 
 ## Critical Rules
 
+- NEVER manually edit or update `docs/DIRECTORY_STRUCTURE.md` — it is auto-generated and kept in sync by the `.github/workflows/update-directory-structure.yml` workflow (scheduled daily). Any directory-structure changes will be committed automatically by that workflow
 - NEVER make git commits, git pushes, or GitHub PR changes without explicit user permission or confirmation
 - Always ask before committing, pushing, or creating/modifying pull requests
 - When starting work on a NEW feature, always ASK the user whether to create a new branch (suggest a name like `feat/XYZ`) or continue working on the current branch — never assume
