@@ -3,8 +3,7 @@ updates:
     - package-ecosystem: npm
       directory: /
       schedule:
-          interval: weekly
-          day: monday
+          interval: monthly
           time: "06:00"
           timezone: Asia/Kolkata
       open-pull-requests-limit: 10
@@ -23,8 +22,7 @@ updates:
     - package-ecosystem: npm
       directory: /client
       schedule:
-          interval: weekly
-          day: monday
+          interval: monthly
           time: "06:10"
           timezone: Asia/Kolkata
       open-pull-requests-limit: 10
@@ -44,8 +42,7 @@ updates:
     - package-ecosystem: npm
       directory: /server
       schedule:
-          interval: weekly
-          day: monday
+          interval: monthly
           time: "06:20"
           timezone: Asia/Kolkata
       open-pull-requests-limit: 10
@@ -65,8 +62,7 @@ updates:
     - package-ecosystem: github-actions
       directory: /
       schedule:
-          interval: weekly
-          day: monday
+          interval: monthly
           time: "06:30"
           timezone: Asia/Kolkata
       open-pull-requests-limit: 5
