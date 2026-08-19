@@ -37,6 +37,9 @@ coverage
 # Agent skills
 .agents
 
+# Local tooling config (gitignored, machine-specific)
+.claude
+
 # Misc
 *.min.js
 *.min.css
