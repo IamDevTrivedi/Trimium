@@ -1,26 +1,4 @@
-import dotenv from "dotenv";
-import path from "path";
-import fs from "fs";
-
 const NODE_ENV = process.env.NODE_ENV as "development" | "production";
-const devEnv = path.resolve(__dirname, "../../.env.development");
-const prodEnv = path.resolve(__dirname, "../../.env.production");
-
-if (NODE_ENV === "development") {
-    if (fs.existsSync(devEnv)) {
-        dotenv.config({ path: devEnv });
-    } else {
-        console.error(".env.development file not found");
-        process.exit(1);
-    }
-} else if (NODE_ENV === "production") {
-    if (fs.existsSync(prodEnv)) {
-        dotenv.config({ path: prodEnv });
-    } else {
-        console.warn(".env.production file not found");
-        dotenv.config();
-    }
-}
 
 export const config = {
     NODE_ENV,
