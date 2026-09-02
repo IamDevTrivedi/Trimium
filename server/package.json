@@ -4,12 +4,11 @@
     "description": "Express and TypeScript backend for Trimium authentication, URL routing, analytics, and team workspaces.",
     "type": "module",
     "private": true,
-    "main": "dist/index.js",
+    "main": "src/index.ts",
     "scripts": {
-        "build": "tsc && tsc-alias",
-        "start": "cross-env NODE_ENV=production node dist/index.js",
-        "dev": "cross-env NODE_ENV=development tsx watch --clear-screen=true src src/index.ts",
-        "preview": "pnpm run build && pnpm start"
+        "start": "NODE_ENV=production bun run src/index.js",
+        "dev": "NODE_ENV=development bun --watch src/index.ts",
+        "typecheck": "tsc --noEmit"
     },
     "keywords": [],
     "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
@@ -60,9 +59,6 @@
         "@types/node": "^25.9.1",
         "@types/swagger-jsdoc": "^6.0.4",
         "@types/swagger-ui-express": "^4.1.8",
-        "cross-env": "^10.1.0",
-        "tsc-alias": "^1.9.1",
-        "tsx": "^4.23.12",
         "typescript": "^7.0.2"
     }
 }
