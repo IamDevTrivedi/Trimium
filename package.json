@@ -14,7 +14,7 @@
         "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css,md}\"",
         "lint": "eslint . --ext .js,.ts,.tsx",
         "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
-        "check": "pnpm lint && pnpm format:check",
+        "check": "bun run lint && bun run format:check",
         "prepare": "husky",
         "dev": "bun --parallel run --filter trimium-client --filter trimium-server dev",
         "install:all": "bun run ./scripts/install-all.js",
