@@ -32,7 +32,7 @@ try {
     console.log("Success: GeoLite2-City database updated.");
     process.exit(0);
 } catch (error) {
-    await $`rm -rf ${TEMP_DIR}`.quiet().catch(() => { });
+    await $`rm -rf ${TEMP_DIR}`.quiet().catch(() => {});
     console.error(`Fail: ${error.message}`);
     process.exit(1);
 }

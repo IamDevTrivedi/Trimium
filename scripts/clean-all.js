@@ -10,9 +10,7 @@ const itemsToDelete = [
 ];
 
 try {
-    await Promise.all(
-        itemsToDelete.map((item) => $`rm -rf ${item}`.quiet())
-    );
+    await Promise.all(itemsToDelete.map((item) => $`rm -rf ${item}`.quiet()));
 
     console.log("Success: build artifacts and dependencies cleaned.");
 } catch {
