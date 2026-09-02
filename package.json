@@ -5,10 +5,6 @@
     "type": "module",
     "private": true,
     "license": "MIT",
-    "workspaces": [
-        "client",
-        "server"
-    ],
     "scripts": {
         "format": "prettier --write \"**/*.{js,ts,tsx,json,css,md}\"",
         "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css,md}\"",
@@ -16,7 +12,7 @@
         "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
         "check": "bun run lint && bun run format:check",
         "prepare": "husky",
-        "dev": "bun --parallel run --filter trimium-client --filter trimium-server dev",
+        "dev": "bun run ./scripts/dev.js",
         "install:all": "bun run ./scripts/install-all.js",
         "clean:all": "bun run ./scripts/clean-all.js",
         "reset:all": "bun run ./scripts/reset-all.js",
