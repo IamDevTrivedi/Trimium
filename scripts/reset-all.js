@@ -1,12 +1,10 @@
-// Standalone script to reset the project by cleaning and reinstalling dependencies
-
-import { execSync } from "child_process";
+import { $ } from "bun";
 
 try {
-    execSync("node ./scripts/clean-all.js", { stdio: "inherit" });
-    execSync("node ./scripts/install-all.js", { stdio: "inherit" });
-} catch (error) {
-    console.error("Reset failed");
-    console.error(error);
+    await $`bun ./scripts/clean-all.js`.quiet();
+    await $`bun ./scripts/install-all.js`.quiet();
+    console.log("Success: project reset completed.");
+} catch {
+    console.error("Fail: project reset failed.");
     process.exit(1);
 }

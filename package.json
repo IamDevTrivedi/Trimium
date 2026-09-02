@@ -12,9 +12,9 @@
         "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
         "check": "pnpm lint && pnpm format:check",
         "prepare": "husky",
-        "install:all": "node ./scripts/install-all.js",
-        "clean:all": "node ./scripts/clean-all.js",
-        "reset:all": "node ./scripts/reset-all.js",
+        "install:all": "bun ./scripts/install-all.js",
+        "clean:all": "bun ./scripts/clean-all.js",
+        "reset:all": "bun ./scripts/reset-all.js",
         "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"pnpm --filter trimium-client dev\" \"pnpm --filter trimium-server dev\"",
         "download:geoip": "node ./scripts/update-geolite2.js"
     },

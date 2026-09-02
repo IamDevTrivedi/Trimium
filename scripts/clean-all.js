@@ -1,31 +1,21 @@
-// Standalone script to clean all build artifacts and dependencies
-
-import fs from "fs";
-import path from "path";
+import { $ } from "bun";
 
 const itemsToDelete = [
-    { path: "./node_modules", type: "dir" },
-    { path: "./server/node_modules", type: "dir" },
-    { path: "./client/node_modules", type: "dir" },
-
-    { path: "./server/dist", type: "dir" },
-    { path: "./client/build", type: "dir" },
-    { path: "./client/.next", type: "dir" },
+    "./node_modules",
+    "./server/node_modules",
+    "./client/node_modules",
+    "./server/dist",
+    "./client/build",
+    "./client/.next",
 ];
 
-itemsToDelete.forEach((item) => {
-    const absPath = path.resolve(item.path);
+try {
+    await Promise.all(
+        itemsToDelete.map((item) => $`rm -rf ${item}`.quiet())
+    );
 
-    try {
-        if (fs.existsSync(absPath)) {
-            if (item.type === "dir") {
-                fs.rmSync(absPath, { recursive: true, force: true });
-            } else {
-                fs.unlinkSync(absPath);
-            }
-        }
-    } catch (error) {
-        console.error(`Failed to delete ${item.path}:`);
-        console.error(error);
-    }
-});
+    console.log("Success: build artifacts and dependencies cleaned.");
+} catch {
+    console.error("Fail: could not clean build artifacts and dependencies.");
+    process.exit(1);
+}
