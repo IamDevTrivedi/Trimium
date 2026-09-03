@@ -83,7 +83,6 @@
 ├── .github
 │   ├── workflows
 │   │   ├── ci.yml
-│   │   ├── opencode.yml
 │   │   └── update-directory-structure.yml
 │   └── dependabot.yml
 ├── .husky
@@ -321,9 +320,6 @@
 │   ├── diagrams
 │   │   ├── trimium-architecture-dark.png
 │   │   └── trimium-architecture.png
-│   ├── superpowers
-│   │   └── specs
-│   │       └── 2026-08-05-keyboard-shortcuts-design.md
 │   ├── DIRECTORY_STRUCTURE.md
 │   └── SETUP.md
 ├── scripts
@@ -426,10 +422,9 @@
 ├── LICENSE
 ├── README.md
 ├── eslint.config.ts
-├── opencode.json
 ├── package.json
 ├── pnpm-lock.yaml
 └── skills-lock.json
 
-97 directories, 332 files
+95 directories, 329 files
 ```
