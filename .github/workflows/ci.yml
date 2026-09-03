@@ -175,7 +175,7 @@ jobs:
             log "Preparing release directory..."
             mkdir -p "$RELEASE_DIR"
 
-            cp "$SERVER_DIR/src" "$RELEASE_DIR/src"
+            cp -r "$SERVER_DIR/src" "$RELEASE_DIR/src"
             cp "$SERVER_DIR/bun.lock" "$RELEASE_DIR/bun.lock" 
             cp "$SERVER_DIR/package.json" "$RELEASE_DIR/package.json"
 
