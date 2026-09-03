@@ -1,4 +1,4 @@
-import { HashOptions } from "argon2";
+import type { HashOptions } from "argon2";
 
 export const HASH_OPTIONS: HashOptions = Object.freeze({
     type: 2,

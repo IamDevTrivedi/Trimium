@@ -215,7 +215,7 @@ router.patch("/accounts/password", otpLimiter, controllers.setNewPasswordForRese
  *   post:
  *     tags: [Auth]
  *     summary: Login
- *     description: Login with email/username and password. Sets access and refresh tokens as cookies.
+ *     description: Login with email/username and password. Sets authToken as an HTTP-only cookie.
  *     requestBody:
  *       required: true
  *       content:

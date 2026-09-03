@@ -2,14 +2,7 @@
     "name": "trimium-client",
     "version": "0.1.0",
     "description": "Next.js frontend for Trimium URL shortening, QR tools, analytics, and workspace management.",
-    "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
-    "github": "https://github.com/IamDevTrivedi/Trimium",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/IamDevTrivedi/Trimium.git",
-        "directory": "client"
-    },
-    "homepage": "https://github.com/IamDevTrivedi/Trimium/tree/main/client",
+    "type": "module",
     "private": true,
     "scripts": {
         "dev": "next dev",
@@ -17,6 +10,18 @@
         "start": "next start",
         "preview": "next build && next start -p 3001"
     },
+    "keywords": [],
+    "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
+    "github": "https://github.com/IamDevTrivedi/Trimium",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/IamDevTrivedi/Trimium.git",
+        "directory": "client"
+    },
+    "bugs": {
+        "url": "https://github.com/IamDevTrivedi/Trimium/issues"
+    },
+    "homepage": "https://github.com/IamDevTrivedi/Trimium/tree/main/client",
     "dependencies": {
         "@base-ui/react": "^1.6.0",
         "@hookform/resolvers": "^5.5.7",
@@ -32,7 +37,7 @@
         "input-otp": "^1.4.2",
         "lucide-react": "^0.562.0",
         "motion": "^12.43.0",
-        "next": "16.2.12",
+        "next": "^16.3.0",
         "next-themes": "^0.4.6",
         "qrcode": "^1.5.4",
         "react": "19.2.8",
@@ -58,6 +63,6 @@
         "@types/react-dom": "^19",
         "babel-plugin-react-compiler": "1.0.0",
         "tailwindcss": "^4",
-        "typescript": "^5"
+        "typescript": "^7.0.2"
     }
 }

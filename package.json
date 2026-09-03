@@ -3,18 +3,20 @@
     "version": "0.1.0",
     "description": "Monorepo for Trimium, a full-stack URL shortener, QR generator, and analytics platform.",
     "type": "module",
+    "private": true,
+    "license": "MIT",
     "scripts": {
-        "format": "prettier --write \"**/*.{js,ts,tsx,json,css,md}\"",
-        "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css,md}\"",
-        "lint": "eslint . --ext .js,.ts,.tsx",
-        "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
-        "check": "pnpm lint && pnpm format:check",
+        "format": "biome format --write .",
+        "format:check": "biome format .",
+        "lint": "biome lint --write .",
+        "lint:check": "biome lint .",
+        "check": "bun run lint:check && bun run format:check",
         "prepare": "husky",
-        "install:all": "node ./scripts/install-all.js",
-        "clean:all": "node ./scripts/clean-all.js",
-        "reset:all": "node ./scripts/reset-all.js",
-        "dev": "concurrently -n CLIENT,SERVER -c cyan,green \"pnpm --filter trimium-client dev\" \"pnpm --filter trimium-server dev\"",
-        "download:geoip": "node ./scripts/update-geolite2.js"
+        "dev": "bun run ./scripts/dev.js",
+        "install:all": "bun run ./scripts/install-all.js",
+        "clean:all": "bun run ./scripts/clean-all.js",
+        "reset:all": "bun run ./scripts/reset-all.js",
+        "download:geoip": "bun --env-file=.env run ./scripts/update-geolite2.js"
     },
     "keywords": [],
     "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
@@ -27,20 +29,9 @@
         "url": "https://github.com/IamDevTrivedi/Trimium/issues"
     },
     "homepage": "https://github.com/IamDevTrivedi/Trimium#readme",
-    "license": "MIT",
-    "packageManager": "pnpm@10.28.0",
-    "dependencies": {
-        "prettier": "^3.9.6"
-    },
+    "packageManager": "bun@1.4.0",
     "devDependencies": {
-        "@eslint/js": "^9.39.4",
-        "concurrently": "^9.2.1",
-        "dotenv": "^16.6.1",
-        "eslint": "^10.8.1",
-        "globals": "^16.5.0",
-        "husky": "^9.1.7",
-        "jiti": "^2.7.0",
-        "tar": "^7.5.22",
-        "typescript-eslint": "^8.67.0"
+        "@biomejs/biome": "2.5.11",
+        "husky": "^9.1.7"
     }
 }

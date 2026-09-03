@@ -10,7 +10,7 @@ import { HASH_OPTIONS } from "@config/argon2";
 import { URL } from "@/models/url";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 import argon2 from "argon2";
@@ -187,9 +187,9 @@ export const controllers = {
                 messageToDisplay: string;
             };
 
-            let passwordProtect: PasswordProtect | undefined = undefined;
-            let transfer: Transfer | undefined = undefined;
-            let scheduleObj: Schedule | undefined = undefined;
+            let passwordProtect: PasswordProtect | undefined;
+            let transfer: Transfer | undefined;
+            let scheduleObj: Schedule | undefined;
 
             if (typeof password === "string") {
                 const passwordHash = await argon2.hash(password, HASH_OPTIONS);
@@ -568,7 +568,7 @@ export const controllers = {
                 if (existingAnalytics.referrersStats.has(refDomain)) {
                     existingAnalytics.referrersStats.set(
                         refDomain,
-                        existingAnalytics.referrersStats.get(refDomain)! + 1
+                        (existingAnalytics.referrersStats.get(refDomain) ?? 0) + 1
                     );
                 } else {
                     existingAnalytics.referrersStats.set(refDomain, 1);
@@ -702,7 +702,7 @@ export const controllers = {
 
             const len = existingAnalytics.dailyStats.length;
 
-            if (len == 0) {
+            if (len === 0) {
                 existingAnalytics.dailyStats.push({
                     date: currentToday.getTime(),
                     totalClicks: 1,
@@ -731,7 +731,7 @@ export const controllers = {
             if (existingAnalytics.locationStats.has(currentLocation)) {
                 existingAnalytics.locationStats.set(
                     currentLocation,
-                    existingAnalytics.locationStats.get(currentLocation)! + 1
+                    (existingAnalytics.locationStats.get(currentLocation) ?? 0) + 1
                 );
             } else {
                 existingAnalytics.locationStats.set(currentLocation, 1);

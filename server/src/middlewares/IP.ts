@@ -1,5 +1,5 @@
 import { logger } from "@utils/logger";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 declare module "express-serve-static-core" {
     interface Locals {

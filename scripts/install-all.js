@@ -1,19 +1,21 @@
-// Standalone script to install dependencies in all project directories
-
 import path from "path";
-import { execSync } from "child_process";
+import { $ } from "bun";
 
 const dirs = [".", "./server", "./client"];
+const failedDirs = [];
 
-dirs.forEach((dir) => {
+for (const dir of dirs) {
     const absPath = path.resolve(dir);
     try {
-        execSync("pnpm install", {
-            cwd: absPath,
-            stdio: "inherit",
-        });
-    } catch (error) {
-        console.error(`Failed to install in ${dir}`);
-        console.error(error);
+        await $`bun install`.cwd(absPath).quiet();
+    } catch {
+        failedDirs.push(dir);
     }
-});
+}
+
+if (failedDirs.length > 0) {
+    console.error(`Fail: could not install dependencies in: ${failedDirs.join(", ")}`);
+    process.exit(1);
+} else {
+    console.log("Success: dependencies installed in all directories.");
+}

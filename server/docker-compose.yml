@@ -1,0 +1,105 @@
+name: trimium-dev-infra
+
+services:
+  redis:
+    image: redis:8
+    restart: unless-stopped
+    ports:
+      - "5001:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  mongodb:
+    image: mongo:7.0.40
+    restart: unless-stopped
+    ports:
+      - "5002:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "5003:1025"
+      - "5004:8025"
+    volumes:
+      - mailpit_data:/data
+    environment:
+      MP_DATA_FILE: /data/mailpit.db
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8025/readyz",
+        ]
+
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    restart: unless-stopped
+    ports:
+      - "5005:5540"
+    volumes:
+      - redisinsight_data:/data
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: unless-stopped
+    ports:
+      - "5006:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    volumes:
+      - mongo_express_data:/data
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+volumes:
+  redis_data:
+    name: redis_data
+  mongodb_data:
+    name: mongodb_data
+  mongodb_config:
+    name: mongodb_config
+  mailpit_data:
+    name: mailpit_data
+  redisinsight_data:
+    name: redisinsight_data
+  mongo_express_data:
+    name: mongo_express_data

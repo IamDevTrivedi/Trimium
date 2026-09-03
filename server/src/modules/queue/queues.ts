@@ -1,7 +1,7 @@
 import { Queue } from "bullmq";
 import { redisConfig } from "./redisConfig";
-import { SendEmailJobData } from "./processors/sendEmail";
-import { UpdateLastActivityJobData } from "./processors/updateLastActivity";
+import type { SendEmailJobData } from "./processors/sendEmail";
+import type { UpdateLastActivityJobData } from "./processors/updateLastActivity";
 
 export enum QueueNames {
     SEND_EMAIL = "emailQueue",

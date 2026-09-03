@@ -1,26 +1,4 @@
-import dotenv from "dotenv";
-import path from "path";
-import fs from "fs";
-
 const NODE_ENV = process.env.NODE_ENV as "development" | "production";
-const devEnv = path.resolve(__dirname, "../../.env.development");
-const prodEnv = path.resolve(__dirname, "../../.env.production");
-
-if (NODE_ENV === "development") {
-    if (fs.existsSync(devEnv)) {
-        dotenv.config({ path: devEnv });
-    } else {
-        console.error(".env.development file not found");
-        process.exit(1);
-    }
-} else if (NODE_ENV === "production") {
-    if (fs.existsSync(prodEnv)) {
-        dotenv.config({ path: prodEnv });
-    } else {
-        console.warn(".env.production file not found");
-        dotenv.config();
-    }
-}
 
 export const config = {
     NODE_ENV,
@@ -51,8 +29,11 @@ export const config = {
     REDIS_HOST: process.env.REDIS_HOST as string,
     REDIS_PORT: Number(process.env.REDIS_PORT),
 
+    SMTP_HOST: process.env.SMTP_HOST as string,
+    SMTP_PORT: Number(process.env.SMTP_PORT),
+    SMTP_USER: process.env.SMTP_USER as string,
+    SMTP_PASS: process.env.SMTP_PASS as string,
     SENDER_EMAIL: process.env.SENDER_EMAIL as string,
-    BREVO_API_KEY: process.env.BREVO_API_KEY as string,
 
     JWT_KEY: process.env.JWT_KEY as string,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY as string,

@@ -8,16 +8,17 @@ A comprehensive guide to set up and run the Trimium application locally.
 
 Ensure the following tools and services are installed before proceeding:
 
-| Requirement        | Version | Notes                                |
-| ------------------ | ------- | ------------------------------------ |
-| Node.js            | v18+    | Required                             |
-| pnpm               | Latest  | Required for workspace scripts       |
-| Git                | Latest  | Required for Husky pre-push hooks    |
-| MongoDB            | Latest  | Local or cloud (e.g., MongoDB Atlas) |
-| Redis              | Latest  | Local or cloud (e.g., Redis Cloud)   |
-| MaxMind GeoLite2   | Latest  | Optional, enhances location services |
-| Brevo account      | Latest  | Required for transactional emails    |
-| Cloudinary account | Latest  | Required for media uploads           |
+| Requirement        | Version | Notes                                                                              |
+| ------------------ | ------- | ---------------------------------------------------------------------------------- |
+| Bun                | 1.4.0+  | [Installation guide](https://bun.sh)                                                |
+| Git                | Latest  | Required for Husky pre-commit hooks                                                |
+| Docker             | Latest  | Required to run MongoDB, Redis, and Mailpit via `server/docker-compose.yml`          |
+| Cloudinary account | Latest  | Required for media uploads                                                         |
+| SMTP Email Account | Latest  | Required for transactional emails (local dev uses Mailpit, see below)               |
+| MaxMind GeoLite2   | Latest  | Optional, enhances location services                                                |
+
+> [!NOTE]
+> MongoDB, Redis, and Mailpit (local SMTP catch-all) are provided by `server/docker-compose.yml`. Docker is the only additional infrastructure requirement — no separate MongoDB or Redis installs needed for local development.
 
 ---
 
@@ -35,7 +36,7 @@ cd Trimium
 From the project root, run:
 
 ```bash
-pnpm run install:all
+bun run install:all
 ```
 
 > This installs dependencies for the root, client, and server workspaces. The root `prepare` script also initializes Husky hooks automatically.
@@ -65,14 +66,18 @@ Used by `scripts/update-geolite2.js` to download the GeoIP database.
 | --------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `MAXMIND_LICENSE_KEY` | Optional | License key to download `GeoLite2-City.mmdb` automatically. Obtain from [MaxMind license page](https://www.maxmind.com/en/accounts/current/license-key). |
 
+> [!NOTE]
+> For local development, `server/.env.example` is pre-configured to match the services defined in `server/docker-compose.yml` (MongoDB, Redis, Mailpit). Copy it directly without editing.
+
 ### 3.3 Server Environment (`server/.env.development`, `server/.env.production`)
 
-The server loads the appropriate file based on `NODE_ENV` (see `server/src/config/env.ts`). Validation is enforced at startup via `server/src/config/checkEnv.ts` — the server will fail fast if values are missing or invalid.
+The server loads the appropriate file based on `NODE_ENV` (set by Bun when using `--env-file`). Validation is enforced at startup via `server/src/config/checkEnv.ts` — the server will fail fast if values are missing or invalid.
 
 Create both files using `server/.env.example`, then set environment-specific values.
 
-| Variable                   | Required | Description                                                                          |
+| Variable                    | Required | Description                                                                          |
 | -------------------------- | -------- | ------------------------------------------------------------------------------------ |
+| `NODE_ENV`                 | Yes      | `development` or `production`                                                        |
 | `PORT`                     | Yes      | API server port (e.g., `5000`)                                                       |
 | `BACKEND_URL_DEV`          | Yes      | Development backend URL (e.g., `http://localhost:5000`)                              |
 | `BACKEND_URL_PROD`         | Yes      | Production backend URL (your deployed domain)                                        |
@@ -83,11 +88,14 @@ Create both files using `server/.env.example`, then set environment-specific val
 | `REDIS_PASSWORD`           | Yes      | Redis password                                                                       |
 | `REDIS_HOST`               | Yes      | Redis host                                                                           |
 | `REDIS_PORT`               | Yes      | Redis port (default `6379`)                                                          |
-| `SENDER_EMAIL`             | Yes      | Verified sender email in Brevo                                                       |
-| `BREVO_API_KEY`            | Yes      | Brevo API key for transactional emails                                               |
-| `JWT_KEY`                  | Yes      | JWT signing secret (min 32 chars). Generate via `openssl rand -hex 32`               |
+| `SMTP_HOST`                | Yes      | SMTP server host (e.g., `smtp.gmail.com`, `smtp.resend.dev`)                        |
+| `SMTP_PORT`                | Yes      | SMTP server port (e.g., `587` for TLS, `465` for SSL)                               |
+| `SMTP_USER`                | Yes      | SMTP username / email address                                                       |
+| `SMTP_PASS`                | Yes      | SMTP password or app-specific password                                               |
+| `SENDER_EMAIL`             | Yes      | Verified sender email                                                                |
+| `JWT_KEY`                  | Yes      | JWT signing secret (min 32 chars). Generate via `openssl rand -hex 32`                |
 | `TURNSTILE_SECRET_KEY`     | Yes      | Cloudflare Turnstile secret key                                                      |
-| `PoW_SECRET`               | Yes      | Proof-of-Work secret (min 32 chars). Generate via `openssl rand -hex 32`             |
+| `PoW_SECRET`               | Yes      | Proof-of-Work secret (min 32 chars). Generate via `openssl rand -hex 32`              |
 | `PoW_DIFFICULTY`           | Yes      | Proof-of-Work difficulty (1–6). Recommended `3` for development                      |
 | `CLOUDINARY_CLOUD_NAME`    | Yes      | Cloudinary cloud identifier                                                          |
 | `CLOUDINARY_API_KEY`       | Yes      | Cloudinary API key                                                                   |
@@ -190,7 +198,7 @@ ls -la server/.env.development server/.env.production client/.env .env
 3. Run the update script:
 
     ```bash
-    node ./scripts/update-geolite2.js
+    bun run download:geoip
     ```
 
 4. Verify the file exists at `server/src/constants/GeoLite2-City.mmdb`
@@ -199,48 +207,79 @@ ls -la server/.env.development server/.env.production client/.env .env
 
 ## 5. Running the Application
 
-### Start Required Services
+### Start Required Services (Local Dev)
 
-Ensure MongoDB and Redis are running before starting the application — either locally or through a cloud provider.
+The `server/docker-compose.yml` file ships MongoDB, Redis, Mailpit (local SMTP catch-all), and their UIs. Start it before launching the app:
+
+```bash
+cd server
+docker compose up -d
+```
+
+This brings up:
+
+| Container          | Host port | Purpose                          |
+| ------------------ | --------- | -------------------------------- |
+| `mongodb-server`   | `5002`    | MongoDB (root / root)            |
+| `redis-server`     | `5001`    | Redis (`default` / `password`)   |
+| `mailpit-server`   | `5003`    | SMTP (no auth) + UI on `5004`    |
+| `mongodb-viewer`   | `5006`    | Mongo Express UI (admin / admin) |
+| `redis-insights`   | `5005`    | Redis Insight UI                 |
+
+> [!TIP]
+> Mailpit captures every email the app sends. Open http://localhost:5004 in your browser to inspect them — no real emails are sent during local dev.
+
+> [!IMPORTANT]
+> The default MongoDB image in `server/docker-compose.yml` is pinned to a version that is compatible with the host Linux kernel. If you fork this project on a newer kernel, you may need to update the image tag.
+
+To stop the stack:
+
+```bash
+cd server
+docker compose down
+```
 
 ### Start Development Server
 
 From the project root:
 
 ```bash
-pnpm run dev
+bun run dev
 ```
 
-This starts both the client and server concurrently.
+This starts both the client and server concurrently using Bun's parallel execution.
 
 ### Access the Application
 
-| Service | URL                                                               |
-| ------- | ----------------------------------------------------------------- |
-| Client  | http://localhost:3000                                             |
-| Server  | http://localhost:`PORT` (as defined in `server/.env.development`) |
+| Service      | URL                                                                       |
+| ------------ | ------------------------------------------------------------------------- |
+| Client       | http://localhost:3000                                                     |
+| Server       | http://localhost:`PORT` (as defined in `server/.env.development`)         |
+| Mailpit UI   | http://localhost:5004                                                     |
+| Mongo Express | http://localhost:5006                                                    |
+| Redis Insight | http://localhost:5005                                                    |
 
 ---
 
-## 6. Pre-Push Quality Gate
+## 6. Pre-Commit Quality Gate
 
-Trimium uses **Husky** to enforce quality checks before every push.
+Trimium uses **Husky** to enforce quality checks before every commit.
 
-### What runs before push
+### What runs before commit
 
-The pre-push hook at `.husky/pre-push` executes:
-
-```bash
-pnpm run check
-```
-
-The `check` script runs linting and formatting verification:
+The pre-commit hook at `.husky/pre-commit` executes:
 
 ```bash
-pnpm run lint && pnpm run format:check
+bun run check
 ```
 
-If either command fails, the push is rejected locally.
+The `check` script runs Biome linting and formatting verification:
+
+```bash
+bun run lint:check && bun run format:check
+```
+
+If either command fails, the commit is rejected locally.
 
 ### Verify hook setup
 
@@ -257,32 +296,34 @@ Expected output:
 ### Useful local commands
 
 ```bash
-pnpm run check        # Run all pre-push checks manually
-pnpm run lint         # Lint only
-pnpm run format:check # Check formatting only
-pnpm run format       # Auto-format files
+bun run check        # Run all pre-commit checks manually
+bun run lint:check   # Lint only (Biome)
+bun run format:check # Check formatting only (Biome)
+bun run format       # Auto-format files
 ```
 
 ### If hooks are missing
 
 ```bash
-pnpm run prepare
+bun run prepare
 ```
 
 ---
 
 ## Troubleshooting
 
-| Issue                             | Solution                                                              |
-| --------------------------------- | --------------------------------------------------------------------- |
-| Server won't start                | Verify all required environment variables are set correctly           |
-| MongoDB connection failed         | Confirm MongoDB is running and the connection string is correct       |
-| Redis connection failed           | Confirm Redis is running and the connection details are accurate      |
-| GeoLite2 not working              | Ensure the `.mmdb` file is placed in `server/src/constants/`          |
-| Push blocked by pre-push hook     | Run `pnpm run check`, fix issues, then push again                     |
-| Husky hook not triggering         | Run `pnpm run prepare` and verify `core.hooksPath` returns `.husky/_` |
-| Invalid environment configuration | Start the server in dev mode and check the Zod validation output      |
-| Client cannot reach backend       | Verify `client/.env` API URLs and restart the client dev server       |
+| Issue                             | Solution                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------------------ |
+| Server won't start                | Verify all required environment variables are set correctly                                |
+| MongoDB connection failed         | Confirm the dev stack is running: `cd server && docker compose ps`                         |
+| Redis connection failed           | Confirm the dev stack is running: `cd server && docker compose ps`                         |
+| MongoDB container keeps restarting | Check host kernel compatibility — see `server/docker-compose.yml` for the pinned image tag |
+| Email not arriving                | Open http://localhost:5004 (Mailpit) — local dev never sends real email                    |
+| GeoLite2 not working             | Ensure the `.mmdb` file is placed in `server/src/constants/`                               |
+| Commit blocked by pre-commit hook | Run `bun run check`, fix issues, then commit again                                         |
+| Husky hook not triggering        | Run `bun run prepare` and verify `core.hooksPath` returns `.husky/_`                       |
+| Invalid environment configuration | Start the server in dev mode and check the Zod validation output                           |
+| Client cannot reach backend       | Verify `client/.env` API URLs and restart the client dev server                            |
 
 > [!NOTE]
 > The server follows a **fail-fast** principle — it will not start if environment variables are missing or misconfigured. Validation details are printed to the console.

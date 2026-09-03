@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 import { sendResponse } from "@utils/sendResponse";
@@ -9,7 +9,7 @@ import { cloudinary } from "@/config/cloudinary";
 import { USERNAME, USERNAME_NOTICE } from "@/constants/regex";
 
 export const controllers = {
-    getMyLinkhub: async (req: Request, res: Response) => {
+    getMyLinkhub: async (_req: Request, res: Response) => {
         try {
             const { userID } = res.locals;
 
@@ -98,8 +98,8 @@ export const controllers = {
             if (updateData.socials) {
                 Object.keys(updateData.socials).forEach((key) => {
                     const socialKey = key as keyof typeof updateData.socials;
-                    if (updateData.socials![socialKey] === "") {
-                        updateData.socials![socialKey] = undefined;
+                    if (updateData.socials && updateData.socials[socialKey] === "") {
+                        updateData.socials[socialKey] = undefined;
                     }
                 });
             }
@@ -213,7 +213,7 @@ export const controllers = {
             const existingLinkhub = await Linkhub.findOne({ userID });
             const existingAvatarUrl = existingLinkhub?.avatarUrl;
 
-            if (existingAvatarUrl && existingAvatarUrl.includes("cloudinary")) {
+            if (existingAvatarUrl?.includes("cloudinary")) {
                 try {
                     const urlParts = existingAvatarUrl.split("/");
                     const publicIdWithExtension = urlParts[urlParts.length - 1];
@@ -240,7 +240,7 @@ export const controllers = {
                             else resolve(result as { secure_url: string; public_id: string });
                         }
                     );
-                    uploadStream.end(req.file!.buffer);
+                    uploadStream.end(req.file?.buffer as Buffer);
                 }
             );
 

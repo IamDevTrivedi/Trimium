@@ -1,5 +1,10 @@
 export type ShortcutContext =
-    "global" | "workspace" | "workspace-list" | "shortlink" | "form" | "qr";
+    | "global"
+    | "workspace"
+    | "workspace-list"
+    | "shortlink"
+    | "form"
+    | "qr";
 
 export interface ShortcutDefinition {
     id: string;

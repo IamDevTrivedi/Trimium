@@ -26,8 +26,11 @@ export const envSchema = z
         REDIS_HOST: z.string().min(1),
         REDIS_PORT: z.number().min(1).max(65535),
 
+        SMTP_HOST: z.string().min(1),
+        SMTP_PORT: z.number().min(1).max(65535),
+        SMTP_USER: z.string().min(1),
+        SMTP_PASS: z.string().min(1),
         SENDER_EMAIL: z.email(),
-        BREVO_API_KEY: z.string().min(1),
 
         JWT_KEY: z.string().min(32),
         TURNSTILE_SECRET_KEY: z.string().min(1),

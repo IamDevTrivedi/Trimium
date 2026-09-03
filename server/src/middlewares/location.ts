@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express";
-import maxmind, { CityResponse, Reader } from "maxmind";
+import type { NextFunction, Request, Response } from "express";
+import maxmind, { type CityResponse, type Reader } from "maxmind";
 import path from "path";
 import fs from "fs";
 import axios from "axios";
@@ -150,7 +150,7 @@ const getLocationFromAPI = async (ip: string): Promise<LocationData> => {
     }
 };
 
-export const locationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const locationMiddleware = async (_req: Request, res: Response, next: NextFunction) => {
     const { clientIP } = res.locals;
     try {
         let locationData: LocationData;

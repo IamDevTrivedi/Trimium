@@ -1,5 +1,5 @@
 import { config } from "@config/env";
-import { ConnectionOptions } from "bullmq";
+import type { ConnectionOptions } from "bullmq";
 
 export const redisConfig: ConnectionOptions = {
     port: config.REDIS_PORT,

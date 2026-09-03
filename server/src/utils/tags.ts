@@ -1,4 +1,4 @@
-import { ITAG, TAGS } from "@/constants/tags";
+import { type ITAG, TAGS } from "@/constants/tags";
 
 export const tagIDToTag = (id: number): ITAG | undefined => {
     return TAGS.find((tag) => tag.id === id);

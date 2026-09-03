@@ -7,9 +7,7 @@ const invitationSchema = new mongoose.Schema(
             type: String,
             required: true,
             validate: {
-                validator: function (v: string) {
-                    return z.email().safeParse(v).success;
-                },
+                validator: (v: string) => z.email().safeParse(v).success,
             },
         },
 

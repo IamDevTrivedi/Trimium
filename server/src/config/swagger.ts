@@ -20,7 +20,7 @@ const options: swaggerJsdoc.Options = {
                 cookieAuth: {
                     type: "apiKey",
                     in: "cookie",
-                    name: "accessToken",
+                    name: "authToken",
                 },
             },
             schemas: {

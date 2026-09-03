@@ -1,9 +1,9 @@
 import multer from "multer";
-import { Request } from "express";
+import type { Request } from "express";
 
 const storage = multer.memoryStorage();
 
-const imageFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const imageFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     if (file.mimetype.startsWith("image/")) {
         cb(null, true);
     } else {

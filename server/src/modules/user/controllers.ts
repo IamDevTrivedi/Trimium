@@ -10,7 +10,7 @@ import { HASH_OPTIONS } from "@config/argon2";
 import { User } from "@/models/user";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 import argon2 from "argon2";

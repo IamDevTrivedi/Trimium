@@ -38,6 +38,6 @@ indent_style = space
 indent_size = 2
 
 # Package files
-[{package.json,package-lock.json,pnpm-lock.yaml}]
+[{package.json,bun.lock,bun.lockb}]
 indent_style = space
 indent_size = 2
