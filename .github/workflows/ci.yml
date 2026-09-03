@@ -152,7 +152,7 @@ jobs:
 
             # ── Exit trap ─────────────────────────────────────────────
             DEPLOY_START=$(date +%s)
-            trap 'DEPLOY_END=$(date +%s); log "Exited with status $? in $((DEPLOY_END - DEPLOY_START)) seconds."' EXIT
+            trap 'EXIT_CODE=$?; DEPLOY_END=$(date +%s); log "Exited with status $EXIT_CODE in $((DEPLOY_END - DEPLOY_START)) seconds."' EXIT
 
             log "===== Deployment started ====="
 
@@ -228,7 +228,7 @@ jobs:
 
             for i in $(seq 1 "$HEALTH_RETRY_COUNT"); do
               log "Health check attempt $i/$HEALTH_RETRY_COUNT..."
-              STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_CHECK_URL")
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_CHECK_URL" || echo "000")
               if [ "$STATUS" -eq 200 ]; then
                 IS_HEALTHY=true
                 log "Health check passed on attempt $i."
@@ -272,7 +272,7 @@ jobs:
 
               for i in $(seq 1 "$HEALTH_RETRY_COUNT"); do
                 log "Rollback health check attempt $i/$HEALTH_RETRY_COUNT..."
-                STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_CHECK_URL")
+                STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_CHECK_URL" || echo "000")
                 if [ "$STATUS" -eq 200 ]; then
                   ROLLBACK_HEALTHY=true
                   log "Rollback health check passed on attempt $i."
