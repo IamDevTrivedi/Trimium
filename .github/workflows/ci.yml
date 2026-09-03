@@ -1,7 +1,7 @@
 name: CI/CD
 
-on: 
-  push: 
+on:
+  push:
     branches:
       - main
 
@@ -12,30 +12,7 @@ jobs:
     steps:
       - run: echo "Gate passed — proceeding with CI/CD"
 
-  lint:
-    runs-on: ubuntu-latest
-    needs: [gate] 
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-          cache: pnpm
-
-      - name: Install root dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run lint check
-        run: pnpm run lint
-
-  prettier:
+  check:
     runs-on: ubuntu-latest
     needs: [gate]
 
@@ -43,29 +20,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "24"
-          cache: pnpm
+          bun-version: "1.4.0"
 
       - name: Install root dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
-      - name: Run Prettier formatting check
-        run: pnpm run format:check
+      - name: Run biome check
+        run: bun run check
 
   detect-changes:
     runs-on: ubuntu-latest
-    needs: [lint, prettier]
+    needs: [check]
 
     outputs:
       client: ${{ steps.changes.outputs.client }}
       server: ${{ steps.changes.outputs.server }}
-    
+
     steps:
       - uses: actions/checkout@v6
 
@@ -80,26 +53,44 @@ jobs:
               - 'server/**'
               - 'package.json'
 
+  typecheck:
+    runs-on: ubuntu-latest
+    needs: [detect-changes]
+    if: needs.detect-changes.outputs.server == 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.0"
+
+      - name: Install server dependencies
+        working-directory: server
+        run: bun install --frozen-lockfile --ignore-scripts
+
+      - name: Run server typecheck
+        working-directory: server
+        run: bun run typecheck
+
   deploy-client:
     runs-on: ubuntu-latest
-    needs: detect-changes
+    needs: [detect-changes]
     if: needs.detect-changes.outputs.client == 'true'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: "24"
-          cache: pnpm
+          bun-version: "1.4.0"
 
       - name: Install Vercel CLI
-        run: npm install -g vercel
+        run: bun add -g vercel
 
       - name: Pull Vercel Environment
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
@@ -121,7 +112,7 @@ jobs:
 
   deploy-server:
     runs-on: ubuntu-latest
-    needs: detect-changes
+    needs: [typecheck]
     if: needs.detect-changes.outputs.server == 'true'
 
     steps:
@@ -133,10 +124,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           envs: PROJECT_DIR,SERVER_DIR,RELEASES_DIR,SHARED_DIR,CURRENT_DIR,HEALTH_CHECK_URL,HEALTH_RETRY_COUNT,HEALTH_RETRY_INTERVAL,PM2_APP_NAME,MAX_RELEASES_TO_KEEP
           script: |
-
-            # ── Setup environment ─────────────────────────────────────
-            source ~/.bashrc
-            source ~/.nvm/nvm.sh
 
             # ── Constants ────────────────────────────────────────────
             PROJECT_DIR="/projects/Trimium"
@@ -177,34 +164,23 @@ jobs:
 
             log "New release ID: $RELEASE_ID"
 
-            # ── Install and build ─────────────────────────────────────
-            log "Installing root dependencies..."
             cd "$PROJECT_DIR"
-            pnpm install --frozen-lockfile
+            log "Downloading GeoIP database..."
+            bun run download:geoip
 
             log "Installing server dependencies..."
             cd "$SERVER_DIR"
-            pnpm install --frozen-lockfile
+            bun install --production --ignore-scripts
 
-            log "Building server..."
-            pnpm run build
-
-            cd "$PROJECT_DIR"
-            log "Downloading GeoIP database..."
-            pnpm run download:geoip
-
-            # ── Prepare release directory ─────────────────────────────
-            cd "$SERVER_DIR"
             log "Preparing release directory..."
             mkdir -p "$RELEASE_DIR"
 
-            mv "$SERVER_DIR/dist" "$RELEASE_DIR/dist"
+            cp "$SERVER_DIR/src" "$RELEASE_DIR/src"
+            cp "$SERVER_DIR/bun.lock" "$RELEASE_DIR/bun.lock" 
+            cp "$SERVER_DIR/package.json" "$RELEASE_DIR/package.json"
 
-            # Symlink everything from shared into release
-            ln -sfn "$SHARED_DIR/logs" "$RELEASE_DIR/logs"
             ln -sfn "$SHARED_DIR/.env.production" "$RELEASE_DIR/.env.production"
 
-            # ── Go live ───────────────────────────────────────────────
             log "Pointing current to new release..."
             ln -sfn "$RELEASE_DIR" "$CURRENT_DIR"
 
@@ -239,7 +215,6 @@ jobs:
                     rm -rf "$old_release"
                   done
 
-              pm2 list
               exit 0
             fi
 
