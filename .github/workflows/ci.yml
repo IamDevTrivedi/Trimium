@@ -135,7 +135,7 @@ jobs:
             HEALTH_RETRY_COUNT=10
             HEALTH_RETRY_INTERVAL=5
             PM2_APP_NAME="trimium-api"
-            MAX_RELEASES_TO_KEEP=5
+            MAX_RELEASES_TO_KEEP=3
 
             # ── Exit trap ─────────────────────────────────────────────
             DEPLOY_START=$(date +%s)
@@ -168,10 +168,6 @@ jobs:
             log "Downloading GeoIP database..."
             bun run download:geoip
 
-            log "Installing server dependencies..."
-            cd "$SERVER_DIR"
-            bun install --production --ignore-scripts
-
             log "Preparing release directory..."
             mkdir -p "$RELEASE_DIR"
 
@@ -180,6 +176,10 @@ jobs:
             cp "$SERVER_DIR/package.json" "$RELEASE_DIR/package.json"
 
             ln -sfn "$SHARED_DIR/.env.production" "$RELEASE_DIR/.env.production"
+
+            log "Installing server dependencies..."
+            cd "$RELEASE_DIR"
+            bun install --production --ignore-scripts
 
             log "Pointing current to new release..."
             ln -sfn "$RELEASE_DIR" "$CURRENT_DIR"
