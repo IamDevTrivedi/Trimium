@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
 import { logger } from "@utils/logger";
@@ -78,7 +78,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
 const getCurrentTokenVersion = async (userID: string): Promise<number | null> => {
     const value = await redisClient.get(`userID:${userID}`);
     if (value) {
-        return parseInt(value);
+        return parseInt(value, 10);
     }
 
     const exisitingUser = await User.findById(userID).select("tokenVersion").lean();
@@ -99,7 +99,7 @@ const getCurrentTokenVersion = async (userID: string): Promise<number | null> =>
 const getLoginHistoryTokenVersion = async (loginHistoryID: string): Promise<number | null> => {
     const value = await redisClient.get(`loginHistoryID:${loginHistoryID}`);
     if (value) {
-        return parseInt(value);
+        return parseInt(value, 10);
     }
 
     const existingLoginHistory = await LoginHistory.findById(loginHistoryID)

@@ -1,6 +1,6 @@
 import { transporter } from "@config/mailer";
 import { logger } from "@utils/logger";
-import { Job } from "bullmq";
+import type { Job } from "bullmq";
 
 export interface SendEmailJobData {
     to: string;

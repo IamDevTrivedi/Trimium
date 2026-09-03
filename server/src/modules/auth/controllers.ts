@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { StatusCodes } from "http-status-codes";
 import { UAParser } from "ua-parser-js";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { config } from "@config/env";
 import { redisClient } from "@db/connectRedis";
 import { User } from "@models/user";
@@ -783,7 +783,7 @@ export const controllers = {
         }
     },
 
-    logoutMyDevice: async (req: Request, res: Response) => {
+    logoutMyDevice: async (_req: Request, res: Response) => {
         try {
             const { loginHistoryID } = res.locals;
 
@@ -826,7 +826,7 @@ export const controllers = {
         }
     },
 
-    logoutAllOtherDevices: async (req: Request, res: Response) => {
+    logoutAllOtherDevices: async (_req: Request, res: Response) => {
         try {
             const { userID, loginHistoryID } = res.locals;
 
@@ -962,7 +962,7 @@ export const controllers = {
         }
     },
 
-    me: async (req: Request, res: Response) => {
+    me: async (_req: Request, res: Response) => {
         try {
             const existingUser = await User.findById(res.locals.userID).select(
                 "-passwordHash -tokenVersion -__v"

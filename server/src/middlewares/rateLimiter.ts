@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import RedisStore from "rate-limit-redis";
 import rateLimit from "express-rate-limit";
 import crypto from "crypto";
@@ -45,7 +45,7 @@ const calculateAdaptiveDifficulty = (options: { windowMs: number; max: number })
 };
 
 const issuePoWChallenge = (
-    req: Request,
+    _req: Request,
     res: Response,
     options: { windowMs: number; max: number }
 ) => {
@@ -145,7 +145,7 @@ export const createRateLimiter = ({ windowMs, max, prefix = "rl" }: RateLimitOpt
         legacyHeaders: false,
         skipFailedRequests: false,
         skipSuccessfulRequests: false,
-        keyGenerator: (req: Request, res: Response) => {
+        keyGenerator: (_req: Request, res: Response) => {
             res.locals.visitorID = res.locals.clientIP;
             return res.locals.visitorID;
         },

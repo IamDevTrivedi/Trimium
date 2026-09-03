@@ -3,7 +3,7 @@ import { config } from "@config/env";
 import { emailTemplates } from "@utils/emailTemplates";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 import { emailQueue, QueueNames } from "@modules/queue";

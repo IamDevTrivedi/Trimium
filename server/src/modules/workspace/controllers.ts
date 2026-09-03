@@ -5,7 +5,7 @@ import { config } from "@config/env";
 import { emailTemplates } from "@utils/emailTemplates";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 import { DEFAULT_TAG, TAGS_ID_RANGE } from "@/constants/tags";
@@ -138,7 +138,7 @@ export const controllers = {
         }
     },
 
-    getAllInvitations: async (req: Request, res: Response) => {
+    getAllInvitations: async (_req: Request, res: Response) => {
         try {
             const { userID } = res.locals;
 
@@ -294,7 +294,7 @@ export const controllers = {
         }
     },
 
-    getMyWorkspaces: async (req: Request, res: Response) => {
+    getMyWorkspaces: async (_req: Request, res: Response) => {
         try {
             const { userID } = res.locals;
             const workspaces = await Workspace.find({ "members.userID": userID })
@@ -310,8 +310,8 @@ export const controllers = {
                         title: ws.title,
                         description: ws.description,
                         workspaceID: ws._id,
-                        permission: ws.members.find((m) => m.userID.toString() === userID)!
-                            .permission,
+                        permission: ws.members.find((m) => m.userID.toString() === userID)
+                            ?.permission,
                         createdAt: ws.createdAt,
                         size: ws.members.length,
                     };
@@ -527,7 +527,7 @@ export const controllers = {
 
             if (membersToAdd) {
                 for (const member of membersToAdd) {
-                    if (member.email === existingUser!.email) {
+                    if (member.email === existingUser?.email) {
                         continue;
                     }
 
@@ -570,7 +570,7 @@ export const controllers = {
                             workspaceTitle: existingWorkspace.title,
                             description: existingWorkspace.description,
                             permission: member.permission,
-                            senderName: `${existingUser!.firstName} ${existingUser!.lastName}`,
+                            senderName: `${existingUser?.firstName ?? ""} ${existingUser?.lastName ?? ""}`,
                         }),
                     });
                 }
@@ -647,11 +647,11 @@ export const controllers = {
                         .lean();
 
                     return {
-                        userID: detail!._id,
+                        userID: detail?._id ?? "",
                         permission: member.permission,
-                        fullName: `${detail!.firstName} ${detail!.lastName}`,
-                        email: detail!.email,
-                        username: detail!.username,
+                        fullName: `${detail?.firstName ?? ""} ${detail?.lastName ?? ""}`,
+                        email: detail?.email ?? "",
+                        username: detail?.username ?? "",
                     };
                 })
             );
@@ -924,7 +924,7 @@ export const controllers = {
                     });
                 }
 
-                const tagValue = existingWorkspace.tags.get(oldTag)!;
+                const tagValue = existingWorkspace.tags.get(oldTag) ?? 0;
                 existingWorkspace.tags.delete(oldTag);
                 existingWorkspace.tags.set(newTag, tagValue);
 

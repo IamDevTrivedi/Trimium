@@ -1,4 +1,4 @@
-import { Response } from "express";
+import type { Response } from "express";
 import { StatusCodes, getReasonPhrase } from "http-status-codes";
 
 export interface ApiResponse {

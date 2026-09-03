@@ -30,7 +30,7 @@ export const gracefulShutdown = async (signal: string): Promise<void> => {
         if (httpServer) {
             logger.info("Closing HTTP server...");
             await new Promise<void>((resolve, reject) => {
-                httpServer!.close((err) => {
+                httpServer?.close((err) => {
                     if (err) {
                         logger.error({ err }, "Error closing HTTP server");
                         reject(err);

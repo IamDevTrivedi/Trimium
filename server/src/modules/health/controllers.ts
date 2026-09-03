@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { config } from "@config/env";
 import { sendResponse } from "@utils/sendResponse";
 
 export const controller = {
-    index: (req: Request, res: Response) => {
+    index: (_req: Request, res: Response) => {
         const memoryUsage = process.memoryUsage();
 
         return sendResponse(res, {

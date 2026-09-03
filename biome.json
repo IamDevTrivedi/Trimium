@@ -7,11 +7,7 @@
     },
     "files": {
         "ignoreUnknown": true,
-        "experimentalScannerIgnores": [
-            "**/*.md",
-            "docs/**",
-            ".agents/**"
-        ]
+        "includes": ["**", "!**/*.md", "!docs", "!.agents"]
     },
     "formatter": {
         "enabled": true,
@@ -34,7 +30,10 @@
     "linter": {
         "enabled": true,
         "rules": {
-            "recommended": true
+            "preset": "recommended",
+            "style": {
+                "useNodejsImportProtocol": "off"
+            }
         }
     },
     "assist": {
