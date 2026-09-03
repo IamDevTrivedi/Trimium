@@ -6,7 +6,12 @@
         "useIgnoreFile": true
     },
     "files": {
-        "ignoreUnknown": true
+        "ignoreUnknown": true,
+        "experimentalScannerIgnores": [
+            "**/*.md",
+            "docs/**",
+            ".agents/**"
+        ]
     },
     "formatter": {
         "enabled": true,
