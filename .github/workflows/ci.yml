@@ -174,6 +174,7 @@ jobs:
             cp -r "$SERVER_DIR/src" "$RELEASE_DIR/src"
             cp "$SERVER_DIR/bun.lock" "$RELEASE_DIR/bun.lock" 
             cp "$SERVER_DIR/package.json" "$RELEASE_DIR/package.json"
+            cp "$SERVER_DIR/tsconfig.json" "$RELEASE_DIR/tsconfig.json"
 
             ln -sfn "$SHARED_DIR/.env.production" "$RELEASE_DIR/.env.production"
 
