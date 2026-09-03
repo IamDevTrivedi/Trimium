@@ -6,10 +6,10 @@
     "private": true,
     "license": "MIT",
     "scripts": {
-        "format": "prettier --write \"**/*.{js,ts,tsx,json,css,md}\"",
-        "format:check": "prettier --check \"**/*.{js,ts,tsx,json,css,md}\"",
-        "lint": "eslint . --ext .js,.ts,.tsx",
-        "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
+        "format": "biome format --write .",
+        "format:check": "biome format .",
+        "lint": "biome lint .",
+        "lint:fix": "biome lint --write .",
         "check": "bun run lint && bun run format:check",
         "prepare": "husky",
         "dev": "bun run ./scripts/dev.js",
@@ -31,12 +31,8 @@
     "homepage": "https://github.com/IamDevTrivedi/Trimium#readme",
     "packageManager": "bun@1.4.0",
     "devDependencies": {
-        "@eslint/js": "^9.39.4",
-        "eslint": "^10.8.1",
-        "globals": "^16.5.0",
+        "@biomejs/biome": "2.5.11",
         "husky": "^9.1.7",
-        "jiti": "^2.7.0",
-        "prettier": "^3.9.6",
-        "typescript-eslint": "^8.67.0"
+        "jiti": "^2.7.0"
     }
 }
