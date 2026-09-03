@@ -7,9 +7,9 @@ from diagrams.programming.language import TypeScript
 from diagrams.onprem.database import MongoDB
 from diagrams.onprem.inmemory import Redis
 from diagrams.onprem.client import User
+from diagrams.aws.engagement import SimpleEmailServiceSes
 from diagrams.saas.cdn import Cloudflare
 from diagrams.saas.media import Cloudinary
-from diagrams.saas.communication import Twilio
 from diagrams.generic.database import SQL
 import os
 
@@ -123,7 +123,7 @@ def gen(dark: bool):
         # ---- External Services ----
         with Cluster("External Services", graph_attr=cattr("red")):
             cloudinary = Cloudinary("Cloudinary")
-            brevo = Twilio("Brevo\n(Email)")
+            ses = SimpleEmailServiceSes("Email\nvia SMTP")
             maxmind = SQL("MaxMind\nGeoIP")
             turnstile = Cloudflare("Turnstile\nCAPTCHA")
 
@@ -136,7 +136,7 @@ def gen(dark: bool):
         api >> e(label="  Read / Write  ") >> mongo
         api >> e(label="  Cache & Queues  ") >> redis
         api >> e(label="  Image Uploads  ") >> cloudinary
-        api >> e(label="  Email  ") >> brevo
+        api >> e(label="  Email  ") >> ses
         api >> e(label="  GeoIP Lookup  ") >> maxmind
         # CAPTCHA verification is a server-side call the API makes to
         # Cloudflare, mirroring the other External Service calls above
