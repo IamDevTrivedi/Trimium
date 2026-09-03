@@ -29,8 +29,11 @@ export const config = {
     REDIS_HOST: process.env.REDIS_HOST as string,
     REDIS_PORT: Number(process.env.REDIS_PORT),
 
+    SMTP_HOST: process.env.SMTP_HOST as string,
+    SMTP_PORT: Number(process.env.SMTP_PORT),
+    SMTP_USER: process.env.SMTP_USER as string,
+    SMTP_PASS: process.env.SMTP_PASS as string,
     SENDER_EMAIL: process.env.SENDER_EMAIL as string,
-    BREVO_API_KEY: process.env.BREVO_API_KEY as string,
 
     JWT_KEY: process.env.JWT_KEY as string,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY as string,
