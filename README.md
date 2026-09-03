@@ -7,10 +7,10 @@
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 [![CI/CD](https://img.shields.io/github/actions/workflow/status/IamDevTrivedi/Trimium/ci.yml?style=flat-square&label=CI%2FCD)](https://github.com/IamDevTrivedi/Trimium/actions)
 <br>
-![pnpm](https://img.shields.io/badge/pnpm-10.28.0-F69220?style=flat-square&logo=pnpm)
+![Bun](https://img.shields.io/badge/Bun-1.4.0-black?style=flat-square&logo=bun)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=next.js)
 ![Express](https://img.shields.io/badge/Express-5-000000?style=flat-square&logo=express)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
+![TypeScript](https://img.shields.io/badge/TypeScript-7-3178C6?style=flat-square&logo=typescript)
 ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss)
@@ -41,7 +41,7 @@ A professional URL shortener and link management platform. Create short URLs, ge
 | ------------------------------ | --------------------------------------- |
 | **Next.js 16** (App Router)    | React framework                         |
 | **React 19**                   | UI library                              |
-| **TypeScript**                 | Type safety                             |
+| **TypeScript 7**               | Type safety                             |
 | **Tailwind CSS 4**             | Utility-first CSS                       |
 | **shadcn/ui** + @base-ui/react | Accessible component library            |
 | **Zustand**                    | State management                        |
@@ -54,16 +54,16 @@ A professional URL shortener and link management platform. Create short URLs, ge
 | Technology                                | Purpose                                         |
 | ----------------------------------------- | ----------------------------------------------- |
 | **Express 5**                             | Web framework                                   |
-| **TypeScript**                            | Type safety                                     |
+| **TypeScript 7**                          | Type safety                                     |
 | **MongoDB + Mongoose**                    | Database & ODM                                  |
-| **Redis** (ioredis)                       | Caching, rate limiting, job queues              |
+| **Redis** (native)                        | Caching, rate limiting, job queues              |
 | **BullMQ**                                | Background job queues (email, activity updates) |
-| **JWT**                                   | Authentication tokens with token versioning     |
+| **JWT**                                   | Authentication tokens with token versioning      |
 | **Argon2**                                | Password hashing                                |
-| **Zod**                                   | Request & environment validation                |
-| **Brevo API** (Sendinblue)                | Transactional email delivery                    |
+| **Zod**                                   | Request & environment validation                 |
+| **Nodemailer** (SMTP)                    | Transactional email delivery                    |
 | **Cloudinary**                            | Image & file upload management                  |
-| **MaxMind GeoIP**                         | IP geolocation (country, city)                  |
+| **MaxMind GeoIP**                         | IP geolocation (country, city)                   |
 | **ua-parser-js**                          | User-agent parsing                              |
 | **Pino**                                  | Structured logging                              |
 | **express-rate-limit + rate-limit-redis** | Rate limiting                                   |
@@ -72,25 +72,23 @@ A professional URL shortener and link management platform. Create short URLs, ge
 
 | Technology            | Purpose                                  |
 | --------------------- | ---------------------------------------- |
-| **pnpm**              | package manager                          |
-| **Turbopack**         | Next.js bundler                          |
-| **Husky**             | Git hooks (pre-push lint + format check) |
-| **ESLint + Prettier** | Code quality & formatting                |
-| **GitHub Actions**    | CI/CD (Vercel client + VPS server)       |
+| **Bun**               | Package manager and runtime              |
+| **Biome**             | Linter and formatter  |
+| **Husky**             | Git hooks (pre-commit quality checks)    |
+| **GitHub Actions**    | CI/CD (Vercel client + VPS server)      |
 | **Dependabot**        | Automated dependency updates             |
 | **PM2**               | Production server process manager        |
-| **Concurrently**      | Parallel dev script runner               |
 
 ## Architecture
 
-Trimium follows a **monorepo structure** with two packages managed by pnpm workspaces:
+Trimium follows a **monorepo structure** with two packages managed by Bun workspaces:
 
 ```
 Trimium/
 ├── client/          # Next.js frontend (App Router, route groups)
 ├── server/          # Express backend (feature-based modules)
 ├── scripts/         # Utility scripts (install, clean, reset, GeoIP update)
-├── docs/            # Architecture and setup documentation
+├── docs/            | Architecture and setup documentation
 └── .github/         # CI/CD workflow
 ```
 
@@ -109,8 +107,7 @@ The server uses a **feature-based modular architecture** — each domain (`auth`
 
 ### Prerequisites
 
-- **Node.js** >= 20
-- **pnpm** 10.28+
+- **Bun** >= 1.4.0 — [Installation guide](https://bun.sh)
 - **MongoDB** instance (local or Atlas)
 - **Redis** instance (local or cloud)
 - **MaxMind GeoLite2** license key (for geo-analytics)

@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-pnpm monorepo with two packages: `client/` (Next.js 16) and `server/` (Express 5).
+Bun monorepo with two packages: `client/` (Next.js 16) and `server/` (Express 5).
 Live at **trimium.vercel.app**.
 
 ---
@@ -11,10 +11,12 @@ Live at **trimium.vercel.app**.
 
 | Layer      | Technology                                                                 |
 | ---------- | -------------------------------------------------------------------------- |
-| **Client** | Next.js 16 (App Router), React 19, TypeScript 5, Tailwind CSS 4, shadcn/ui |
-| **Server** | Express 5, TypeScript 5, MongoDB + Mongoose, Redis (ioredis), BullMQ       |
+| **Client** | Next.js 16 (App Router), React 19, TypeScript 7, Tailwind CSS 4, shadcn/ui |
+| **Server** | Express 5, TypeScript 7, MongoDB + Mongoose, Redis (native), BullMQ       |
 | **Auth**   | JWT (cookie-based) with token versioning, Argon2 hashing                   |
 | **Infra**  | Vercel (client deploy), VPS + PM2 (server deploy), GitHub Actions CI/CD    |
+| **Package Manager** | Bun 1.4.0                                                     |
+| **Linting & Formatting** | Biome                            |
 
 ---
 
@@ -48,6 +50,16 @@ scripts/             Utility scripts (install, clean, reset, GeoIP updater)
 ---
 
 ## Key Architecture Patterns
+
+### Server Runs Directly from Source
+
+The server uses **no build step** in production. It runs directly via:
+
+```bash
+bun --env-file=.env.production run src/index.ts
+```
+
+The CI deploys `src/` and `bun.lock` to the VPS, and Bun handles TypeScript execution natively.
 
 ### API Response Format
 
@@ -105,7 +117,7 @@ BullMQ queues (email + activity updates), processed by workers.
 | **Models**        | One file per model in `server/src/models/`               |
 | **UI components** | shadcn/ui in `client/src/components/ui/`                 |
 | **Styling**       | Tailwind + `cn()` from `client/src/lib/utils.ts`         |
-| **Formatting**    | Prettier (tabWidth 4, singleQuote false, printWidth 100) |
+| **Formatting**    | Biome (tabWidth 4, doubleQuote true, semicolons always, printWidth 100) |
 
 ---
 
@@ -115,50 +127,56 @@ BullMQ queues (email + activity updates), processed by workers.
 
 | Command               | Description                        |
 | --------------------- | ---------------------------------- |
-| `pnpm dev`            | Run client + server concurrently   |
-| `pnpm lint`           | ESLint check                       |
-| `pnpm lint:fix`       | Auto-fix ESLint issues             |
-| `pnpm format`         | Auto-format with Prettier          |
-| `pnpm format:check`   | Prettier check                     |
-| `pnpm check`          | lint + format:check combined       |
-| `pnpm install:all`    | Install all workspace dependencies |
-| `pnpm download:geoip` | Download GeoIP database            |
+| `bun run dev`         | Run client + server concurrently   |
+| `bun run lint:check`  | Biome lint check                  |
+| `bun run lint`        | Biome lint auto-fix               |
+| `bun run format:check` | Biome format check                |
+| `bun run format`      | Biome format auto-fix             |
+| `bun run check`       | lint:check + format:check         |
+| `bun run install:all` | Install all workspace dependencies |
+| `bun run download:geoip` | Download GeoIP database           |
+| `bun run clean:all`   | Clean node_modules and build dirs |
+| `bun run reset:all`   | clean:all + install:all           |
 
 ### Server (run from `server/`)
 
-| Command      | Description                                           |
-| ------------ | ----------------------------------------------------- |
-| `pnpm build` | TypeScript compile + `tsc-alias` (type check + build) |
-| `pnpm dev`   | Dev watch mode with `tsx`                             |
-| `pnpm start` | Production start from `dist/`                         |
+| Command      | Description                                              |
+| ------------ | --------------------------------------------------------- |
+| `bun run dev`   | Bun dev mode with --env-file (watches for changes)      |
+| `bun run start` | Bun production start with --env-file                     |
+| `bun run typecheck` | TypeScript type checking (`tsc --noEmit`)            |
+
+> **Note:** The server has no `build` script. It runs directly from `src/` via Bun.
 
 ### Client (run from `client/`)
 
 | Command      | Description               |
 | ------------ | ------------------------- |
-| `pnpm build` | Next.js build to `.next/` |
-| `pnpm dev`   | Next.js dev server        |
-| `pnpm start` | Production start          |
+| `bun run build`   | Next.js build to `.next/` |
+| `bun run dev`     | Next.js dev server        |
+| `bun run start`   | Production start          |
+| `bun run preview` | Build + serve on port 3001 |
 
 ---
 
 ## Critical Rules
 
-- NEVER manually edit or update `docs/DIRECTORY_STRUCTURE.md` — it is auto-generated and kept in sync by the `.github/workflows/update-directory-structure.yml` workflow (scheduled daily). Any directory-structure changes will be committed automatically by that workflow
-- NEVER make git commits, git pushes, or GitHub PR changes without explicit user permission or confirmation
-- Always ask before committing, pushing, or creating/modifying pull requests
-- When starting work on a NEW feature, always ASK the user whether to create a new branch (suggest a name like `feat/XYZ`) or continue working on the current branch — never assume
-- Builds are STRICTLY verified before considering any change complete:
-    - Client build: run `pnpm run build` from the `client/` directory
-    - Server build: run `pnpm run build` from the `server/` directory
-- Quality gates are STRICTLY enforced at the repository root:
-    - Lint: run `pnpm run lint`
-    - Prettier: run `pnpm run format:check`
+- **Server has no build step** — it runs from `src/` directly via Bun. Do not assume a `dist/` output exists.
+- NEVER manually edit or update `docs/DIRECTORY_STRUCTURE.md` — it is auto-generated and kept in sync by the `.github/workflows/update-directory-structure.yml` workflow (scheduled daily at 06:00 UTC).
+- NEVER make git commits, git pushes, or GitHub PR changes without explicit user permission or confirmation.
+- Always ask before committing, pushing, or creating/modifying pull requests.
+- When starting work on a NEW feature, always ASK the user whether to create a new branch (suggest a name like `feat/XYZ`) or continue working on the current branch — never assume.
+- Quality gates are STRICTLY enforced at the repository root via Husky pre-commit hook:
+    - Lint: `bun run lint:check`
+    - Format: `bun run format:check`
+    - Both run together: `bun run check`
 
 ## Important Notes
 
-- Husky pre-push hook runs `pnpm check` automatically
+- Husky pre-commit hook runs `bun run check` automatically.
 - Client build output: `client/.next/`
-- Server build output: `server/dist/`
-- Server env files (`.env.development`, `.env.production`) are gitignored; use `.env.example` as template
-- Client env file (`.env`) are gitignored; use `.env.example` as template
+- Server runs directly from: `server/src/`
+- Server env files (`.env.development`, `.env.production`) are gitignored; use `.env.example` as template.
+- Client env file (`.env`) is gitignored; use `.env.example` as template.
+- The project uses **Biome** for both linting and formatting.
+- Linting is disabled for `client/**`

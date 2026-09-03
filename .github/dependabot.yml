@@ -1,6 +1,6 @@
 version: 2
 updates:
-    - package-ecosystem: npm
+    - package-ecosystem: bun
       directory: /
       schedule:
           interval: monthly
@@ -12,14 +12,14 @@ updates:
       commit-message:
           prefix: deps
       groups:
-          root-npm-minor-and-patch:
+          root-bun-minor-and-patch:
               patterns:
                   - "*"
               update-types:
                   - minor
                   - patch
 
-    - package-ecosystem: npm
+    - package-ecosystem: bun
       directory: /client
       schedule:
           interval: monthly
@@ -32,14 +32,14 @@ updates:
       commit-message:
           prefix: deps
       groups:
-          client-npm-minor-and-patch:
+          client-bun-minor-and-patch:
               patterns:
                   - "*"
               update-types:
                   - minor
                   - patch
 
-    - package-ecosystem: npm
+    - package-ecosystem: bun
       directory: /server
       schedule:
           interval: monthly
@@ -52,7 +52,7 @@ updates:
       commit-message:
           prefix: deps
       groups:
-          server-npm-minor-and-patch:
+          server-bun-minor-and-patch:
               patterns:
                   - "*"
               update-types:

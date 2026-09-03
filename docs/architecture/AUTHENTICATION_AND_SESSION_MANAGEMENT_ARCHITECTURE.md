@@ -35,7 +35,7 @@ flowchart LR
         J --> L[Activity Worker]
     end
 
-    K --> M[Brevo API]
+    K --> M[SMTP Server]
     L --> F
 ```
 

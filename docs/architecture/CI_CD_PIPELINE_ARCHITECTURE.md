@@ -10,7 +10,7 @@ The pipeline is built around these design principles:
 
 - **Branch-gated delivery** from a single production branch (`main`)
 - **Skip gate** via `SKIP_ACTIONS` variable to pause pipeline execution when needed
-- **Mandatory quality gates** (lint + format) before any deployment path is evaluated
+- **Mandatory quality gates** (Biome lint + format) before any deployment path is evaluated
 - **Monorepo-aware deployment selection** using path filtering via `dorny/paths-filter`
 - **Split deployment strategy** by target platform:
     - client → Vercel prebuilt production deploy
@@ -23,23 +23,23 @@ flowchart LR
     B -- "true (skip)" --> Z[Pipeline skipped]
     B -- "false (proceed)" --> C[CI/CD Pipeline]
 
-    C --> D[lint job]
-    C --> E[prettier job]
+    C --> D[check job]
 
-    D --> F[detect-changes job]
-    E --> F
+    D --> E[detect-changes job]
 
-    F --> G{client paths changed?}
-    F --> H{server paths changed and DEPLOY_TO_VPS true?}
+    E --> F{client paths changed?}
+    E --> G{server paths changed?}
 
-    G -- yes --> I[deploy-client]
-    G -- no --> J[skip client deploy]
+    F -- yes --> H[typecheck job]
+    F -- no --> I[skip client deploy]
 
-    H -- yes --> K[deploy-server]
-    H -- no --> L[skip server deploy]
+    H --> J[deploy-client]
+    J --> K[(Vercel Production)]
 
-    I --> M[(Vercel Production)]
-    K --> N[(VPS + PM2)]
+    G -- yes --> L[deploy-server]
+    G -- no --> M[skip server deploy]
+
+    L --> N[(VPS + PM2)]
 ```
 
 ---
@@ -48,22 +48,21 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    A[gate] --> B[lint]
-    A --> C[prettier]
+    A[gate] --> B[check]
 
-    B --> D[detect-changes]
-    C --> D
+    B --> C[detect-changes]
 
-    D --> E[deploy-client]
-    D --> F[deploy-server]
+    C --> D[typecheck]
+    C --> E[deploy-client]
 ```
 
 Dependency semantics:
 
 - `gate` runs first and conditionally gates all downstream jobs
-- `lint` and `prettier` run in parallel after `gate`
-- `detect-changes` waits for both quality jobs
-- Deployment jobs wait for `detect-changes` and only run if their path conditions are met
+- `check` runs Biome linting and formatting verification
+- `detect-changes` waits for `check` to pass before computing deployment scope
+- `typecheck` runs only when server paths changed (concurrent with `deploy-client`)
+- `deploy-client` and `deploy-server` both run after `detect-changes` (concurrent)
 
 ---
 
@@ -74,20 +73,21 @@ flowchart TD
     A[Push to main] --> B[gate job]
     B --> C{SKIP_ACTIONS == true?}
     C -- yes --> D[Pipeline skipped]
-    C -- no --> E[Run lint and prettier in parallel]
+    C -- no --> E[Run biome check (lint + format)]
 
-    E --> F{Both passed?}
+    E --> F{Check passed?}
     F -- no --> G[Pipeline fails before deployment]
     F -- yes --> H[Run detect-changes]
 
     H --> I{client output == true?}
-    H --> J{server output == true and DEPLOY_TO_VPS == true?}
+    H --> J{server output == true?}
 
-    I -- yes --> K[Run deploy-client]
+    I -- yes --> K[Run typecheck]
     I -- no --> L[Client deploy skipped]
 
-    J -- yes --> M[Run deploy-server]
-    J -- no --> N[Server deploy skipped]
+    K --> M[Run deploy-client]
+    J -- yes --> N[Run deploy-server]
+    J -- no --> O[Server deploy skipped]
 ```
 
 ---
@@ -115,11 +115,11 @@ Failure behavior:
 
 - If `SKIP_ACTIONS` is `'true'`, the gate is skipped and no downstream jobs execute.
 
-### `lint` Job
+### `check` Job
 
 Purpose:
 
-- Enforce static code quality before any release logic.
+- Enforce code quality (linting and formatting) before any release logic.
 
 | Property | Value           |
 | -------- | --------------- |
@@ -129,39 +129,14 @@ Purpose:
 Execution steps:
 
 1. Checkout repository state for the pushed commit
-2. Install pnpm tooling (`pnpm/action-setup@v5`)
-3. Install Node.js 22 with pnpm cache enabled
-4. Install dependencies at repository root with lockfile strictness (`--frozen-lockfile`)
-5. Execute `pnpm run lint`
+2. Setup Bun (`oven-sh/setup-bun@v2`, version `1.4.0`)
+3. Install root dependencies with frozen lockfile (`bun install --frozen-lockfile`)
+4. Execute `bun run check` — runs `biome lint .` and `biome format --check .` in sequence
 
 Failure behavior:
 
 - Any non-zero exit fails the job
-- `detect-changes`, `deploy-client`, and `deploy-server` are blocked
-
-### `prettier` Job
-
-Purpose:
-
-- Enforce formatting consistency as a second quality gate.
-
-| Property | Value           |
-| -------- | --------------- |
-| Runner   | `ubuntu-latest` |
-| Needs    | `gate`          |
-
-Execution steps:
-
-1. Checkout repository
-2. Setup pnpm
-3. Setup Node.js 22 with pnpm cache
-4. Install root dependencies with frozen lockfile
-5. Run `pnpm run format:check`
-
-Failure behavior:
-
-- Non-zero format check fails the job
-- Downstream `detect-changes` and deployment jobs do not run
+- `detect-changes`, `typecheck`, `deploy-client`, and `deploy-server` are blocked
 
 ### `detect-changes` Job
 
@@ -172,7 +147,7 @@ Purpose:
 | Property | Value              |
 | -------- | ------------------ |
 | Runner   | `ubuntu-latest`    |
-| Needs    | `lint`, `prettier` |
+| Needs    | `check`            |
 
 Execution steps:
 
@@ -187,7 +162,30 @@ Output contract:
 | Output   | Meaning                              | Used by                   |
 | -------- | ------------------------------------ | ------------------------- |
 | `client` | Whether client-related paths changed | `deploy-client` condition |
-| `server` | Whether server-related paths changed | `deploy-server` condition |
+| `server` | Whether server-related paths changed | `deploy-server` + `typecheck` conditions |
+
+### `typecheck` Job
+
+Purpose:
+
+- Run TypeScript type checking on the server when server paths have changed.
+
+| Property  | Value                                               |
+| --------- | --------------------------------------------------- |
+| Runner    | `ubuntu-latest`                                     |
+| Needs     | `detect-changes`                                    |
+| Condition | `needs.detect-changes.outputs.server == 'true'`      |
+
+Execution steps:
+
+1. Checkout repository
+2. Setup Bun (`oven-sh/setup-bun@v2`, version `1.4.0`)
+3. Install server dependencies with frozen lockfile (`bun install --frozen-lockfile --ignore-scripts`)
+4. Run `bun run typecheck` (`tsc --noEmit`)
+
+Failure behavior:
+
+- Type errors fail the job and block server deployment.
 
 ### `deploy-client` Job
 
@@ -204,8 +202,8 @@ Purpose:
 Execution steps:
 
 1. Checkout repository
-2. Setup pnpm and Node.js 22
-3. Install Vercel CLI globally
+2. Setup Bun
+3. Install Vercel CLI globally via Bun (`bun add -g vercel`)
 4. Pull production environment metadata using Vercel token and org/project IDs
 5. Build prebuilt output with `vercel build --prod`
 6. Deploy prebuilt artifact with `vercel deploy --prebuilt --prod`
@@ -229,17 +227,20 @@ Purpose:
 
 - Deploy backend changes to a VPS with health-validated release switching.
 
-| Property  | Value                                                                           |
-| --------- | ------------------------------------------------------------------------------- |
-| Runner    | `ubuntu-latest`                                                                 |
-| Needs     | `detect-changes`                                                                |
-| Condition | `needs.detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_VPS == 'true'` |
+| Property  | Value                                           |
+| --------- | ----------------------------------------------- |
+| Runner    | `ubuntu-latest`                                 |
+| Needs     | `detect-changes`                                |
+| Condition | `needs.detect-changes.outputs.server == 'true'` |
 
 Execution model:
 
 - GitHub Actions triggers a single SSH session using `appleboy/ssh-action@v1.0.3`
 - Environment variables are passed via the `envs` parameter to make them available in the remote shell
-- The remote host performs the full deployment lifecycle: pull, install, build, release creation, symlink switch, process reload, health check, optional rollback, and cleanup
+- The remote host performs the full deployment lifecycle: pull, install, source sync, release creation, symlink switch, process reload, health check, optional rollback, and cleanup
+
+> [!NOTE]
+> Unlike the old pipeline, there is **no `DEPLOY_TO_VPS` gate**. Server deployment is automatic whenever server paths change.
 
 Environment variables passed to the remote session:
 
@@ -254,7 +255,7 @@ Environment variables passed to the remote session:
 | `HEALTH_RETRY_COUNT`    | `10`                                  |
 | `HEALTH_RETRY_INTERVAL` | `5` (seconds)                         |
 | `PM2_APP_NAME`          | `trimium-api`                         |
-| `MAX_RELEASES_TO_KEEP`  | `54`                                  |
+| `MAX_RELEASES_TO_KEEP`  | `5`                                   |
 
 ---
 
@@ -268,7 +269,6 @@ Environment variables passed to the remote session:
 
 ### 2. Environment Preparation
 
-- Load bash profile and nvm (`source ~/.nvm/nvm.sh`)
 - Capture previous release before any changes occur by finding the last directory in `$RELEASES_DIR` by sort order
 
 ### 3. Source Synchronization
@@ -276,22 +276,25 @@ Environment variables passed to the remote session:
 - `git pull origin main`
 - Explicit guard: abort deployment if pull fails
 
-### 4. Dependency Installation and Build
+### 4. Dependency Installation
 
-- Install root dependencies with frozen lockfile
-- Install server dependencies with frozen lockfile
-- Build server with `pnpm run build`
-- Download GeoIP database via `pnpm run download:geoip`
+- Install production dependencies with `bun install --production --ignore-scripts`
+- Download GeoIP database via `bun run download:geoip` from project root
 
 ### 5. Release Creation
 
 - Capture `GIT_HASH` and `EPOCH` timestamp
 - Create release identifier: `{EPOCH}_{GIT_HASH}`
 - Create release directory: `$RELEASES_DIR/$RELEASE_ID`
-- Move compiled `dist/` into the release directory
+- Copy to the release directory:
+    - `src/` directory
+    - `bun.lock`
+    - `package.json`
 - Symlink shared resources into the release:
-    - `$SHARED_DIR/logs` → `$RELEASE_DIR/logs`
     - `$SHARED_DIR/.env.production` → `$RELEASE_DIR/.env.production`
+
+> [!NOTE]
+> The server runs **directly from `src/`** via Bun — no TypeScript compilation step.
 
 ### 6. Atomic Traffic Switch
 
@@ -329,11 +332,11 @@ flowchart LR
     A["server/"] --> B["releases/{epoch}_{commit_hash}/"]
     A --> C["current (symlink)"]
     A --> D["shared/.env.production"]
-    A --> E["shared/logs"]
 
-    B --> F["dist/"]
-    B --> G[".env.production (symlink to shared)"]
-    B --> H["logs (symlink to shared)"]
+    B --> E["src/ (copied)"]
+    B --> F["bun.lock (copied)"]
+    B --> G["package.json (copied)"]
+    B --> H[".env.production (symlink to shared)"]
 
     C --> B
 ```
@@ -341,6 +344,7 @@ flowchart LR
 This is a symlink-based immutable release layout:
 
 - Code artifacts are versioned by timestamped commit hash directories
+- The server runs directly from `src/` via Bun (no build step)
 - Runtime pointer is a single mutable symlink (`current`)
 - Shared mutable state (env, logs) is separated from versioned code
 
@@ -376,7 +380,7 @@ sequenceDiagram
     GH->>VPS: SSH deploy script (with envs)
     VPS->>FS: Capture previous release dir
     VPS->>FS: git pull origin main
-    VPS->>FS: Install + build + create releases/{id}
+    VPS->>FS: bun install + prepare releases/{id}
     VPS->>FS: Point current -> new release
     VPS->>PM2: reload trimium-api
 
@@ -409,14 +413,19 @@ stateDiagram-v2
     Gate --> QualityChecks: SKIP_ACTIONS false
     Gate --> [*]: SKIP_ACTIONS true
 
-    QualityChecks --> DetectChanges: lint + prettier pass
-    QualityChecks --> [*]: lint or prettier fail
+    QualityChecks --> DetectChanges: biome check passes
+    QualityChecks --> [*]: biome check fails
 
-    DetectChanges --> BuildAndPrepare: client or server changed
+    DetectChanges --> TypecheckAndDeploy: server changed
+    DetectChanges --> DeployClientOnly: client changed only
     DetectChanges --> [*]: no changes detected
 
-    BuildAndPrepare --> SwitchToNewRelease
-    SwitchToNewRelease --> HealthValidation
+    DeployClientOnly --> DeployClient
+    DeployClient --> [*]
+
+    TypecheckAndDeploy --> Typecheck
+    Typecheck --> DeployServer
+    DeployServer --> HealthValidation
 
     HealthValidation --> Success: health == 200
     HealthValidation --> Rollback: all retries failed
@@ -437,14 +446,14 @@ stateDiagram-v2
 
 ## Conditions and Routing Matrix
 
-| Job              | Condition                                                                 | Result if false                   |
-| ---------------- | ------------------------------------------------------------------------- | --------------------------------- |
-| `gate`           | Always runs (implicit)                                                    | Not applicable                    |
-| `lint`           | Needs `gate`                                                              | Skipped if gate skipped           |
-| `prettier`       | Needs `gate`                                                              | Skipped if gate skipped           |
-| `detect-changes` | Needs `lint` and `prettier`                                               | Pipeline stops before deployments |
-| `deploy-client`  | `detect-changes.outputs.client == 'true'`                                 | Client deploy skipped             |
-| `deploy-server`  | `detect-changes.outputs.server == 'true' && vars.DEPLOY_TO_VPS == 'true'` | Server deploy skipped             |
+| Job              | Condition                                                   | Result if false                   |
+| ---------------- | ----------------------------------------------------------- | --------------------------------- |
+| `gate`           | Always runs (implicit)                                      | Not applicable                    |
+| `check`          | Needs `gate`                                                | Skipped if gate skipped           |
+| `detect-changes` | Needs `check`                                               | Pipeline stops before deployments |
+| `typecheck`      | `detect-changes.outputs.server == 'true'`                  | Skipped if no server changes      |
+| `deploy-client`  | `detect-changes.outputs.client == 'true'`                   | Client deploy skipped             |
+| `deploy-server`  | `detect-changes.outputs.server == 'true'`                   | Server deploy skipped             |
 
 ---
 
@@ -452,20 +461,19 @@ stateDiagram-v2
 
 | Scope           | Name                | Purpose                                     |
 | --------------- | ------------------- | ------------------------------------------- |
-| GitHub Secret   | `VERCEL_TOKEN`      | Authenticate Vercel CLI actions             |
+| GitHub Secret   | `VERCEL_TOKEN`      | Authenticate Vercel CLI actions              |
 | GitHub Secret   | `VERCEL_ORG_ID`     | Select Vercel org context                   |
 | GitHub Secret   | `VERCEL_PROJECT_ID` | Select Vercel project context               |
 | GitHub Secret   | `SSH_HOST`          | SSH target host                             |
 | GitHub Secret   | `SSH_USER`          | SSH login user                              |
 | GitHub Secret   | `SSH_PRIVATE_KEY`   | SSH private key for remote execution        |
-| GitHub Variable | `DEPLOY_TO_VPS`     | Feature flag to enable/disable server CD    |
 | GitHub Variable | `SKIP_ACTIONS`      | Emergency brake to skip the entire pipeline |
 
 Trust boundary notes:
 
 - GitHub-hosted runners execute CI logic
 - Deployment credentials are injected at runtime from GitHub secrets
-- Server deployment trusts the remote VPS environment (nvm, pnpm, PM2, filesystem layout)
+- Server deployment trusts the remote VPS environment (Bun, PM2, filesystem layout)
 - SSH environment variables (`PROJECT_DIR`, `SERVER_DIR`, etc.) are declared inline in the workflow, not stored as secrets
 
 ---
@@ -474,7 +482,8 @@ Trust boundary notes:
 
 | Failure Domain                           | Recovery                                                              |
 | ---------------------------------------- | --------------------------------------------------------------------- |
-| Quality gate failure (lint/format)       | Blocks all deployments; preserves production                          |
+| Quality gate failure (biome check)       | Blocks all deployments; preserves production                          |
+| Typecheck failure                        | Blocks server deployment; client deploy may still run                  |
 | Client deploy failure                    | Isolated to Vercel job; server deploy unaffected                      |
 | Server deploy failure (health fails)     | Automatic rollback to previous release + rollback health verification |
 | Server deploy failure (no prior release) | Exit code 2 — critical, manual intervention required                  |
@@ -488,10 +497,12 @@ Trust boundary notes:
 This pipeline demonstrates practical release engineering for a full-stack monorepo:
 
 - **Emergency skip gate** provides a way to halt all CI/CD without modifying the workflow
-- **Strong CI gates** before CD — both linting and formatting must pass
+- **Strong CI gates** before CD — Biome linting and formatting must both pass
+- **TypeScript type checking** runs as a separate gate before server deployment
 - **Change-aware deployment selection** reduces unnecessary releases for untouched surfaces
+- **Source-direct server deployment** — the server runs directly from `src/` via Bun, eliminating the build step entirely
 - **Platform-specific deployment workflows** — Vercel for frontend, VPS SSH orchestration for backend
 - **Immutable release directories** with timestamped commit hashes for traceability
 - **Atomic symlink switch** enables near-instantaneous traffic migration
 - **Health-validated rollout** with automatic rollback and rollback health verification
-- **Controlled release retention** (54 releases kept) balances history depth with disk hygiene
+- **Controlled release retention** (5 releases kept) balances history depth with disk hygiene
