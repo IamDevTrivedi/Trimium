@@ -8,15 +8,17 @@ A comprehensive guide to set up and run the Trimium application locally.
 
 Ensure the following tools and services are installed before proceeding:
 
-| Requirement        | Version | Notes                                |
-| ------------------ | ------- | ------------------------------------ |
-| Bun                | 1.4.0+  | [Installation guide](https://bun.sh) |
-| Git                | Latest  | Required for Husky pre-commit hooks |
-| MongoDB            | Latest  | Local or cloud (e.g., MongoDB Atlas) |
-| Redis              | Latest  | Local or cloud (e.g., Redis Cloud)   |
-| MaxMind GeoLite2   | Latest  | Optional, enhances location services |
-| SMTP Email Account | Latest  | Required for transactional emails    |
-| Cloudinary account | Latest  | Required for media uploads           |
+| Requirement        | Version | Notes                                                                              |
+| ------------------ | ------- | ---------------------------------------------------------------------------------- |
+| Bun                | 1.4.0+  | [Installation guide](https://bun.sh)                                                |
+| Git                | Latest  | Required for Husky pre-commit hooks                                                |
+| Docker             | Latest  | Required to run MongoDB, Redis, and Mailpit via `server/docker-compose.yml`          |
+| Cloudinary account | Latest  | Required for media uploads                                                         |
+| SMTP Email Account | Latest  | Required for transactional emails (local dev uses Mailpit, see below)               |
+| MaxMind GeoLite2   | Latest  | Optional, enhances location services                                                |
+
+> [!NOTE]
+> MongoDB, Redis, and Mailpit (local SMTP catch-all) are provided by `server/docker-compose.yml`. Docker is the only additional infrastructure requirement — no separate MongoDB or Redis installs needed for local development.
 
 ---
 
@@ -63,6 +65,9 @@ Used by `scripts/update-geolite2.js` to download the GeoIP database.
 | Variable              | Required | Description                                                                                                                                              |
 | --------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `MAXMIND_LICENSE_KEY` | Optional | License key to download `GeoLite2-City.mmdb` automatically. Obtain from [MaxMind license page](https://www.maxmind.com/en/accounts/current/license-key). |
+
+> [!NOTE]
+> For local development, `server/.env.example` is pre-configured to match the services defined in `server/docker-compose.yml` (MongoDB, Redis, Mailpit). Copy it directly without editing.
 
 ### 3.3 Server Environment (`server/.env.development`, `server/.env.production`)
 
@@ -202,9 +207,37 @@ ls -la server/.env.development server/.env.production client/.env .env
 
 ## 5. Running the Application
 
-### Start Required Services
+### Start Required Services (Local Dev)
 
-Ensure MongoDB and Redis are running before starting the application — either locally or through a cloud provider.
+The `server/docker-compose.yml` file ships MongoDB, Redis, Mailpit (local SMTP catch-all), and their UIs. Start it before launching the app:
+
+```bash
+cd server
+docker compose up -d
+```
+
+This brings up:
+
+| Container          | Host port | Purpose                          |
+| ------------------ | --------- | -------------------------------- |
+| `mongodb-server`   | `5002`    | MongoDB (root / root)            |
+| `redis-server`     | `5001`    | Redis (`default` / `password`)   |
+| `mailpit-server`   | `5003`    | SMTP (no auth) + UI on `5004`    |
+| `mongodb-viewer`   | `5006`    | Mongo Express UI (admin / admin) |
+| `redis-insights`   | `5005`    | Redis Insight UI                 |
+
+> [!TIP]
+> Mailpit captures every email the app sends. Open http://localhost:5004 in your browser to inspect them — no real emails are sent during local dev.
+
+> [!IMPORTANT]
+> The default MongoDB image in `server/docker-compose.yml` is pinned to a version that is compatible with the host Linux kernel. If you fork this project on a newer kernel, you may need to update the image tag.
+
+To stop the stack:
+
+```bash
+cd server
+docker compose down
+```
 
 ### Start Development Server
 
@@ -218,10 +251,13 @@ This starts both the client and server concurrently using Bun's parallel executi
 
 ### Access the Application
 
-| Service | URL                                                               |
-| ------- | ----------------------------------------------------------------- |
-| Client  | http://localhost:3000                                             |
-| Server  | http://localhost:`PORT` (as defined in `server/.env.development`) |
+| Service      | URL                                                                       |
+| ------------ | ------------------------------------------------------------------------- |
+| Client       | http://localhost:3000                                                     |
+| Server       | http://localhost:`PORT` (as defined in `server/.env.development`)         |
+| Mailpit UI   | http://localhost:5004                                                     |
+| Mongo Express | http://localhost:5006                                                    |
+| Redis Insight | http://localhost:5005                                                    |
 
 ---
 
@@ -276,16 +312,18 @@ bun run prepare
 
 ## Troubleshooting
 
-| Issue                             | Solution                                                              |
-| --------------------------------- | --------------------------------------------------------------------- |
-| Server won't start                | Verify all required environment variables are set correctly           |
-| MongoDB connection failed         | Confirm MongoDB is running and the connection string is correct       |
-| Redis connection failed           | Confirm Redis is running and the connection details are accurate      |
-| GeoLite2 not working             | Ensure the `.mmdb` file is placed in `server/src/constants/`          |
-| Commit blocked by pre-commit hook | Run `bun run check`, fix issues, then commit again                    |
-| Husky hook not triggering        | Run `bun run prepare` and verify `core.hooksPath` returns `.husky/_` |
-| Invalid environment configuration | Start the server in dev mode and check the Zod validation output      |
-| Client cannot reach backend       | Verify `client/.env` API URLs and restart the client dev server       |
+| Issue                             | Solution                                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------------------ |
+| Server won't start                | Verify all required environment variables are set correctly                                |
+| MongoDB connection failed         | Confirm the dev stack is running: `cd server && docker compose ps`                         |
+| Redis connection failed           | Confirm the dev stack is running: `cd server && docker compose ps`                         |
+| MongoDB container keeps restarting | Check host kernel compatibility — see `server/docker-compose.yml` for the pinned image tag |
+| Email not arriving                | Open http://localhost:5004 (Mailpit) — local dev never sends real email                    |
+| GeoLite2 not working             | Ensure the `.mmdb` file is placed in `server/src/constants/`                               |
+| Commit blocked by pre-commit hook | Run `bun run check`, fix issues, then commit again                                         |
+| Husky hook not triggering        | Run `bun run prepare` and verify `core.hooksPath` returns `.husky/_`                       |
+| Invalid environment configuration | Start the server in dev mode and check the Zod validation output                           |
+| Client cannot reach backend       | Verify `client/.env` API URLs and restart the client dev server                            |
 
 > [!NOTE]
 > The server follows a **fail-fast** principle — it will not start if environment variables are missing or misconfigured. Validation details are printed to the console.
