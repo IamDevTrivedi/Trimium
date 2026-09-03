@@ -3,7 +3,7 @@
 
 from diagrams import Diagram, Cluster, Edge
 from diagrams.programming.framework import NextJs, React, Vercel
-from diagrams.programming.language import NodeJS
+from diagrams.programming.language import TypeScript
 from diagrams.onprem.database import MongoDB
 from diagrams.onprem.inmemory import Redis
 from diagrams.onprem.client import User
@@ -48,8 +48,8 @@ def gen(dark: bool):
         "fontsize": "28",
         "fontname": "Helvetica Bold",
         "pad": "0.3",
-        "nodesep": "0.8",
-        "ranksep": "1.2",
+        "nodesep": "0.7",
+        "ranksep": "1.0",
         "dpi": "150",
         "label": "Trimium System Architecture\n\n",
         "labelloc": "t",
@@ -99,10 +99,13 @@ def gen(dark: bool):
         e = lambda **kw: Edge(color=edge_color, **kw)
 
         # ---- Client Layer ----
+        # Browser is the node that carries the edge down to Vercel, so it is
+        # declared in the middle of the row -> keeps it centred over the
+        # Vercel / API / Data spine instead of drifting to one side.
         with Cluster("Client Layer", graph_attr=cattr("blue")):
-            nextjs = NextJs("Next.js 16")
             react = React("React 19")
             browser = User("Browser")
+            nextjs = NextJs("Next.js 16")
 
         # ---- CDN / Edge ----
         with Cluster("CDN / Edge", graph_attr=cattr("yellow")):
@@ -110,7 +113,7 @@ def gen(dark: bool):
 
         # ---- API Layer ----
         with Cluster("API Layer", graph_attr=cattr("green")):
-            api = NodeJS("Express API")
+            api = TypeScript("Bun + Express API")
 
         # ---- Data Layer ----
         with Cluster("Data Layer", graph_attr=cattr("cyan")):
@@ -124,20 +127,21 @@ def gen(dark: bool):
             maxmind = SQL("MaxMind\nGeoIP")
             turnstile = Cloudflare("Turnstile\nCAPTCHA")
 
-        # ---- Edges ----
+        # ---- Main vertical spine ----
         browser >> e(label="  HTTPS  ") >> vercel
         vercel >> e(label="  API Calls  ") >> api
 
+        # ---- API fan-out (kept in one consistent left-to-right order so
+        # the elbowed edges step down evenly instead of crossing) ----
         api >> e(label="  Read / Write  ") >> mongo
         api >> e(label="  Cache & Queues  ") >> redis
         api >> e(label="  Image Uploads  ") >> cloudinary
         api >> e(label="  Email  ") >> brevo
         api >> e(label="  GeoIP Lookup  ") >> maxmind
-
-        turnstile >> e(label="  CAPTCHA Verify  ") >> browser
-
-        # Force data + external clusters side by side
-        mongo >> Edge(style="invis", color=edge_color) >> cloudinary
+        # CAPTCHA verification is a server-side call the API makes to
+        # Cloudflare, mirroring the other External Service calls above
+        # instead of a long edge that ran back up across the whole diagram.
+        api >> e(label="  CAPTCHA Verify  ") >> turnstile
 
 
 gen(dark=False)
