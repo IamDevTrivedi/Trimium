@@ -16,6 +16,7 @@ export const emailQueue = new Queue<SendEmailJobData>(QueueNames.SEND_EMAIL, {
             type: "exponential",
             delay: 3000,
         },
+        priority: 1,
     },
 });
 
