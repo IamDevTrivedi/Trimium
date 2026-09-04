@@ -10,7 +10,7 @@ import { Toast } from "./toast";
 import { InputOTPGroup, InputOTPSeparator, InputOTPSlot, InputOTP } from "./ui/input-otp";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import React from "react";
-import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { NAME, PASSWORD, USERNAME } from "@/constants/regex";
 import { backend } from "@/config/backend";
 import { useRouter } from "next/navigation";
@@ -103,7 +103,7 @@ export function CreateAccountEmail() {
                         </p>
                     )}
                     <FieldDescription>
-                        We&apos;ll send a 6-digit verification code to this email.
+                        We&apos;ll send an 8-character verification code to this email.
                     </FieldDescription>
                 </Field>
             </FieldGroup>
@@ -220,27 +220,29 @@ export function CreateAccountVerify() {
                     <div className="flex justify-center">
                         <InputOTP
                             id="otp"
-                            pattern={REGEXP_ONLY_DIGITS}
-                            maxLength={6}
+                            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                            maxLength={8}
                             value={OTP}
-                            onChange={setOTP}
+                            onChange={(v) => setOTP(v.toUpperCase())}
                             required
                         >
                             <InputOTPGroup>
                                 <InputOTPSlot index={0} className="size-10 sm:size-8" />
                                 <InputOTPSlot index={1} className="size-10 sm:size-8" />
                                 <InputOTPSlot index={2} className="size-10 sm:size-8" />
+                                <InputOTPSlot index={3} className="size-10 sm:size-8" />
                             </InputOTPGroup>
                             <InputOTPSeparator />
                             <InputOTPGroup>
-                                <InputOTPSlot index={3} className="size-10 sm:size-8" />
                                 <InputOTPSlot index={4} className="size-10 sm:size-8" />
                                 <InputOTPSlot index={5} className="size-10 sm:size-8" />
+                                <InputOTPSlot index={6} className="size-10 sm:size-8" />
+                                <InputOTPSlot index={7} className="size-10 sm:size-8" />
                             </InputOTPGroup>
                         </InputOTP>
                     </div>
                     <FieldDescription>
-                        Enter the 6-digit code we sent to your email address.
+                        Enter the 8-character code we sent to your email address.
                     </FieldDescription>
                 </Field>
             </FieldGroup>
