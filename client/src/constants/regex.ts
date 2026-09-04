@@ -13,8 +13,7 @@ export const USERNAME_NOTICE =
     "Username can contain letters, numbers, dots, and underscores, and must not contain spaces.";
 export const PASSWORD_NOTICE =
     "Password must be 8-128 characters long, include uppercase and lowercase letters, a number, a special character, and must not contain spaces.";
-export const OTP_NOTICE =
-    "OTP must be exactly 8 characters (2-9, A-Z excluding confusables) and must not contain spaces.";
+export const OTP_NOTICE = "OTP must be exactly 8 characters and must not contain spaces.";
 export const SHORTCODE_NOTICE =
     "Shortcode must be 5-20 characters long, can include letters, numbers, underscores, hyphens, and must not contain spaces.";
 export const UTC_DATE_NOTICE =
