@@ -120,7 +120,7 @@ const otpCard = (OTP: string): string => {
     return `
         <div class="tb-primary-soft" style="margin:20px 0;padding:20px;border:1px solid ${C.border};background:${C.primarySoft};border-radius:12px;text-align:center;">
             <p class="tb-primary-soft-text" style="margin:0;color:${C.primarySoftText};font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">Verification Code</p>
-            <p class="tb-otp" style="margin:12px 0 8px;color:${C.primary};font-family:${MONO_FONT_STACK};font-size:34px;font-weight:700;letter-spacing:10px;line-height:1.1;">${safeText(OTP)}</p>
+            <p class="tb-otp" style="margin:12px 0 8px;color:${C.primary};font-family:${MONO_FONT_STACK};font-size:34px;font-weight:700;letter-spacing:6px;line-height:1.1;">${safeText(OTP)}</p>
             <p class="tb-muted" style="margin:0;color:${C.muted};font-size:12px;line-height:18px;">This code expires in 5 minutes.</p>
         </div>
     `;
