@@ -8,7 +8,7 @@ import { Button } from "./ui/button";
 import { InputOTPGroup, InputOTPSeparator, InputOTPSlot, InputOTP } from "./ui/input-otp";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import React from "react";
-import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp";
 import { NAME, PASSWORD, USERNAME } from "@/constants/regex";
 import { useResetPasswordStore } from "@/store/reset-password-store";
 import { backend } from "@/config/backend";
@@ -107,7 +107,7 @@ export function ResetPasswordEmail() {
                         </p>
                     )}
                     <FieldDescription>
-                        We&apos;ll send a 6-digit Verification Code to registered email.
+                        We&apos;ll send an 8-character Verification Code to registered email.
                     </FieldDescription>
                 </Field>
             </FieldGroup>
@@ -211,10 +211,10 @@ export function ResetPasswordVerify() {
                     <div className="flex justify-center">
                         <InputOTP
                             id="otp"
-                            pattern={REGEXP_ONLY_DIGITS}
-                            maxLength={6}
+                            pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+                            maxLength={8}
                             value={OTP}
-                            onChange={setOTP}
+                            onChange={(v) => setOTP(v.toUpperCase())}
                             required
                         >
                             <InputOTPGroup>
@@ -227,11 +227,13 @@ export function ResetPasswordVerify() {
                                 <InputOTPSlot index={3} />
                                 <InputOTPSlot index={4} />
                                 <InputOTPSlot index={5} />
+                                <InputOTPSlot index={6} />
+                                <InputOTPSlot index={7} />
                             </InputOTPGroup>
                         </InputOTP>
                     </div>
                     <FieldDescription>
-                        Enter the 6-digit code we sent to your email address.
+                        Enter the 8-character code we sent to your email address.
                     </FieldDescription>
                 </Field>
             </FieldGroup>
