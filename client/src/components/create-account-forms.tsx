@@ -230,10 +230,10 @@ export function CreateAccountVerify() {
                                 <InputOTPSlot index={0} className="size-10 sm:size-8" />
                                 <InputOTPSlot index={1} className="size-10 sm:size-8" />
                                 <InputOTPSlot index={2} className="size-10 sm:size-8" />
+                                <InputOTPSlot index={3} className="size-10 sm:size-8" />
                             </InputOTPGroup>
                             <InputOTPSeparator />
                             <InputOTPGroup>
-                                <InputOTPSlot index={3} className="size-10 sm:size-8" />
                                 <InputOTPSlot index={4} className="size-10 sm:size-8" />
                                 <InputOTPSlot index={5} className="size-10 sm:size-8" />
                                 <InputOTPSlot index={6} className="size-10 sm:size-8" />
