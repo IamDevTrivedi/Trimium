@@ -108,7 +108,7 @@ const urlSchema = new mongoose.Schema(
 
             validate: {
                 validator: (v: string) => z.url().safeParse(v).success,
-                message: "Invalid URL format",
+                message: "Please enter a valid URL.",
             },
         },
 

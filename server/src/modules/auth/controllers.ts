@@ -45,7 +45,7 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message: "Please provide a valid email address.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -61,7 +61,7 @@ export const controllers = {
             if (existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "User with given email already exists",
+                    message: "An account with this email already exists. Please log in instead.",
                     statusCode: StatusCodes.CONFLICT,
                 });
             }
@@ -98,7 +98,8 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in initlising account creation",
+                message:
+                    "We couldn't start account creation right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -115,7 +116,7 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message: "Please provide a valid email and verification code.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -128,7 +129,8 @@ export const controllers = {
             if (!save) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No OTP request found for this email",
+                    message:
+                        "We couldn't find a verification code request for this email. Please request a new one.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -143,7 +145,8 @@ export const controllers = {
             if (parsedSave.status === "VERIFIED") {
                 return sendResponse(res, {
                     success: false,
-                    message: "OTP already verified for this email",
+                    message:
+                        "This verification code has already been used. Please sign in to continue.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -151,7 +154,7 @@ export const controllers = {
             if (Date.now() > parsedSave.expiresAt) {
                 return sendResponse(res, {
                     success: false,
-                    message: "OTP has expired",
+                    message: "Your verification code has expired. Please request a new one.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -163,7 +166,7 @@ export const controllers = {
                     return sendResponse(res, {
                         success: false,
                         message:
-                            "Maximum OTP verification attempts exceeded. Please request a new OTP.",
+                            "Too many failed attempts. Please request a new verification code and try again.",
                         statusCode: StatusCodes.BAD_REQUEST,
                     });
                 }
@@ -179,7 +182,7 @@ export const controllers = {
 
                 return sendResponse(res, {
                     success: false,
-                    message: "Invalid OTP",
+                    message: "The verification code you entered is incorrect. Please try again.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -202,7 +205,7 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in verifying OTP for Account Creation",
+                message: "We couldn't verify your code right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -228,7 +231,7 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message: "Please review your account details and try again.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -240,7 +243,8 @@ export const controllers = {
             if (!save) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No OTP request found for this email",
+                    message:
+                        "We couldn't find a verification code request for this email. Please request a new one.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -254,7 +258,7 @@ export const controllers = {
             if (parsedSave.status !== "VERIFIED") {
                 return sendResponse(res, {
                     success: false,
-                    message: "OTP not verified for this email",
+                    message: "Please verify your code before creating an account.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -268,7 +272,8 @@ export const controllers = {
             if (exist) {
                 return sendResponse(res, {
                     success: false,
-                    message: "User with given email or username already exists",
+                    message:
+                        "An account with this email or username already exists. Please log in instead.",
                     statusCode: StatusCodes.CONFLICT,
                 });
             }
@@ -296,7 +301,7 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in creating account",
+                message: "We couldn't create your account right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -312,7 +317,7 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message: "Please enter a valid email or username.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -331,7 +336,7 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No user found with given identity",
+                    message: "We couldn't find an account with that email or username.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -371,7 +376,7 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in sending OTP for Reset Password",
+                message: "We couldn't send the reset code right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -388,7 +393,8 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message:
+                        "Please enter a valid email or username along with your verification code.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -407,7 +413,7 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No user found with given identity",
+                    message: "We couldn't find an account with that email or username.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -417,7 +423,7 @@ export const controllers = {
             if (!save) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No OTP request found for this user",
+                    message: "No password reset request was found. Please request a new code.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -432,7 +438,8 @@ export const controllers = {
             if (parsedSave.status === "VERIFIED") {
                 return sendResponse(res, {
                     success: false,
-                    message: "OTP already verified for this user",
+                    message:
+                        "This verification code has already been used. Please sign in to continue.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -440,7 +447,7 @@ export const controllers = {
             if (Date.now() > parsedSave.expiresAt) {
                 return sendResponse(res, {
                     success: false,
-                    message: "OTP has expired",
+                    message: "Your verification code has expired. Please request a new one.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -452,7 +459,7 @@ export const controllers = {
                     return sendResponse(res, {
                         success: false,
                         message:
-                            "Maximum OTP verification attempts exceeded. Please request a new OTP.",
+                            "Too many failed attempts. Please request a new verification code and try again.",
                         statusCode: StatusCodes.BAD_REQUEST,
                     });
                 }
@@ -472,7 +479,7 @@ export const controllers = {
 
                 return sendResponse(res, {
                     success: false,
-                    message: "Invalid OTP",
+                    message: "The verification code you entered is incorrect. Please try again.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -499,7 +506,7 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in verifying OTP for Reset Password",
+                message: "We couldn't verify your code right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -518,7 +525,7 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message: "Please enter a valid email or username and a strong password.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -535,7 +542,7 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No user found with given identity",
+                    message: "We couldn't find an account with that email or username.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -545,7 +552,7 @@ export const controllers = {
             if (!save) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No OTP request found for this user",
+                    message: "No password reset request was found. Please request a new code.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -560,7 +567,7 @@ export const controllers = {
             if (parsedSave.status !== "VERIFIED") {
                 return sendResponse(res, {
                     success: false,
-                    message: "OTP not verified for this user",
+                    message: "Please verify your code before resetting your password.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -587,7 +594,8 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in setting new password for Reset Password",
+                message:
+                    "We couldn't save your new password right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -604,7 +612,7 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message: "Please enter a valid email or username and your password.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -621,7 +629,7 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No user found with given identity",
+                    message: "We couldn't find an account with that email or username.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -686,7 +694,7 @@ export const controllers = {
 
                 return sendResponse(res, {
                     success: false,
-                    message: "Invalid credentials",
+                    message: "The email or password you entered is incorrect. Please try again.",
                     statusCode: StatusCodes.UNAUTHORIZED,
                 });
             }
@@ -777,7 +785,7 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in login",
+                message: "We couldn't log you in right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -794,7 +802,8 @@ export const controllers = {
             if (!existingLogin) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No active session found for this device",
+                    message:
+                        "We couldn't find an active session for this device. Please log in again.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -820,7 +829,7 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in logging out from my device",
+                message: "We couldn't log you out right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -838,7 +847,7 @@ export const controllers = {
             if (!existingUser || !existingLogin) {
                 return sendResponse(res, {
                     success: false,
-                    message: "User not found",
+                    message: "We couldn't find your account. Please log in again.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -887,7 +896,8 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in logging out from all devices",
+                message:
+                    "We couldn't log you out from all devices right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -903,7 +913,7 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message: "Please provide a valid device session ID.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -915,7 +925,8 @@ export const controllers = {
             if (loginHistoryID === targetLoginHistoryID) {
                 return sendResponse(res, {
                     success: false,
-                    message: "Cannot logout from current device",
+                    message:
+                        "You can't log out of the device you're currently using from this page. Please use the main logout button instead.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -928,7 +939,8 @@ export const controllers = {
             if (!existingLogin) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No active session found for the specified device",
+                    message:
+                        "We couldn't find an active session for that device. It may have already been logged out.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -956,7 +968,8 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in logging out from particular device",
+                message:
+                    "We couldn't log you out from that device right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -971,7 +984,7 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "User not found",
+                    message: "We couldn't find your account. Please log in again.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -986,7 +999,8 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in fetching current user details",
+                message:
+                    "We couldn't load your account details right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -1004,7 +1018,7 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message: "Please provide a valid session ID to view login history.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -1021,7 +1035,7 @@ export const controllers = {
                 if (!loginHistory) {
                     return sendResponse(res, {
                         success: false,
-                        message: "No login history found for the given ID",
+                        message: "We couldn't find any login history for that session.",
                         statusCode: StatusCodes.NOT_FOUND,
                     });
                 }
@@ -1067,7 +1081,8 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in fetching login history",
+                message:
+                    "We couldn't load your login history right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -1083,7 +1098,7 @@ export const controllers = {
 
             if (!result.success) {
                 return sendResponse(res, {
-                    message: "Invalid request",
+                    message: "Please provide a valid username to check availability.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -1114,7 +1129,7 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in checking username availability",
+                message: "We couldn't check that username right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }
@@ -1131,7 +1146,8 @@ export const controllers = {
             if (!result.success) {
                 return sendResponse(res, {
                     success: false,
-                    message: "Invalid request",
+                    message:
+                        "This logout link couldn't be processed. Please try requesting a new one.",
                     statusCode: StatusCodes.BAD_REQUEST,
                     error: z.treeifyError(result.error),
                 });
@@ -1152,7 +1168,7 @@ export const controllers = {
             if (!match) {
                 return sendResponse(res, {
                     success: false,
-                    message: "Invalid revoke Token",
+                    message: "This logout link is invalid. Please try requesting a new one.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -1167,7 +1183,7 @@ export const controllers = {
                     success: false,
                     expired: true,
                     message:
-                        "Revoke Token has expired. You can still logout device from your account. Please login to your account and go to security settings to logout the device",
+                        "This logout link has expired. You can still log out the device from your account. Please log in and go to your security settings to log out the device.",
                     statusCode: StatusCodes.BAD_REQUEST,
                 });
             }
@@ -1178,7 +1194,8 @@ export const controllers = {
             if (!existingLogin) {
                 return sendResponse(res, {
                     success: false,
-                    message: "No active session found for the given revoke Token",
+                    message:
+                        "We couldn't find an active session for this logout link. The link may have already been used.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -1189,7 +1206,7 @@ export const controllers = {
             if (!existingUser) {
                 return sendResponse(res, {
                     success: false,
-                    message: "User not found for the given revoke Token",
+                    message: "We couldn't find the account associated with this logout link.",
                     statusCode: StatusCodes.NOT_FOUND,
                 });
             }
@@ -1197,7 +1214,7 @@ export const controllers = {
             if (existingUser.tokenVersion > existingLogin.tokenVersion) {
                 return sendResponse(res, {
                     success: true,
-                    message: "Session already revoked",
+                    message: "This device has already been logged out.",
                     statusCode: StatusCodes.OK,
                 });
             }
@@ -1226,7 +1243,7 @@ export const controllers = {
 
             return sendResponse(res, {
                 success: false,
-                message: "Error in email logout",
+                message: "We couldn't log you out right now. Please try again in a moment.",
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
             });
         }

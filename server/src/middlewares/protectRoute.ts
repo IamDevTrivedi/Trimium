@@ -26,7 +26,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.UNAUTHORIZED,
-                message: "Unauthorized access, Please login again",
+                message: "Your session has expired. Please log in again to continue.",
             });
         }
 
@@ -43,7 +43,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.UNAUTHORIZED,
-                message: "Unauthorized access, Please login again",
+                message: "Your session has expired. Please log in again to continue.",
             });
         }
 
@@ -52,7 +52,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.UNAUTHORIZED,
-                message: "Unauthorized access, Please login again",
+                message: "Your session has expired. Please log in again to continue.",
             });
         }
 
@@ -70,7 +70,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
         return sendResponse(res, {
             success: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: "Internal server error",
+            message: "We couldn't verify your session right now. Please try again.",
         });
     }
 };

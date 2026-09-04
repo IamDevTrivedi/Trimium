@@ -35,7 +35,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please enter a valid first name and last name.",
                     data: z.treeifyError(result.error),
                 });
             }
@@ -51,7 +51,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
-                    message: "User not found",
+                    message: "We couldn't find your account. Please log in again.",
                 });
             }
 
@@ -73,7 +73,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message: "We couldn't update your name right now. Please try again in a moment.",
             });
         }
     },
@@ -95,7 +95,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please enter a strong current and new password.",
                     data: z.treeifyError(result.error),
                 });
             }
@@ -109,7 +109,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
-                    message: "User not found",
+                    message: "We couldn't find your account. Please log in again.",
                 });
             }
 
@@ -119,7 +119,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.UNAUTHORIZED,
-                    message: "Current password is incorrect",
+                    message: "The current password you entered is incorrect. Please try again.",
                 });
             }
 
@@ -139,7 +139,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't update your password right now. Please try again in a moment.",
             });
         }
     },
@@ -158,7 +159,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please enter a valid username.",
                     data: z.treeifyError(result.error),
                 });
             }
@@ -172,7 +173,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.NOT_FOUND,
-                    message: "User not found",
+                    message: "We couldn't find your account. Please log in again.",
                 });
             }
 
@@ -204,7 +205,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't update your username right now. Please try again in a moment.",
             });
         }
     },

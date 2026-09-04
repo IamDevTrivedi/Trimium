@@ -25,7 +25,7 @@ export const controller = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide valid contact form details.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -66,7 +66,7 @@ export const controller = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal server error",
+                message: "We couldn't send your message right now. Please try again in a moment.",
             });
         }
     },

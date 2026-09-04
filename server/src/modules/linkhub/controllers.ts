@@ -42,7 +42,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't load your linkhub profile right now. Please try again in a moment.",
             });
         }
     },
@@ -88,7 +89,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide valid linkhub profile details to update.",
                     data: z.treeifyError(result.error),
                 });
             }
@@ -123,7 +124,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't update your linkhub profile right now. Please try again in a moment.",
             });
         }
     },
@@ -140,7 +142,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid username",
+                    message: "Please provide a valid username to find the profile.",
                     data: z.treeifyError(result.error),
                 });
             }
@@ -193,7 +195,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message: "We couldn't load this profile right now. Please try again in a moment.",
             });
         }
     },
@@ -206,7 +208,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "No file uploaded",
+                    message: "Please attach a file to upload.",
                 });
             }
 
@@ -265,7 +267,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Failed to upload avatar",
+                message: "We couldn't upload your avatar right now. Please try again in a moment.",
             });
         }
     },

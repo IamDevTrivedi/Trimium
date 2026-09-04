@@ -25,7 +25,7 @@ export const verifyTurnstileToken = async (req: Request, res: Response, next: Ne
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.BAD_REQUEST,
-                message: "Missing or invalid security challenge token",
+                message: "Please complete the security check and try again.",
                 error: z.treeifyError(result.error),
             });
         }
@@ -79,7 +79,7 @@ export const verifyTurnstileToken = async (req: Request, res: Response, next: Ne
         return sendResponse(res, {
             success: false,
             statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-            message: "Internal server error",
+            message: "We couldn't verify your security challenge right now. Please try again.",
         });
     }
 };

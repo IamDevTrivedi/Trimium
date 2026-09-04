@@ -34,7 +34,7 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
                     success: false,
-                    message: "Invalid request data",
+                    message: "Please provide a valid shortcode to check availability.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -64,7 +64,8 @@ export const controllers = {
             return sendResponse(res, {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 success: false,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't check shortcode availability right now. Please try again in a moment.",
             });
         }
     },
@@ -125,7 +126,8 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
                     success: false,
-                    message: "Invalid request data",
+                    message:
+                        "Please provide a valid shortcode, original URL, title, and workspace ID to create a new short link.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -253,7 +255,8 @@ export const controllers = {
             return sendResponse(res, {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 success: false,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't create your shortcode right now. Please try again in a moment.",
             });
         }
     },
@@ -272,7 +275,7 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
                     success: false,
-                    message: "Invalid request data",
+                    message: "Please provide a valid shortcode to retrieve its information.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -317,7 +320,8 @@ export const controllers = {
             return sendResponse(res, {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 success: false,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't retrieve shortcode info right now. Please try again in a moment.",
             });
         }
     },
@@ -335,7 +339,7 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
                     success: false,
-                    message: "Invalid shortcode",
+                    message: "Please provide a valid shortcode to edit.",
                     errors: z.treeifyError(paramResult.error),
                 });
             }
@@ -386,7 +390,7 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
                     success: false,
-                    message: "Invalid request data",
+                    message: "Please provide valid shortcode details to update.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -492,7 +496,8 @@ export const controllers = {
             return sendResponse(res, {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 success: false,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't update your shortcode right now. Please try again in a moment.",
             });
         }
     },
@@ -527,7 +532,7 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
                     success: false,
-                    message: "Invalid request data",
+                    message: "Please provide a valid shortcode to continue.",
                     errors: z.treeifyError(result.error),
                     verdict: "INVALID" as VERDICT,
                 });
@@ -555,7 +560,8 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                     success: false,
-                    message: "Analytics data not found",
+                    message:
+                        "We couldn't load this short link's analytics right now. Please try again in a moment.",
                     verdict: "INVALID" as VERDICT,
                 });
             }
@@ -754,7 +760,8 @@ export const controllers = {
             return sendResponse(res, {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 success: false,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't redirect to this short link right now. Please try again in a moment.",
                 verdict: "INVALID" as VERDICT,
             });
         }
@@ -774,7 +781,7 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
                     success: false,
-                    message: "Invalid request data",
+                    message: "Please provide a valid shortcode to view its performance.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -847,7 +854,8 @@ export const controllers = {
             return sendResponse(res, {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 success: false,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't load this short link's performance data right now. Please try again in a moment.",
             });
         }
     },
@@ -866,7 +874,7 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
                     success: false,
-                    message: "Invalid request data",
+                    message: "Please provide a valid shortcode to export its analytics.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -1006,7 +1014,8 @@ export const controllers = {
             return sendResponse(res, {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 success: false,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't export the analytics right now. Please try again in a moment.",
             });
         }
     },
@@ -1055,7 +1064,8 @@ export const controllers = {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
                     success: false,
-                    message: "Invalid request data",
+                    message:
+                        "Please provide a valid workspace ID and a list of short links to create in bulk.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -1200,7 +1210,8 @@ export const controllers = {
                     results.push({
                         rowNumber: row.rowNumber,
                         status: "failed",
-                        message: "Failed to process row",
+                        message:
+                            "We couldn't process this row. Please check the data and try uploading the file again.",
                     });
                 }
             }
@@ -1230,7 +1241,8 @@ export const controllers = {
             return sendResponse(res, {
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
                 success: false,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't process your bulk short link upload right now. Please try again in a moment.",
             });
         }
     },
@@ -1246,7 +1258,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid shortcode",
+                    message: "Please provide a valid shortcode to fetch its tags.",
                     errors: z.treeifyError(paramResult.error),
                 });
             }
@@ -1304,7 +1316,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message: "We couldn't fetch the tags right now. Please try again in a moment.",
             });
         }
     },
@@ -1320,7 +1332,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid shortcode",
+                    message: "Please provide a valid shortcode to update its tags.",
                     errors: z.treeifyError(paramResult.error),
                 });
             }
@@ -1347,7 +1359,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide valid tags to add or remove from this shortcode.",
                     errors: z.treeifyError(bodyResult.error),
                 });
             }
@@ -1444,7 +1456,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message: "We couldn't update the tags right now. Please try again in a moment.",
             });
         }
     },

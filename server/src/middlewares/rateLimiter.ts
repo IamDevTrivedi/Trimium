@@ -61,7 +61,8 @@ const issuePoWChallenge = (
     const PoW_token = Buffer.from(`${challenge}|${integrity}`).toString("base64");
 
     return res.status(429).json({
-        message: "Rate limit exceeded. Please solve the Proof of Work challenge.",
+        message:
+            "You're going a bit too fast. Please complete the quick security check to continue.",
         PoW_token,
         difficulty,
         code: "rate_limit_pow_challenge",
@@ -73,7 +74,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (typeof PoW_header !== "string") {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW header.",
+            message: "Please complete the security check and try again.",
         });
     }
 
@@ -81,7 +82,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (!PoW_Token || !nonce) {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW header format.",
+            message: "Your security check response looks incomplete. Please try the check again.",
         });
     }
 
@@ -92,7 +93,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (!difficultyStr || !expiryStr || !salt || !integrity) {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW token format.",
+            message: "Your security check couldn't be verified. Please try the check again.",
         });
     }
 
@@ -102,7 +103,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (Date.now() > expiry) {
         return res.status(400).json({
             success: false,
-            message: "PoW challenge has expired.",
+            message: "Your security check has expired. Please try again.",
         });
     }
 
@@ -114,7 +115,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (integrity !== expectedIntegrity) {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW token integrity.",
+            message: "Your security check couldn't be verified. Please try the check again.",
         });
     }
 
@@ -126,7 +127,7 @@ const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) =>
     if (leadingZeroCount < difficulty) {
         return res.status(400).json({
             success: false,
-            message: "Invalid PoW solution.",
+            message: "Your security check didn't pass. Please try again.",
         });
     }
 

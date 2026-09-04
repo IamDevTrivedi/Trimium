@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
             trim: true,
             validate: {
                 validator: (v: string) => NAME.test(v),
-                message: "Invalid first name format",
+                message: "Please enter a valid first name.",
             },
         },
 
@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
             trim: true,
             validate: {
                 validator: (v: string) => NAME.test(v),
-                message: "Invalid last name format",
+                message: "Please enter a valid last name.",
             },
         },
 
@@ -31,7 +31,8 @@ const userSchema = new mongoose.Schema(
 
             validate: {
                 validator: (v: string) => USERNAME.test(v),
-                message: "Invalid username format",
+                message:
+                    "Please choose a username that contains only letters, numbers, and underscores, starting with a letter.",
             },
         },
 
@@ -43,7 +44,7 @@ const userSchema = new mongoose.Schema(
 
             validate: {
                 validator: (v: string) => EMAIL.test(v),
-                message: "Invalid email format",
+                message: "Please enter a valid email address.",
             },
         },
 

@@ -48,7 +48,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please check your workspace details and try again.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -64,7 +64,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.UNAUTHORIZED,
-                    message: "User not found",
+                    message: "We couldn't find your account. Please log in again.",
                 });
             }
 
@@ -133,7 +133,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't create your workspace right now. Please try again in a moment.",
             });
         }
     },
@@ -148,7 +149,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.UNAUTHORIZED,
-                    message: "User not found",
+                    message: "We couldn't find your account. Please log in again.",
                 });
             }
 
@@ -172,7 +173,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't fetch your invitations right now. Please try again in a moment.",
             });
         }
     },
@@ -188,7 +190,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide a valid invitation ID.",
                     errors: z.treeifyError(paramResult.error),
                 });
             }
@@ -204,7 +206,8 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message:
+                        "Please indicate whether you want to accept or decline the invitation.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -218,7 +221,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.UNAUTHORIZED,
-                    message: "User not found",
+                    message: "We couldn't find your account. Please log in again.",
                 });
             }
 
@@ -289,7 +292,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't process your response right now. Please try again in a moment.",
             });
         }
     },
@@ -324,7 +328,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't fetch your workspaces right now. Please try again in a moment.",
             });
         }
     },
@@ -341,7 +346,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide a valid workspace ID.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -403,7 +408,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message: "We couldn't leave the workspace right now. Please try again in a moment.",
             });
         }
     },
@@ -418,7 +423,7 @@ export const controllers = {
             if (!paramResult.success) {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid Request",
+                    message: "Please provide a valid workspace ID.",
                     success: false,
                     errors: z.treeifyError(paramResult.error),
                 });
@@ -457,7 +462,7 @@ export const controllers = {
             if (!result.success) {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid Request",
+                    message: "Please check your workspace update details and try again.",
                     success: false,
                     errors: z.treeifyError(result.error),
                 });
@@ -593,7 +598,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't update the workspace right now. Please try again in a moment.",
             });
         }
     },
@@ -610,7 +616,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide a valid workspace ID.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -678,7 +684,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't fetch workspace details right now. Please try again in a moment.",
             });
         }
     },
@@ -695,7 +702,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide a valid workspace ID.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -746,7 +753,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't fetch your workspace permissions right now. Please try again in a moment.",
                 data: { permission: null, partOf: false },
             });
         }
@@ -763,7 +771,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide a valid workspace ID.",
                     errors: z.treeifyError(paramResult.error),
                 });
             }
@@ -781,7 +789,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please check your tag details and try again.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -832,7 +840,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message: "We couldn't create the tag right now. Please try again in a moment.",
             });
         }
     },
@@ -848,7 +856,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide a valid workspace ID.",
                     errors: z.treeifyError(paramResult.error),
                 });
             }
@@ -876,7 +884,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please check your tag update details and try again.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -974,7 +982,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message: "We couldn't update the tag right now. Please try again in a moment.",
             });
         }
     },
@@ -989,7 +997,7 @@ export const controllers = {
             if (!paramResult.success) {
                 return sendResponse(res, {
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid Request",
+                    message: "Please provide a valid workspace ID.",
                     success: false,
                     errors: z.treeifyError(paramResult.error),
                 });
@@ -1048,7 +1056,8 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                    message: "Failed to delete workspace",
+                    message:
+                        "We couldn't delete the workspace right now. Please try again in a moment.",
                 });
             } finally {
                 await session.endSession();
@@ -1060,7 +1069,8 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message:
+                    "We couldn't delete the workspace right now. Please try again in a moment.",
             });
         }
     },
@@ -1078,7 +1088,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide a valid workspace ID and tag.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -1131,7 +1141,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message: "We couldn't delete the tag right now. Please try again in a moment.",
             });
         }
     },
@@ -1148,7 +1158,7 @@ export const controllers = {
                 return sendResponse(res, {
                     success: false,
                     statusCode: StatusCodes.BAD_REQUEST,
-                    message: "Invalid request data",
+                    message: "Please provide a valid workspace ID.",
                     errors: z.treeifyError(result.error),
                 });
             }
@@ -1194,7 +1204,7 @@ export const controllers = {
             return sendResponse(res, {
                 success: false,
                 statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-                message: "Internal Server Error",
+                message: "We couldn't fetch the tags right now. Please try again in a moment.",
             });
         }
     },
