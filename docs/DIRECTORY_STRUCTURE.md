@@ -306,10 +306,10 @@
 │   │       ├── login-store.ts
 │   │       ├── reset-password-store.ts
 │   │       └── user-store.ts
+│   ├── bun.lock
 │   ├── components.json
-│   ├── next.config.ts
+│   ├── next.config.mjs
 │   ├── package.json
-│   ├── pnpm-lock.yaml
 │   ├── postcss.config.mjs
 │   └── tsconfig.json
 ├── docs
@@ -324,6 +324,7 @@
 │   └── SETUP.md
 ├── scripts
 │   ├── clean-all.js
+│   ├── dev.js
 │   ├── generate-architecture.py
 │   ├── install-all.js
 │   ├── reset-all.js
@@ -409,21 +410,20 @@
 │   │   │   ├── shutdown.ts
 │   │   │   └── tags.ts
 │   │   └── index.ts
+│   ├── bun.lock
+│   ├── docker-compose.yml
 │   ├── package.json
-│   ├── pnpm-lock.yaml
 │   └── tsconfig.json
 ├── .editorconfig
 ├── .env.example
 ├── .gitignore
-├── .prettierignore
-├── .prettierrc
 ├── .vercelignore
 ├── AGENTS.md
 ├── LICENSE
 ├── README.md
-├── eslint.config.ts
+├── biome.json
+├── bun.lock
 ├── package.json
-├── pnpm-lock.yaml
 └── skills-lock.json
 
 95 directories, 329 files
