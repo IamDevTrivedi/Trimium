@@ -138,7 +138,7 @@ jobs:
         with:
           context: ./server
           push: true
-          tags: ghcr.io/IAmDevTrivedi/Trimium/Trimium-app:latest
+          tags: ghcr.io/iamdevtrivedi/trimium-app:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -169,7 +169,7 @@ jobs:
             HEALTH_RETRY_INTERVAL=5
             GHCR_USER="${{ github.actor }}"
             GHCR_TOKEN="${{ secrets.GITHUB_TOKEN }}"
-            IMAGE_BASE="ghcr.io/IAmDevTrivedi/Trimium/Trimium-app"
+            IMAGE_BASE="ghcr.io/iamdevtrivedi/trimium-app"
             LATEST_TAG="${IMAGE_BASE}:latest"
             CURRENT_TAG="${IMAGE_BASE}:current"
             LIVE_TAG="${IMAGE_BASE}:live"

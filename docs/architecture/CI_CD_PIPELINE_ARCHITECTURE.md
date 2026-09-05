@@ -250,7 +250,7 @@ Execution steps:
 4. Build and push the image with `docker/build-push-action@v6`:
     - `context: ./server`
     - `push: true`
-    - `tags: ghcr.io/IAmDevTrivedi/Trimium/Trimium-app:latest`
+    - `tags: ghcr.io/iamdevtrivedi/trimium-app:latest`
     - `cache-from: type=gha` and `cache-to: type=gha,mode=max` for GitHub Actions cache acceleration
 
 The image produced is the single source of truth for the server release: a layered, reproducible artifact built from the current `server/Dockerfile`. The `:latest` tag is overwritten on every successful build; downstream jobs and the VPS only ever read from GHCR.
@@ -290,7 +290,7 @@ Environment variables passed to the remote session:
 | `HEALTH_CHECK_URL`      | `http://localhost:5003/api/v1/health` |
 | `HEALTH_RETRY_COUNT`    | `10`                                  |
 | `HEALTH_RETRY_INTERVAL` | `5` (seconds)                         |
-| `IMAGE_BASE`            | `ghcr.io/IAmDevTrivedi/Trimium/Trimium-app` |
+| `IMAGE_BASE`            | `ghcr.io/iamdevtrivedi/trimium-app` |
 | `LATEST_TAG`            | `${IMAGE_BASE}:latest`                |
 | `CURRENT_TAG`           | `${IMAGE_BASE}:current`               |
 | `LIVE_TAG`              | `${IMAGE_BASE}:live`                  |

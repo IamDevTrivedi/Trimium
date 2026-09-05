@@ -58,7 +58,7 @@ scripts/             Utility scripts (install, clean, reset)
 
 ### Server Runs Inside a Docker Image
 
-The production server runs inside a multi-stage Docker image built from `server/Dockerfile` and pushed to GHCR as `ghcr.io/IAmDevTrivedi/Trimium/Trimium-app:latest`. The CI workflow tags `:latest` → `:current` and, after a successful health check, promotes `:current` → `:live`. The VPS runs `docker compose up -d` against the production `server/docker-compose.yml`, which deploys the `:current` tag.
+The production server runs inside a multi-stage Docker image built from `server/Dockerfile` and pushed to GHCR as `ghcr.io/iamdevtrivedi/trimium-app:latest`. The CI workflow tags `:latest` → `:current` and, after a successful health check, promotes `:current` → `:live`. The VPS runs `docker compose up -d` against the production `server/docker-compose.yml`, which deploys the `:current` tag.
 
 For local development, run the server directly via Bun:
 
@@ -180,7 +180,7 @@ BullMQ queues (email + activity updates), processed by workers.
 
 - Husky pre-commit hook runs `bun run check` automatically.
 - Client build output: `client/.next/`
-- Server production image: `ghcr.io/IAmDevTrivedi/Trimium/Trimium-app` (`:current` = deployed, `:live` = last-known-good)
+- Server production image: `ghcr.io/iamdevtrivedi/trimium-app` (`:current` = deployed, `:live` = last-known-good)
 - Server env files (`.env.development`, `.env.production`) are gitignored; use `.env.example` as template.
 - Client env file (`.env`) is gitignored; use `.env.example` as template.
 - The project uses **Biome** for both linting and formatting.

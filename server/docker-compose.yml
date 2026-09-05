@@ -17,7 +17,7 @@ services:
       - trimium-network
 
   app:
-    image: ghcr.io/IAmDevTrivedi/Trimium/Trimium-app:current
+    image: ghcr.io/iamdevtrivedi/trimium-app:current
     restart: unless-stopped
     ports:
       - "5003:5003"
