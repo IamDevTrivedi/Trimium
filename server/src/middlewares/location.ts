@@ -5,6 +5,7 @@ import fs from "fs";
 import axios from "axios";
 import { logger } from "@utils/logger";
 import { redisClient } from "@db/connectRedis";
+import { ONE_DAY_IN_S } from "@/constants/time";
 
 declare module "express-serve-static-core" {
     interface Locals {
@@ -44,7 +45,7 @@ const DEFAULT_LOCATION: LocationData = {
 
 const MMDB_PATH = path.join(__dirname, "..", "constants", "GeoLite2-City.mmdb");
 const CACHE_PREFIX = "location:";
-const CACHE_TTL = 86400;
+const CACHE_TTL = ONE_DAY_IN_S;
 
 let reader: Reader<CityResponse> | null = null;
 let useMMDB = false;

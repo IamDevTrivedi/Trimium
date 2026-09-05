@@ -2,35 +2,36 @@ import { Router } from "express";
 import { controllers } from "./controllers";
 import { protectRoute } from "@/middlewares/protectRoute";
 import { createRateLimiter } from "@/middlewares/rateLimiter";
+import { ONE_MINUTE_IN_MS } from "@/constants/time";
 
 const router = Router();
 
 const shortcodeCheckLimiter = createRateLimiter({
-    windowMs: 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 30,
     prefix: "rl:url:check",
 });
 
 const shortcodeCreateLimiter = createRateLimiter({
-    windowMs: 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 20,
     prefix: "rl:url:create",
 });
 
 const bulkCreateLimiter = createRateLimiter({
-    windowMs: 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 10,
     prefix: "rl:url:bulk-create",
 });
 
 const urlGeneralLimiter = createRateLimiter({
-    windowMs: 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 60,
     prefix: "rl:url:general",
 });
 
 const redirectLimiter = createRateLimiter({
-    windowMs: 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 100,
     prefix: "rl:url:redirect",
 });

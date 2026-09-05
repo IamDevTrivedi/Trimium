@@ -3,17 +3,18 @@ import { controllers } from "./controllers";
 import { protectRoute } from "@/middlewares/protectRoute";
 import { createRateLimiter } from "@/middlewares/rateLimiter";
 import { uploadAvatar } from "@/middlewares/upload";
+import { ONE_MINUTE_IN_MS } from "@/constants/time";
 
 const router = Router();
 
 const linkhubUpdateLimiter = createRateLimiter({
-    windowMs: 1 * 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 30,
     prefix: "rl:linkhub:update",
 });
 
 const linkhubPublicLimiter = createRateLimiter({
-    windowMs: 1 * 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 60,
     prefix: "rl:linkhub:public",
 });

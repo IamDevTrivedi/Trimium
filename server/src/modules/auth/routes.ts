@@ -3,29 +3,30 @@ import { controllers } from "@modules/auth/controllers";
 import { protectRoute } from "@/middlewares/protectRoute";
 import { createRateLimiter } from "@/middlewares/rateLimiter";
 import { verifyTurnstileToken } from "@/middlewares/verifyTurnstile";
+import { FIFTEEN_MINUTES_IN_MS, ONE_MINUTE_IN_MS } from "@/constants/time";
 
 const router = Router();
 
 const otpLimiter = createRateLimiter({
-    windowMs: 15 * 60 * 1000,
+    windowMs: FIFTEEN_MINUTES_IN_MS,
     max: 5,
     prefix: "rl:auth:otp",
 });
 
 const loginLimiter = createRateLimiter({
-    windowMs: 15 * 60 * 1000,
+    windowMs: FIFTEEN_MINUTES_IN_MS,
     max: 10,
     prefix: "rl:auth:login",
 });
 
 const authGeneralLimiter = createRateLimiter({
-    windowMs: 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 60,
     prefix: "rl:auth:general",
 });
 
 const usernameCheckLimiter = createRateLimiter({
-    windowMs: 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 30,
     prefix: "rl:auth:username",
 });

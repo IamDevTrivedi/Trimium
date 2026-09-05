@@ -5,6 +5,7 @@ import { StatusCodes } from "http-status-codes";
 import { logger } from "@utils/logger";
 import { sendResponse } from "@utils/sendResponse";
 import { config } from "@config/env";
+import { ONE_HOUR_IN_S, THREE_MINUTES_IN_S } from "@/constants/time";
 import { LoginHistory } from "@/models/loginHistory";
 import { User } from "@/models/user";
 import { redisClient } from "@db/connectRedis";
@@ -89,7 +90,7 @@ const getCurrentTokenVersion = async (userID: string): Promise<number | null> =>
     await redisClient.set(`userID:${userID}`, exisitingUser.tokenVersion, {
         expiration: {
             type: "EX",
-            value: 1 * 60 * 60,
+            value: ONE_HOUR_IN_S,
         },
     });
 
@@ -112,7 +113,7 @@ const getLoginHistoryTokenVersion = async (loginHistoryID: string): Promise<numb
     await redisClient.set(`loginHistoryID:${loginHistoryID}`, existingLoginHistory.tokenVersion, {
         expiration: {
             type: "EX",
-            value: 1 * 60 * 60,
+            value: ONE_HOUR_IN_S,
         },
     });
 
@@ -131,7 +132,7 @@ const updateLastActivityDebounced = async (loginHistoryID: string): Promise<void
         await redisClient.set(debounceKey, "1", {
             expiration: {
                 type: "EX",
-                value: 3 * 60,
+                value: THREE_MINUTES_IN_S,
             },
         });
 

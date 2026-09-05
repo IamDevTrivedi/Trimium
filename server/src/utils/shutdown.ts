@@ -3,6 +3,7 @@ import { redisClient } from "@/db/connectRedis";
 import { emailQueue, lastActivityQueue } from "@/modules/queue/queues";
 import { emailWorker, lastActivityWorker } from "@/modules/queue/workers";
 import mongoose from "mongoose";
+import { THIRTY_SECONDS_IN_MS } from "@/constants/time";
 
 let httpServer: ReturnType<typeof import("http").createServer> | null = null;
 let isShuttingDown = false;
@@ -23,7 +24,7 @@ export const gracefulShutdown = async (signal: string): Promise<void> => {
     const shutdownTimeout = setTimeout(() => {
         logger.error("Graceful shutdown timed out. Forcing exit.");
         process.exit(1);
-    }, 30000); // 30 second hard timeout
+    }, THIRTY_SECONDS_IN_MS); // 30 second hard timeout
 
     try {
         // 1. Stop accepting new HTTP requests

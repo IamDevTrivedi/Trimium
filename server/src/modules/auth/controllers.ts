@@ -22,14 +22,22 @@ import {
     clearFailedAttempts,
     loginThrottleConfig,
 } from "@utils/loginThrottle";
-import { REVOKE_TOKEN_EXPIRATION_TIME } from "@/constants/app";
+import {
+    FIFTEEN_MINUTES_IN_S,
+    FIVE_MINUTES_IN_MS,
+    FIVE_MINUTES_IN_S,
+    ONE_HOUR_IN_S,
+    SEVEN_DAYS_IN_MS,
+    SEVEN_DAYS_JWT_STRING,
+    THREE_HOURS_IN_MS,
+} from "@/constants/time";
 
 const getCookieOptions = (clear = false) => {
     return {
         httpOnly: true,
         secure: config.isProduction,
         sameSite: (config.isProduction ? "none" : "lax") as "lax" | "none" | "strict",
-        maxAge: clear ? undefined : 7 * 24 * 60 * 60 * 1000,
+        maxAge: clear ? undefined : SEVEN_DAYS_IN_MS,
         path: "/",
     };
 };
@@ -68,7 +76,7 @@ export const controllers = {
 
             const save = {
                 OTP: generateOTP(),
-                expiresAt: Date.now() + 5 * 60 * 1000,
+                expiresAt: Date.now() + FIVE_MINUTES_IN_MS,
                 status: "NOT_VERIFIED",
                 failedAttempts: 0,
             };
@@ -76,7 +84,7 @@ export const controllers = {
             await redisClient.set(`upcomingEmail:${email}`, JSON.stringify(save), {
                 expiration: {
                     type: "EX",
-                    value: 60 * 5,
+                    value: FIVE_MINUTES_IN_S,
                 },
             });
 
@@ -192,7 +200,7 @@ export const controllers = {
             await redisClient.set(`upcomingEmail:${email}`, JSON.stringify(parsedSave), {
                 expiration: {
                     type: "EX",
-                    value: 60 * 15,
+                    value: FIFTEEN_MINUTES_IN_S,
                 },
             });
 
@@ -343,7 +351,7 @@ export const controllers = {
 
             const save = {
                 OTP: generateOTP(),
-                expiresAt: Date.now() + 5 * 60 * 1000,
+                expiresAt: Date.now() + FIVE_MINUTES_IN_MS,
                 status: "NOT_VERIFIED",
                 failedAttempts: 0,
             };
@@ -351,7 +359,7 @@ export const controllers = {
             await redisClient.set(`resetPassword:${existingUser.email}`, JSON.stringify(save), {
                 expiration: {
                     type: "EX",
-                    value: 60 * 5,
+                    value: FIVE_MINUTES_IN_S,
                 },
             });
 
@@ -492,7 +500,7 @@ export const controllers = {
                 {
                     expiration: {
                         type: "EX",
-                        value: 60 * 15,
+                        value: FIFTEEN_MINUTES_IN_S,
                     },
                 }
             );
@@ -579,7 +587,7 @@ export const controllers = {
             await redisClient.set(`userID:${existingUser._id}`, existingUser.tokenVersion, {
                 expiration: {
                     type: "EX",
-                    value: 1 * 60 * 60,
+                    value: ONE_HOUR_IN_S,
                 },
             });
 
@@ -720,7 +728,7 @@ export const controllers = {
                 },
                 config.JWT_KEY,
                 {
-                    expiresIn: "7d",
+                    expiresIn: SEVEN_DAYS_JWT_STRING,
                 }
             );
 
@@ -730,7 +738,7 @@ export const controllers = {
 
             const revokePayload = {
                 loginHistoryID: newLogin._id.toString(),
-                expiresAt: Date.now() + REVOKE_TOKEN_EXPIRATION_TIME,
+                expiresAt: Date.now() + THREE_HOURS_IN_MS,
             };
 
             const payloadB64 = Buffer.from(JSON.stringify(revokePayload)).toString("base64url");
@@ -757,14 +765,14 @@ export const controllers = {
             await redisClient.set(`userID:${existingUser._id}`, existingUser.tokenVersion, {
                 expiration: {
                     type: "EX",
-                    value: 1 * 60 * 60,
+                    value: ONE_HOUR_IN_S,
                 },
             });
 
             await redisClient.set(`loginHistoryID:${newLogin._id}`, existingUser.tokenVersion, {
                 expiration: {
                     type: "EX",
-                    value: 1 * 60 * 60,
+                    value: ONE_HOUR_IN_S,
                 },
             });
 
@@ -814,7 +822,7 @@ export const controllers = {
             await redisClient.set(`loginHistoryID:${loginHistoryID}`, existingLogin.tokenVersion, {
                 expiration: {
                     type: "EX",
-                    value: 1 * 60 * 60,
+                    value: ONE_HOUR_IN_S,
                 },
             });
 
@@ -861,14 +869,14 @@ export const controllers = {
             await redisClient.set(`userID:${userID}`, existingUser.tokenVersion, {
                 expiration: {
                     type: "EX",
-                    value: 1 * 60 * 60,
+                    value: ONE_HOUR_IN_S,
                 },
             });
 
             await redisClient.set(`loginHistoryID:${loginHistoryID}`, existingLogin.tokenVersion, {
                 expiration: {
                     type: "EX",
-                    value: 1 * 60 * 60,
+                    value: ONE_HOUR_IN_S,
                 },
             });
 
@@ -880,7 +888,7 @@ export const controllers = {
                 },
                 config.JWT_KEY,
                 {
-                    expiresIn: "7d",
+                    expiresIn: SEVEN_DAYS_JWT_STRING,
                 }
             );
 
@@ -954,7 +962,7 @@ export const controllers = {
                 {
                     expiration: {
                         type: "EX",
-                        value: 1 * 60 * 60,
+                        value: ONE_HOUR_IN_S,
                     },
                 }
             );
@@ -1228,7 +1236,7 @@ export const controllers = {
                 {
                     expiration: {
                         type: "EX",
-                        value: 1 * 60 * 60,
+                        value: ONE_HOUR_IN_S,
                     },
                 }
             );

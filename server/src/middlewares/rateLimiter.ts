@@ -6,6 +6,7 @@ import crypto from "crypto";
 import { config } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { redisClient } from "@/db/connectRedis";
+import { ONE_MINUTE_IN_MS } from "@/constants/time";
 
 declare module "express-serve-static-core" {
     interface Locals {
@@ -50,7 +51,7 @@ const issuePoWChallenge = (
     options: { windowMs: number; max: number }
 ) => {
     const difficulty = calculateAdaptiveDifficulty(options);
-    const expiry = Date.now() + 1 * 60 * 1000;
+    const expiry = Date.now() + ONE_MINUTE_IN_MS;
     const salt = crypto.randomBytes(16).toString("hex");
     const challenge = `${difficulty}|${expiry}|${salt}`;
     const integrity = crypto
@@ -166,7 +167,7 @@ export const createRateLimiter = ({ windowMs, max, prefix = "rl" }: RateLimitOpt
 };
 
 export const globalRateLimiter = createRateLimiter({
-    windowMs: 60 * 1000,
+    windowMs: ONE_MINUTE_IN_MS,
     max: 1000,
     prefix: "rl:global",
 });

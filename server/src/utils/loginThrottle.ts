@@ -1,13 +1,14 @@
 import { redisClient } from "@db/connectRedis";
 import { logger } from "@utils/logger";
+import { THIRTY_MINUTES_IN_S, FIFTEEN_MINUTES_IN_S } from "@/constants/time";
 
 const LOGIN_FAILED_PREFIX = "login:failed:";
 const LOGIN_COOLDOWN_PREFIX = "login:cooldown:";
 
 const MAX_FAILED_ATTEMPTS = 5;
 const WARNING_THRESHOLD = 3;
-const FAILED_ATTEMPTS_TTL = 30 * 60; // 30 minutes
-const COOLDOWN_TTL = 15 * 60; // 15 minutes
+const FAILED_ATTEMPTS_TTL = THIRTY_MINUTES_IN_S; // 30 minutes
+const COOLDOWN_TTL = FIFTEEN_MINUTES_IN_S; // 15 minutes
 
 export interface CooldownStatus {
     blocked: boolean;
