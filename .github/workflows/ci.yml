@@ -122,59 +122,27 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: PROJECT_DIR,SERVER_DIR,RELEASES_DIR,SHARED_DIR,CURRENT_DIR,HEALTH_CHECK_URL,HEALTH_RETRY_COUNT,HEALTH_RETRY_INTERVAL,PM2_APP_NAME,MAX_RELEASES_TO_KEEP
+          envs: PROJECT_DIR,SERVER_DIR,HEALTH_CHECK_URL,HEALTH_RETRY_COUNT,HEALTH_RETRY_INTERVAL
           script: |
             set -euo pipefail
 
             # ── Environment setup ───────────────────────────────────────
-            # Non-interactive shells (cron, CI runners, ssh -c) don't load ~/.bashrc
-            # by default, so bun/pm2/node won't be on PATH unless we source them here.
             source ~/.bashrc 2>/dev/null || true
-
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
-            source "$BUN_INSTALL/_bun" 2>/dev/null || true   # bun's shell completion/env hook, if present
 
             # ── Constants ────────────────────────────────────────────
             PROJECT_DIR="/projects/Trimium"
             SERVER_DIR="$PROJECT_DIR/server"
-            RELEASES_DIR="$SERVER_DIR/releases"
-            SHARED_DIR="$SERVER_DIR/shared"
-            CURRENT_DIR="$SERVER_DIR/current"
             HEALTH_CHECK_URL="http://localhost:5003/api/v1/health"
             HEALTH_RETRY_COUNT=10
             HEALTH_RETRY_INTERVAL=5
-            PM2_APP_NAME="trimium-api"
-            MAX_RELEASES_TO_KEEP=3
 
             # ── Helpers ───────────────────────────────────────────────
             log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
-            # ── Exit trap ─────────────────────────────────────────────
             DEPLOY_START=$(date +%s)
             trap 'EXIT_CODE=$?; DEPLOY_END=$(date +%s); log "Exited with status $EXIT_CODE in $((DEPLOY_END - DEPLOY_START)) seconds."' EXIT
 
             log "===== Deployment started ====="
-
-            # ── Verify required tools are available ────────────────────
-            log "Checking bun is on PATH..."
-            if ! command -v bun >/dev/null 2>&1; then
-              log "ERROR: bun not found on PATH after sourcing environment. Aborting."
-              exit 1
-            fi
-            log "Using bun: $(command -v bun) ($(bun --version))"
-
-            log "Checking pm2 is on PATH..."
-            if ! command -v pm2 >/dev/null 2>&1; then
-              log "ERROR: pm2 not found on PATH after sourcing environment. Aborting."
-              exit 1
-            fi
-
-            # ── Capture previous release before anything changes ──────
-            log "Looking up previous release..."
-            PREVIOUS_RELEASE=$(find "$RELEASES_DIR" -mindepth 1 -maxdepth 1 -type d \
-              | sort | tail -n 1)
-            log "Previous release: ${PREVIOUS_RELEASE:-none}"
 
             # ── Pull latest code ──────────────────────────────────────
             log "Pulling latest code..."
@@ -185,42 +153,20 @@ jobs:
             fi
             log "Git pull complete."
 
-            GIT_HASH=$(git rev-parse HEAD)
-            EPOCH=$(date +%s)
-            RELEASE_ID="${EPOCH}_${GIT_HASH}"
-            RELEASE_DIR="$RELEASES_DIR/$RELEASE_ID"
-            log "New release ID: $RELEASE_ID"
+            # ── Docker compose build → down → up ────────────────────────
+            cd "$SERVER_DIR"
 
-            log "Downloading GeoIP database..."
-            cd "$PROJECT_DIR"
-            bun run download:geoip
-            log "GeoIP database download complete."
+            log "Building Docker image..."
+            docker compose build
+            log "Build complete."
 
-            log "Preparing release directory: $RELEASE_DIR"
-            mkdir -p "$RELEASE_DIR"
+            log "Stopping existing containers..."
+            docker compose down
+            log "Down complete."
 
-            log "Copying source files into release directory..."
-            cp -r "$SERVER_DIR/src" "$RELEASE_DIR/src"
-            cp "$SERVER_DIR/bun.lock" "$RELEASE_DIR/bun.lock"
-            cp "$SERVER_DIR/package.json" "$RELEASE_DIR/package.json"
-            cp "$SERVER_DIR/tsconfig.json" "$RELEASE_DIR/tsconfig.json"
-            log "Source files copied."
-
-            log "Linking shared .env.production into release directory..."
-            ln -sfn "$SHARED_DIR/.env.production" "$RELEASE_DIR/.env.production"
-
-            log "Installing server dependencies..."
-            cd "$RELEASE_DIR"
-            bun install --production --ignore-scripts
-            log "Dependency installation complete."
-
-            log "Pointing 'current' symlink to new release..."
-            ln -sfn "$RELEASE_DIR" "$CURRENT_DIR"
-            log "Symlink updated: $CURRENT_DIR -> $RELEASE_DIR"
-
-            log "Reloading PM2 with zero downtime..."
-            pm2 reload "$PM2_APP_NAME"
-            log "PM2 reload triggered."
+            log "Starting containers..."
+            docker compose up -d
+            log "Up complete."
 
             # ── Health check ──────────────────────────────────────────
             log "Running health checks ($HEALTH_RETRY_COUNT attempts)..."
@@ -240,62 +186,12 @@ jobs:
 
             # ── Success path ──────────────────────────────────────────
             if [ "$IS_HEALTHY" = true ]; then
-              log "Deployment successful."
-
-              log "Cleaning up old releases (keeping $MAX_RELEASES_TO_KEEP)..."
-              find "$RELEASES_DIR" -mindepth 1 -maxdepth 1 -type d \
-                | sort \
-                | head -n "-$MAX_RELEASES_TO_KEEP" \
-                | while read -r old_release; do
-                    log "  Removing: $(basename "$old_release")"
-                    rm -rf "$old_release"
-                  done
-              log "Cleanup complete."
-
-              log "===== Deployment finished successfully ====="
+              log "===== Deployment successful ====="
               exit 0
             fi
 
-            # ── Rollback path ─────────────────────────────────────────
-            log "Health check failed. Starting rollback..."
-
-            if [ -n "$PREVIOUS_RELEASE" ] && [ -d "$PREVIOUS_RELEASE" ]; then
-              log "Rolling back to: $(basename "$PREVIOUS_RELEASE")"
-              ln -sfn "$PREVIOUS_RELEASE" "$CURRENT_DIR"
-              log "Symlink reverted: $CURRENT_DIR -> $PREVIOUS_RELEASE"
-
-              log "Reloading PM2 with rolled-back release..."
-              pm2 reload "$PM2_APP_NAME"
-
-              log "Verifying rollback health..."
-              ROLLBACK_HEALTHY=false
-
-              for i in $(seq 1 "$HEALTH_RETRY_COUNT"); do
-                log "Rollback health check attempt $i/$HEALTH_RETRY_COUNT..."
-                STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_CHECK_URL" || echo "000")
-                if [ "$STATUS" -eq 200 ]; then
-                  ROLLBACK_HEALTHY=true
-                  log "Rollback health check passed on attempt $i."
-                  break
-                fi
-                log "Rollback attempt $i/$HEALTH_RETRY_COUNT failed (status: $STATUS). Retrying in ${HEALTH_RETRY_INTERVAL}s..."
-                sleep "$HEALTH_RETRY_INTERVAL"
-              done
-
-              if [ "$ROLLBACK_HEALTHY" = true ]; then
-                log "Rollback successful. Server is alive on previous release."
-                log "Removing failed release directory: $RELEASE_DIR"
-                rm -rf "$RELEASE_DIR"
-                log "===== Deployment failed, rollback succeeded ====="
-                exit 1
-              else
-                log "CRITICAL: Rollback health check also failed. Server may be down."
-                log "===== Deployment failed, rollback also failed ====="
-                exit 2
-              fi
-
-            else
-              log "CRITICAL: No previous release found. Server may be down."
-              log "===== Deployment failed, no rollback available ====="
-              exit 2
-            fi
+            # ── Failure path ──────────────────────────────────────────
+            log "Health check failed. Tearing down..."
+            docker compose down
+            log "===== Deployment failed ====="
+            exit 1
