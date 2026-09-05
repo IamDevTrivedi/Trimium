@@ -8,7 +8,8 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "preview": "next build && next start -p 3001"
+        "preview": "next build && next start -p 3001",
+        "typecheck": "tsc --noEmit"
     },
     "keywords": [],
     "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
