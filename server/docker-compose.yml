@@ -17,9 +17,7 @@ services:
       - trimium-network
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/IAmDevTrivedi/Trimium/Trimium-app:current
     restart: unless-stopped
     ports:
       - "5003:5003"
