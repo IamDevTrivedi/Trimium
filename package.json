@@ -15,8 +15,7 @@
         "dev": "bun run ./scripts/dev.js",
         "install:all": "bun run ./scripts/install-all.js",
         "clean:all": "bun run ./scripts/clean-all.js",
-        "reset:all": "bun run ./scripts/reset-all.js",
-        "download:geoip": "bun --env-file=.env run ./scripts/update-geolite2.js"
+        "reset:all": "bun run ./scripts/reset-all.js"
     },
     "keywords": [],
     "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
