@@ -1,11 +1,5 @@
-import {
-    NAME,
-    NAME_NOTICE,
-    PASSWORD,
-    PASSWORD_NOTICE,
-    USERNAME,
-    USERNAME_NOTICE,
-} from "@/constants/regex";
+import { NAME, PASSWORD, USERNAME } from "@/constants/regex";
+import { NAME_NOTICE, PASSWORD_NOTICE, USERNAME_NOTICE } from "@/constants/notice";
 import { HASH_OPTIONS } from "@config/argon2";
 import { User } from "@/models/user";
 import { logger } from "@utils/logger";

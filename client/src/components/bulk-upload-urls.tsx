@@ -34,7 +34,8 @@ import {
 } from "lucide-react";
 import { backend } from "@/config/backend";
 import { Toast } from "./toast";
-import { PASSWORD, PASSWORD_NOTICE, SHORTCODE, SHORTCODE_NOTICE } from "@/constants/regex";
+import { PASSWORD, SHORTCODE } from "@/constants/regex";
+import { PASSWORD_NOTICE, SHORTCODE_NOTICE } from "@/constants/notice";
 
 interface CSVRow {
     rowNumber: number;

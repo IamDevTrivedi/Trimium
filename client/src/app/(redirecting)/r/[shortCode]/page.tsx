@@ -26,7 +26,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { backend } from "@/config/backend";
 import { toastError } from "@/lib/toast-error";
 import { Toast } from "@/components/toast";
-import { PASSWORD, PASSWORD_NOTICE } from "@/constants/regex";
+import { PASSWORD } from "@/constants/regex";
+import { PASSWORD_NOTICE } from "@/constants/notice";
 
 type VERDICT =
     | "INVALID"

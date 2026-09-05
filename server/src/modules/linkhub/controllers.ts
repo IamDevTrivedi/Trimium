@@ -6,7 +6,8 @@ import { logger } from "@utils/logger";
 import { Linkhub, LINKHUB_THEMES } from "@/models/linkhub";
 import { User } from "@/models/user";
 import { cloudinary } from "@/config/cloudinary";
-import { USERNAME, USERNAME_NOTICE } from "@/constants/regex";
+import { USERNAME } from "@/constants/regex";
+import { USERNAME_NOTICE } from "@/constants/notice";
 
 export const controllers = {
     getMyLinkhub: async (_req: Request, res: Response) => {

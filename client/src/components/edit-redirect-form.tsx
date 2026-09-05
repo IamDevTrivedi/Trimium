@@ -17,7 +17,8 @@ import { Switch } from "./ui/switch";
 import { Separator } from "./ui/separator";
 import config from "@/config/env";
 import { z } from "zod";
-import { PASSWORD, PASSWORD_NOTICE } from "@/constants/regex";
+import { PASSWORD } from "@/constants/regex";
+import { PASSWORD_NOTICE } from "@/constants/notice";
 import { useShortcutAction } from "@/components/shortcuts-provider";
 import TopBackButton from "./top-back-button";
 
