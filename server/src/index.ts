@@ -16,9 +16,6 @@ import { UAParserMiddleware } from "@middlewares/UAParser";
 import { IPMiddleware } from "@middlewares/IP";
 import { initializeReader, locationMiddleware } from "@middlewares/location";
 
-import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "@config/swagger";
-
 import "@modules/queue";
 import { setupGracefulShutdown } from "@/utils/shutdown";
 
@@ -70,7 +67,11 @@ const init = async () => {
     const { default: contactRoutes } = await import("@modules/contact/routes");
     const { default: linkhubRoutes } = await import("@modules/linkhub/routes");
 
-    app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    if (config.isDevelopment) {
+        const swaggerUi = await import("swagger-ui-express");
+        const swaggerSpec = await import("@config/swagger");
+        app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    }
 
     app.use("/", rootRoutes);
     app.use("/api/v1/health", healthRoutes);
