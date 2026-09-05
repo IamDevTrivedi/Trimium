@@ -44,42 +44,45 @@
 │       │   ├── cli.md
 │       │   ├── customization.md
 │       │   └── mcp.md
-│       └── ui-ux-pro-max
-│           ├── data
-│           │   ├── stacks
-│           │   │   ├── astro.csv
-│           │   │   ├── flutter.csv
-│           │   │   ├── html-tailwind.csv
-│           │   │   ├── jetpack-compose.csv
-│           │   │   ├── nextjs.csv
-│           │   │   ├── nuxt-ui.csv
-│           │   │   ├── nuxtjs.csv
-│           │   │   ├── react-native.csv
-│           │   │   ├── react.csv
-│           │   │   ├── shadcn.csv
-│           │   │   ├── svelte.csv
-│           │   │   ├── swiftui.csv
-│           │   │   └── vue.csv
-│           │   ├── charts.csv
-│           │   ├── colors.csv
-│           │   ├── icons.csv
-│           │   ├── landing.csv
-│           │   ├── products.csv
-│           │   ├── react-performance.csv
-│           │   ├── styles.csv
-│           │   ├── typography.csv
-│           │   ├── ui-reasoning.csv
-│           │   ├── ux-guidelines.csv
-│           │   └── web-interface.csv
-│           ├── scripts
-│           │   ├── __pycache__
-│           │   │   ├── core.cpython-314.pyc
-│           │   │   ├── design_system.cpython-314.pyc
-│           │   │   └── search.cpython-314.pyc
-│           │   ├── core.py
-│           │   ├── design_system.py
-│           │   └── search.py
-│           └── SKILL.md
+│       ├── ui-ux-pro-max
+│       │   ├── data
+│       │   │   ├── stacks
+│       │   │   │   ├── astro.csv
+│       │   │   │   ├── flutter.csv
+│       │   │   │   ├── html-tailwind.csv
+│       │   │   │   ├── jetpack-compose.csv
+│       │   │   │   ├── nextjs.csv
+│       │   │   │   ├── nuxt-ui.csv
+│       │   │   │   ├── nuxtjs.csv
+│       │   │   │   ├── react-native.csv
+│       │   │   │   ├── react.csv
+│       │   │   │   ├── shadcn.csv
+│       │   │   │   ├── svelte.csv
+│       │   │   │   ├── swiftui.csv
+│       │   │   │   └── vue.csv
+│       │   │   ├── charts.csv
+│       │   │   ├── colors.csv
+│       │   │   ├── icons.csv
+│       │   │   ├── landing.csv
+│       │   │   ├── products.csv
+│       │   │   ├── react-performance.csv
+│       │   │   ├── styles.csv
+│       │   │   ├── typography.csv
+│       │   │   ├── ui-reasoning.csv
+│       │   │   ├── ux-guidelines.csv
+│       │   │   └── web-interface.csv
+│       │   ├── scripts
+│       │   │   ├── __pycache__
+│       │   │   │   ├── core.cpython-314.pyc
+│       │   │   │   ├── design_system.cpython-314.pyc
+│       │   │   │   └── search.cpython-314.pyc
+│       │   │   ├── core.py
+│       │   │   ├── design_system.py
+│       │   │   └── search.py
+│       │   └── SKILL.md
+│       └── writing-plans
+│           ├── SKILL.md
+│           └── plan-document-reviewer-prompt.md
 ├── .github
 │   ├── workflows
 │   │   ├── ci.yml
@@ -286,6 +289,7 @@
 │   │   │   └── env.ts
 │   │   ├── constants
 │   │   │   ├── linkhub-themes.ts
+│   │   │   ├── notice.ts
 │   │   │   ├── regex.ts
 │   │   │   ├── shortcuts.ts
 │   │   │   ├── socials.tsx
@@ -320,6 +324,12 @@
 │   ├── diagrams
 │   │   ├── trimium-architecture-dark.png
 │   │   └── trimium-architecture.png
+│   ├── superpowers
+│   │   ├── plans
+│   │   │   ├── 2026-09-05-error-message-audit.md
+│   │   │   └── 2026-09-05-otp-migration.md
+│   │   └── specs
+│   │       └── 2026-09-05-otp-migration-design.md
 │   ├── DIRECTORY_STRUCTURE.md
 │   └── SETUP.md
 ├── scripts
@@ -339,9 +349,10 @@
 │   │   │   ├── mailer.ts
 │   │   │   └── swagger.ts
 │   │   ├── constants
-│   │   │   ├── app.ts
+│   │   │   ├── notice.ts
 │   │   │   ├── regex.ts
-│   │   │   └── tags.ts
+│   │   │   ├── tags.ts
+│   │   │   └── time.ts
 │   │   ├── db
 │   │   │   ├── connectMongo.ts
 │   │   │   └── connectRedis.ts
@@ -426,5 +437,5 @@
 ├── package.json
 └── skills-lock.json
 
-95 directories, 329 files
+99 directories, 336 files
 ```
