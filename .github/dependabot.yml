@@ -1,73 +1,73 @@
 version: 2
 updates:
-    - package-ecosystem: bun
-      directory: /
-      schedule:
-          interval: monthly
-          time: "06:00"
-          timezone: Asia/Kolkata
-      open-pull-requests-limit: 10
-      labels:
-          - dependencies
-      commit-message:
-          prefix: deps
-      groups:
-          root-bun-minor-and-patch:
-              patterns:
-                  - "*"
-              update-types:
-                  - minor
-                  - patch
+  - package-ecosystem: bun
+    directory: /
+    schedule:
+      interval: monthly
+      time: "06:00"
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+    commit-message:
+      prefix: deps
+    groups:
+      root-bun-minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
-    - package-ecosystem: bun
-      directory: /client
-      schedule:
-          interval: monthly
-          time: "06:10"
-          timezone: Asia/Kolkata
-      open-pull-requests-limit: 10
-      labels:
-          - dependencies
-          - client
-      commit-message:
-          prefix: deps
-      groups:
-          client-bun-minor-and-patch:
-              patterns:
-                  - "*"
-              update-types:
-                  - minor
-                  - patch
+  - package-ecosystem: bun
+    directory: /client
+    schedule:
+      interval: monthly
+      time: "06:10"
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - client
+    commit-message:
+      prefix: deps
+    groups:
+      client-bun-minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
-    - package-ecosystem: bun
-      directory: /server
-      schedule:
-          interval: monthly
-          time: "06:20"
-          timezone: Asia/Kolkata
-      open-pull-requests-limit: 10
-      labels:
-          - dependencies
-          - server
-      commit-message:
-          prefix: deps
-      groups:
-          server-bun-minor-and-patch:
-              patterns:
-                  - "*"
-              update-types:
-                  - minor
-                  - patch
+  - package-ecosystem: bun
+    directory: /server
+    schedule:
+      interval: monthly
+      time: "06:20"
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - server
+    commit-message:
+      prefix: deps
+    groups:
+      server-bun-minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
-    - package-ecosystem: github-actions
-      directory: /
-      schedule:
-          interval: monthly
-          time: "06:30"
-          timezone: Asia/Kolkata
-      open-pull-requests-limit: 5
-      labels:
-          - dependencies
-          - ci
-      commit-message:
-          prefix: ci
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+      time: "06:30"
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - ci
+    commit-message:
+      prefix: ci
