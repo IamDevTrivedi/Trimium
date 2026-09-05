@@ -110,9 +110,41 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-  deploy-server:
+  build-image:
     runs-on: ubuntu-latest
     needs: [typecheck]
+    if: needs.detect-changes.outputs.server == 'true'
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./server
+          push: true
+          tags: ghcr.io/IAmDevTrivedi/Trimium/Trimium-app:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy-server:
+    runs-on: ubuntu-latest
+    needs: [build-image]
     if: needs.detect-changes.outputs.server == 'true'
 
     steps:
@@ -122,61 +154,52 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          envs: PROJECT_DIR,SERVER_DIR,RELEASES_DIR,SHARED_DIR,CURRENT_DIR,HEALTH_CHECK_URL,HEALTH_RETRY_COUNT,HEALTH_RETRY_INTERVAL,PM2_APP_NAME,MAX_RELEASES_TO_KEEP
+          envs: PROJECT_DIR,SERVER_DIR,HEALTH_CHECK_URL,HEALTH_RETRY_COUNT,HEALTH_RETRY_INTERVAL,IMAGE_BASE,CURRENT_TAG,LIVE_TAG,GHCR_USER,GHCR_TOKEN
           script: |
             set -euo pipefail
 
             # ── Environment setup ───────────────────────────────────────
-            # Non-interactive shells (cron, CI runners, ssh -c) don't load ~/.bashrc
-            # by default, so bun/pm2/node won't be on PATH unless we source them here.
             source ~/.bashrc 2>/dev/null || true
-
-            export BUN_INSTALL="$HOME/.bun"
-            export PATH="$BUN_INSTALL/bin:$PATH"
-            source "$BUN_INSTALL/_bun" 2>/dev/null || true   # bun's shell completion/env hook, if present
 
             # ── Constants ────────────────────────────────────────────
             PROJECT_DIR="/projects/Trimium"
             SERVER_DIR="$PROJECT_DIR/server"
-            RELEASES_DIR="$SERVER_DIR/releases"
-            SHARED_DIR="$SERVER_DIR/shared"
-            CURRENT_DIR="$SERVER_DIR/current"
             HEALTH_CHECK_URL="http://localhost:5003/api/v1/health"
             HEALTH_RETRY_COUNT=10
             HEALTH_RETRY_INTERVAL=5
-            PM2_APP_NAME="trimium-api"
-            MAX_RELEASES_TO_KEEP=3
+            GHCR_USER="${{ github.actor }}"
+            GHCR_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+            IMAGE_BASE="ghcr.io/IAmDevTrivedi/Trimium/Trimium-app"
+            LATEST_TAG="${IMAGE_BASE}:latest"
+            CURRENT_TAG="${IMAGE_BASE}:current"
+            LIVE_TAG="${IMAGE_BASE}:live"
 
             # ── Helpers ───────────────────────────────────────────────
             log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"; }
 
-            # ── Exit trap ─────────────────────────────────────────────
             DEPLOY_START=$(date +%s)
             trap 'EXIT_CODE=$?; DEPLOY_END=$(date +%s); log "Exited with status $EXIT_CODE in $((DEPLOY_END - DEPLOY_START)) seconds."' EXIT
 
+            # Health check loop. Echoes "healthy" on success, "unhealthy" on failure.
+            health_check() {
+              local attempts="$1"
+              for i in $(seq 1 "$attempts"); do
+                log "Health check attempt $i/$attempts..."
+                local status
+                status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_CHECK_URL" || echo "000")
+                if [ "$status" -eq 200 ]; then
+                  log "Health check passed on attempt $i."
+                  return 0
+                fi
+                log "Attempt $i/$attempts failed (status: $status). Retrying in ${HEALTH_RETRY_INTERVAL}s..."
+                sleep "$HEALTH_RETRY_INTERVAL"
+              done
+              return 1
+            }
+
             log "===== Deployment started ====="
 
-            # ── Verify required tools are available ────────────────────
-            log "Checking bun is on PATH..."
-            if ! command -v bun >/dev/null 2>&1; then
-              log "ERROR: bun not found on PATH after sourcing environment. Aborting."
-              exit 1
-            fi
-            log "Using bun: $(command -v bun) ($(bun --version))"
-
-            log "Checking pm2 is on PATH..."
-            if ! command -v pm2 >/dev/null 2>&1; then
-              log "ERROR: pm2 not found on PATH after sourcing environment. Aborting."
-              exit 1
-            fi
-
-            # ── Capture previous release before anything changes ──────
-            log "Looking up previous release..."
-            PREVIOUS_RELEASE=$(find "$RELEASES_DIR" -mindepth 1 -maxdepth 1 -type d \
-              | sort | tail -n 1)
-            log "Previous release: ${PREVIOUS_RELEASE:-none}"
-
-            # ── Pull latest code ──────────────────────────────────────
+            # ── Pull latest code (compose files, env, etc.) ────────────
             log "Pulling latest code..."
             cd "$PROJECT_DIR"
             if ! git pull origin main; then
@@ -185,117 +208,72 @@ jobs:
             fi
             log "Git pull complete."
 
-            GIT_HASH=$(git rev-parse HEAD)
-            EPOCH=$(date +%s)
-            RELEASE_ID="${EPOCH}_${GIT_HASH}"
-            RELEASE_DIR="$RELEASES_DIR/$RELEASE_ID"
-            log "New release ID: $RELEASE_ID"
+            cd "$SERVER_DIR"
 
-            log "Downloading GeoIP database..."
-            cd "$PROJECT_DIR"
-            bun run download:geoip
-            log "GeoIP database download complete."
+            # ── Login to GHCR and pull the freshly built :latest image ─
+            log "Logging in to GHCR..."
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            log "GHCR login complete."
 
-            log "Preparing release directory: $RELEASE_DIR"
-            mkdir -p "$RELEASE_DIR"
+            log "Pulling ${LATEST_TAG}..."
+            if ! docker pull "$LATEST_TAG"; then
+              log "ERROR: docker pull of :latest failed. Aborting."
+              exit 1
+            fi
+            log "Image pull complete."
 
-            log "Copying source files into release directory..."
-            cp -r "$SERVER_DIR/src" "$RELEASE_DIR/src"
-            cp "$SERVER_DIR/bun.lock" "$RELEASE_DIR/bun.lock"
-            cp "$SERVER_DIR/package.json" "$RELEASE_DIR/package.json"
-            cp "$SERVER_DIR/tsconfig.json" "$RELEASE_DIR/tsconfig.json"
-            log "Source files copied."
+            # ── Move :current to :latest, so compose deploys the new build
+            log "Tagging :current -> :latest..."
+            docker tag "$LATEST_TAG" "$CURRENT_TAG"
 
-            log "Linking shared .env.production into release directory..."
-            ln -sfn "$SHARED_DIR/.env.production" "$RELEASE_DIR/.env.production"
+            # ── Deploy :current and health-check ───────────────────────
+            log "Stopping existing containers..."
+            docker compose down
+            log "Down complete."
 
-            log "Installing server dependencies..."
-            cd "$RELEASE_DIR"
-            bun install --production --ignore-scripts
-            log "Dependency installation complete."
+            log "Starting containers with :current..."
+            docker compose up -d
+            log "Up complete."
 
-            log "Pointing 'current' symlink to new release..."
-            ln -sfn "$RELEASE_DIR" "$CURRENT_DIR"
-            log "Symlink updated: $CURRENT_DIR -> $RELEASE_DIR"
-
-            log "Reloading PM2 with zero downtime..."
-            pm2 reload "$PM2_APP_NAME"
-            log "PM2 reload triggered."
-
-            # ── Health check ──────────────────────────────────────────
-            log "Running health checks ($HEALTH_RETRY_COUNT attempts)..."
-            IS_HEALTHY=false
-
-            for i in $(seq 1 "$HEALTH_RETRY_COUNT"); do
-              log "Health check attempt $i/$HEALTH_RETRY_COUNT..."
-              STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_CHECK_URL" || echo "000")
-              if [ "$STATUS" -eq 200 ]; then
-                IS_HEALTHY=true
-                log "Health check passed on attempt $i."
-                break
-              fi
-              log "Attempt $i/$HEALTH_RETRY_COUNT failed (status: $STATUS). Retrying in ${HEALTH_RETRY_INTERVAL}s..."
-              sleep "$HEALTH_RETRY_INTERVAL"
-            done
-
-            # ── Success path ──────────────────────────────────────────
-            if [ "$IS_HEALTHY" = true ]; then
-              log "Deployment successful."
-
-              log "Cleaning up old releases (keeping $MAX_RELEASES_TO_KEEP)..."
-              find "$RELEASES_DIR" -mindepth 1 -maxdepth 1 -type d \
-                | sort \
-                | head -n "-$MAX_RELEASES_TO_KEEP" \
-                | while read -r old_release; do
-                    log "  Removing: $(basename "$old_release")"
-                    rm -rf "$old_release"
-                  done
-              log "Cleanup complete."
-
-              log "===== Deployment finished successfully ====="
+            log "Running health checks against the new deploy..."
+            if health_check "$HEALTH_RETRY_COUNT"; then
+              # ── Happy path: promote :current to :live ────────────────
+              log "Promoting :current to :live (deploy succeeded)..."
+              docker tag "$CURRENT_TAG" "$LIVE_TAG"
+              log "===== Deployment successful (exit 0) ====="
               exit 0
             fi
 
-            # ── Rollback path ─────────────────────────────────────────
-            log "Health check failed. Starting rollback..."
+            # ── Sad path: health check failed. Roll back to :live ──────
+            log "Health check failed on new deploy. Rolling back to :live..."
 
-            if [ -n "$PREVIOUS_RELEASE" ] && [ -d "$PREVIOUS_RELEASE" ]; then
-              log "Rolling back to: $(basename "$PREVIOUS_RELEASE")"
-              ln -sfn "$PREVIOUS_RELEASE" "$CURRENT_DIR"
-              log "Symlink reverted: $CURRENT_DIR -> $PREVIOUS_RELEASE"
-
-              log "Reloading PM2 with rolled-back release..."
-              pm2 reload "$PM2_APP_NAME"
-
-              log "Verifying rollback health..."
-              ROLLBACK_HEALTHY=false
-
-              for i in $(seq 1 "$HEALTH_RETRY_COUNT"); do
-                log "Rollback health check attempt $i/$HEALTH_RETRY_COUNT..."
-                STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$HEALTH_CHECK_URL" || echo "000")
-                if [ "$STATUS" -eq 200 ]; then
-                  ROLLBACK_HEALTHY=true
-                  log "Rollback health check passed on attempt $i."
-                  break
-                fi
-                log "Rollback attempt $i/$HEALTH_RETRY_COUNT failed (status: $STATUS). Retrying in ${HEALTH_RETRY_INTERVAL}s..."
-                sleep "$HEALTH_RETRY_INTERVAL"
-              done
-
-              if [ "$ROLLBACK_HEALTHY" = true ]; then
-                log "Rollback successful. Server is alive on previous release."
-                log "Removing failed release directory: $RELEASE_DIR"
-                rm -rf "$RELEASE_DIR"
-                log "===== Deployment failed, rollback succeeded ====="
-                exit 1
-              else
-                log "CRITICAL: Rollback health check also failed. Server may be down."
-                log "===== Deployment failed, rollback also failed ====="
-                exit 2
-              fi
-
-            else
-              log "CRITICAL: No previous release found. Server may be down."
-              log "===== Deployment failed, no rollback available ====="
+            if ! docker image inspect "$LIVE_TAG" >/dev/null 2>&1; then
+              # No previous :live image to roll back to.
+              log "ERROR: No :live image exists to roll back to. Leaving stack down."
+              docker compose down
+              log "===== Rollback failed (no previous image) (exit 2) ====="
               exit 2
             fi
+
+            # :current <= :live
+            log "Re-tagging :current to :live (rollback)..."
+            docker tag "$LIVE_TAG" "$CURRENT_TAG"
+
+            log "Restarting containers with previous :live image..."
+            docker compose down
+            docker compose up -d
+            log "Rollback up complete."
+
+            log "Running health checks against rolled-back deploy..."
+            if health_check "$HEALTH_RETRY_COUNT"; then
+              # ── SAD-1: rollback succeeded ───────────────────────────
+              log "Rollback succeeded. :live is unchanged; new build was bad."
+              log "===== Deployment failed, rollback succeeded (exit 1) ====="
+              exit 1
+            fi
+
+            # ── SAD-2: rollback also failed ───────────────────────────
+            log "ERROR: Rollback health check failed. Tearing down."
+            docker compose down
+            log "===== Deployment failed, rollback failed (exit 2) ====="
+            exit 2

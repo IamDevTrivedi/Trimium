@@ -8,6 +8,7 @@
     "scripts": {
         "start": "bun --env-file=.env.production run src/index.ts",
         "dev": "bun --env-file=.env.development --watch src/index.ts",
+        "download:geoip": "bun run ./geolite2.js",
         "typecheck": "tsc --noEmit"
     },
     "keywords": [],
@@ -40,11 +41,8 @@
         "nodemailer": "^9.1.1",
         "pino": "^10.1.0",
         "pino-http": "^11.0.0",
-        "pino-pretty": "^13.1.3",
         "rate-limit-redis": "^4.3.1",
         "redis": "^5.12.1",
-        "swagger-jsdoc": "^6.3.0",
-        "swagger-ui-express": "^5.0.1",
         "ts-referer-parser": "^1.1.0",
         "ua-parser-js": "^2.0.10",
         "zod": "^4.4.3"
@@ -60,6 +58,9 @@
         "@types/nodemailer": "^8.0.1",
         "@types/swagger-jsdoc": "^6.0.4",
         "@types/swagger-ui-express": "^4.1.8",
+        "pino-pretty": "^13.1.3",
+        "swagger-jsdoc": "^6.3.0",
+        "swagger-ui-express": "^5.0.1",
         "typescript": "^7.0.2"
     }
 }

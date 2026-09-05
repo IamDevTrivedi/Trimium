@@ -14,7 +14,7 @@ Live at **trimium.vercel.app**.
 | **Client** | Next.js 16 (App Router), React 19, TypeScript 7, Tailwind CSS 4, shadcn/ui |
 | **Server** | Express 5, TypeScript 7, MongoDB + Mongoose, Redis (native), BullMQ       |
 | **Auth**   | JWT (cookie-based) with token versioning, Argon2 hashing                   |
-| **Infra**  | Vercel (client deploy), VPS + PM2 (server deploy), GitHub Actions CI/CD    |
+| **Infra**  | Vercel (client deploy), VPS + Docker + GHCR (server deploy), GitHub Actions CI/CD |
 | **Package Manager** | Bun 1.4.0                                                     |
 | **Linting & Formatting** | Biome                            |
 
@@ -41,25 +41,30 @@ server/              Express 5 backend
 ├── src/utils/       Utility functions (sendResponse, hash, generateShortCode, etc.)
 ├── src/constants/   Server constants (app, regex, tags, GeoIP database)
 ├── src/db/          Database connections (connectMongo, connectRedis)
-└── src/index.ts     App entry point
+├── Dockerfile       Multi-stage Bun image (builder + runner) for production
+├── .dockerignore    Files excluded from the Docker build context
+├── entrypoint.sh    Container entrypoint: downloads GeoIP then execs Bun
+├── geolite2.js      On-startup GeoIP database downloader
+├── docker-compose.yml       Production stack (app + redis)
+└── docker-compose.dev.yml   Local dev services (MongoDB, Redis, Mailpit)
 
 docs/                Architecture documentation
-scripts/             Utility scripts (install, clean, reset, GeoIP updater)
+scripts/             Utility scripts (install, clean, reset)
 ```
 
 ---
 
 ## Key Architecture Patterns
 
-### Server Runs Directly from Source
+### Server Runs Inside a Docker Image
 
-The server uses **no build step** in production. It runs directly via:
+The production server runs inside a multi-stage Docker image built from `server/Dockerfile` and pushed to GHCR as `ghcr.io/IAmDevTrivedi/Trimium/Trimium-app:latest`. The CI workflow tags `:latest` → `:current` and, after a successful health check, promotes `:current` → `:live`. The VPS runs `docker compose up -d` against the production `server/docker-compose.yml`, which deploys the `:current` tag.
+
+For local development, run the server directly via Bun:
 
 ```bash
-bun --env-file=.env.production run src/index.ts
+bun --env-file=.env.development run src/index.ts
 ```
-
-The CI deploys `src/` and `bun.lock` to the VPS, and Bun handles TypeScript execution natively.
 
 ### API Response Format
 
@@ -146,7 +151,7 @@ BullMQ queues (email + activity updates), processed by workers.
 | `bun run start` | Bun production start with --env-file                     |
 | `bun run typecheck` | TypeScript type checking (`tsc --noEmit`)            |
 
-> **Note:** The server has no `build` script. It runs directly from `src/` via Bun.
+> **Note:** Production server runs inside a Docker container built from `server/Dockerfile` — see "Server Runs Inside a Docker Image" above.
 
 ### Client (run from `client/`)
 
@@ -161,7 +166,7 @@ BullMQ queues (email + activity updates), processed by workers.
 
 ## Critical Rules
 
-- **Server has no build step** — it runs from `src/` directly via Bun. Do not assume a `dist/` output exists.
+- **Server has a Dockerfile** — production builds a multi-stage Docker image pushed to GHCR. Do not assume a `dist/` output is used.
 - NEVER manually edit or update `docs/DIRECTORY_STRUCTURE.md` — it is auto-generated and kept in sync by the `.github/workflows/update-directory-structure.yml` workflow (scheduled daily at 06:00 UTC).
 - NEVER make git commits, git pushes, or GitHub PR changes without explicit user permission or confirmation.
 - Always ask before committing, pushing, or creating/modifying pull requests.
@@ -175,7 +180,7 @@ BullMQ queues (email + activity updates), processed by workers.
 
 - Husky pre-commit hook runs `bun run check` automatically.
 - Client build output: `client/.next/`
-- Server runs directly from: `server/src/`
+- Server production image: `ghcr.io/IAmDevTrivedi/Trimium/Trimium-app` (`:current` = deployed, `:live` = last-known-good)
 - Server env files (`.env.development`, `.env.production`) are gitignored; use `.env.example` as template.
 - Client env file (`.env`) is gitignored; use `.env.example` as template.
 - The project uses **Biome** for both linting and formatting.

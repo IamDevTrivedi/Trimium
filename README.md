@@ -77,7 +77,7 @@ A professional URL shortener and link management platform. Create short URLs, ge
 | **Husky**             | Git hooks (pre-commit quality checks)    |
 | **GitHub Actions**    | CI/CD (Vercel client + VPS server)      |
 | **Dependabot**        | Automated dependency updates             |
-| **PM2**               | Production server process manager        |
+| **Docker + GHCR**     | Production server container & registry    |
 
 ## Architecture
 
@@ -123,7 +123,7 @@ For a full directory breakdown, see [docs/DIRECTORY_STRUCTURE.md](./docs/DIRECTO
 The project uses an automated CI/CD pipeline via GitHub Actions:
 
 - **Client** — Built and deployed to **Vercel** on every push to `main`.
-- **Server** — Deployed to a **VPS** with zero-downtime PM2 reload, health check verification, and automatic rollback to the previous release on failure.
+- **Server** — Built into a multi-stage **Docker** image, pushed to **GitHub Container Registry**, and deployed on a **VPS** via `docker compose`. Each release rolls forward by tagging `:current` to the freshly built `:latest` image; on a successful health check `:current` is promoted to `:live`. If the health check fails, the stack is rolled back to the previous `:live` image.
 
 ## License
 

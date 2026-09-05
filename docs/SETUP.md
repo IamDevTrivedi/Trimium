@@ -12,13 +12,13 @@ Ensure the following tools and services are installed before proceeding:
 | ------------------ | ------- | ---------------------------------------------------------------------------------- |
 | Bun                | 1.4.0+  | [Installation guide](https://bun.sh)                                                |
 | Git                | Latest  | Required for Husky pre-commit hooks                                                |
-| Docker             | Latest  | Required to run MongoDB, Redis, and Mailpit via `server/docker-compose.yml`          |
+| Docker             | Latest  | Required to run local dev services (MongoDB, Redis, Mailpit) via `server/docker-compose.dev.yml` |
 | Cloudinary account | Latest  | Required for media uploads                                                         |
 | SMTP Email Account | Latest  | Required for transactional emails (local dev uses Mailpit, see below)               |
 | MaxMind GeoLite2   | Latest  | Optional, enhances location services                                                |
 
 > [!NOTE]
-> MongoDB, Redis, and Mailpit (local SMTP catch-all) are provided by `server/docker-compose.yml`. Docker is the only additional infrastructure requirement — no separate MongoDB or Redis installs needed for local development.
+> MongoDB, Redis, and Mailpit (local SMTP catch-all) are provided by `server/docker-compose.dev.yml`. Docker is the only additional infrastructure requirement — no separate MongoDB or Redis installs needed for local development.
 
 ---
 
@@ -60,14 +60,14 @@ Trimium uses environment files in multiple locations. Each is loaded based on th
 
 ### 3.2 Root Environment (`./.env`)
 
-Used by `scripts/update-geolite2.js` to download the GeoIP database.
+Used to supply `MAXMIND_LICENSE_KEY` for the GeoIP download script (`bun run download:geoip` from the `server/` directory). See [Section 4](#option-b-automated-download) for full details.
 
 | Variable              | Required | Description                                                                                                                                              |
 | --------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `MAXMIND_LICENSE_KEY` | Optional | License key to download `GeoLite2-City.mmdb` automatically. Obtain from [MaxMind license page](https://www.maxmind.com/en/accounts/current/license-key). |
 
 > [!NOTE]
-> For local development, `server/.env.example` is pre-configured to match the services defined in `server/docker-compose.yml` (MongoDB, Redis, Mailpit). Copy it directly without editing.
+> For local development, `server/.env.example` is pre-configured to match the services defined in `server/docker-compose.dev.yml` (MongoDB, Redis, Mailpit). Copy it directly without editing.
 
 ### 3.3 Server Environment (`server/.env.development`, `server/.env.production`)
 
@@ -161,7 +161,7 @@ ls -la server/.env.development server/.env.production client/.env .env
 ## 4. GeoLite2 Database Setup (Optional)
 
 > [!NOTE]
-> This step is optional but recommended for production. Without the database, the application falls back to an API-based geolocation service with reduced throughput.
+> The production Docker container downloads `GeoLite2-City.mmdb` automatically on startup via `server/entrypoint.sh` → `bun run download:geoip` → `server/geolite2.js`, so on the server you only need to set `MAXMIND_LICENSE_KEY` in `server/.env.production`. The steps below are only needed if you want the database present during local development before starting the server.
 
 ### Option A: Manual Download
 
@@ -172,7 +172,7 @@ ls -la server/.env.development server/.env.production client/.env .env
     server/src/constants/GeoLite2-City.mmdb
     ```
 
-### Option B: Automated Download
+### Option B: Automated Download (Local Dev)
 
 1. Obtain your license key from your [MaxMind Account](https://www.maxmind.com/en/accounts/current/license-key)
 
@@ -195,9 +195,10 @@ ls -la server/.env.development server/.env.production client/.env .env
     $env:MAXMIND_LICENSE_KEY="your_license_key_here"
     ```
 
-3. Run the update script:
+3. Run the update script from the `server/` directory:
 
     ```bash
+    cd server
     bun run download:geoip
     ```
 
@@ -209,34 +210,34 @@ ls -la server/.env.development server/.env.production client/.env .env
 
 ### Start Required Services (Local Dev)
 
-The `server/docker-compose.yml` file ships MongoDB, Redis, Mailpit (local SMTP catch-all), and their UIs. Start it before launching the app:
+The `server/docker-compose.dev.yml` file ships MongoDB, Redis, Mailpit (local SMTP catch-all), and their UIs. Start it before launching the app:
 
 ```bash
 cd server
-docker compose up -d
+docker compose -f docker-compose.dev.yml up -d
 ```
 
 This brings up:
 
 | Container          | Host port | Purpose                          |
 | ------------------ | --------- | -------------------------------- |
-| `mongodb-server`   | `5002`    | MongoDB (root / root)            |
-| `redis-server`     | `5001`    | Redis (`default` / `password`)   |
-| `mailpit-server`   | `5003`    | SMTP (no auth) + UI on `5004`    |
-| `mongodb-viewer`   | `5006`    | Mongo Express UI (admin / admin) |
-| `redis-insights`   | `5005`    | Redis Insight UI                 |
+| `mongodb`          | `5002`    | MongoDB (root / root)            |
+| `redis`            | `5001`    | Redis                            |
+| `mailpit`          | `5003`    | SMTP (no auth) + UI on `5004`    |
+| `mongo-express`    | `5006`    | Mongo Express UI (admin / admin) |
+| `redisinsight`     | `5005`    | Redis Insight UI                 |
 
 > [!TIP]
 > Mailpit captures every email the app sends. Open http://localhost:5004 in your browser to inspect them — no real emails are sent during local dev.
 
 > [!IMPORTANT]
-> The default MongoDB image in `server/docker-compose.yml` is pinned to a version that is compatible with the host Linux kernel. If you fork this project on a newer kernel, you may need to update the image tag.
+> The default MongoDB image in `server/docker-compose.dev.yml` is pinned to a version that is compatible with the host Linux kernel. If you fork this project on a newer kernel, you may need to update the image tag.
 
 To stop the stack:
 
 ```bash
 cd server
-docker compose down
+docker compose -f docker-compose.dev.yml down
 ```
 
 ### Start Development Server

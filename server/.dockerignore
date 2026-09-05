@@ -1,0 +1,36 @@
+# Dependencies
+**/node_modules/
+
+# Environment files
+**/.env
+**/.env.*
+
+# Logs
+**/logs/
+**/*.log
+**/*.log.*
+
+# Build output
+**/dist/
+
+# Git
+**/.git
+**/.gitignore
+
+# MMDB files
+**/*.mmdb
+**/*.mmdb.*
+
+# Editor
+**/.DS_Store
+**/.vscode/
+**/.idea/
+
+# Misc
+**/*.tgz
+**/*.zip
+**/*.pem
+
+# Temporary
+**/tmp/
+**/temp/

@@ -1,62 +1,62 @@
 name: Update Directory Structure
 
 on:
-    schedule:
-        - cron: "0 6 * * *" # Daily at 06:00 UTC
+  schedule:
+    - cron: "0 6 * * *" # Daily at 06:00 UTC
 
 permissions:
-    contents: write
+  contents: write
 
 jobs:
-    update-dir-structure:
-        runs-on: ubuntu-latest
+  update-dir-structure:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v6
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
 
-            - name: Ensure tree is installed
-              run: |
-                  which tree || (sudo apt-get update && sudo apt-get install -y tree)
+      - name: Ensure tree is installed
+        run: |
+          which tree || (sudo apt-get update && sudo apt-get install -y tree)
 
-            - name: Generate directory tree
-              run: |
-                  git ls-files | tree --fromfile --dirsfirst > /tmp/tree_output.txt
+      - name: Generate directory tree
+        run: |
+          git ls-files | tree --fromfile --dirsfirst > /tmp/tree_output.txt
 
-            - name: Assemble markdown file
-              run: |
-                  echo "# Directory Structure" > docs/CURRENT_DIRECTORY_STRUCTURE.md
-                  echo "" >> docs/CURRENT_DIRECTORY_STRUCTURE.md
-                  echo '```' >> docs/CURRENT_DIRECTORY_STRUCTURE.md
-                  cat /tmp/tree_output.txt >> docs/CURRENT_DIRECTORY_STRUCTURE.md
-                  echo '```' >> docs/CURRENT_DIRECTORY_STRUCTURE.md
+      - name: Assemble markdown file
+        run: |
+          echo "# Directory Structure" > docs/CURRENT_DIRECTORY_STRUCTURE.md
+          echo "" >> docs/CURRENT_DIRECTORY_STRUCTURE.md
+          echo '```' >> docs/CURRENT_DIRECTORY_STRUCTURE.md
+          cat /tmp/tree_output.txt >> docs/CURRENT_DIRECTORY_STRUCTURE.md
+          echo '```' >> docs/CURRENT_DIRECTORY_STRUCTURE.md
 
-            - name: Compare with existing file
-              id: compare
-              run: |
-                  if diff docs/DIRECTORY_STRUCTURE.md docs/CURRENT_DIRECTORY_STRUCTURE.md > /dev/null 2>&1; then
-                      echo "No changes in directory structure"
-                      echo "changed=false" >> "$GITHUB_OUTPUT"
-                  else
-                      echo "Directory structure has changed"
-                      echo "changed=true" >> "$GITHUB_OUTPUT"
-                  fi
+      - name: Compare with existing file
+        id: compare
+        run: |
+          if diff docs/DIRECTORY_STRUCTURE.md docs/CURRENT_DIRECTORY_STRUCTURE.md > /dev/null 2>&1; then
+              echo "No changes in directory structure"
+              echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+              echo "Directory structure has changed"
+              echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
 
-            - name: Update DIRECTORY_STRUCTURE.md
-              if: steps.compare.outputs.changed == 'true'
-              run: |
-                  cp docs/CURRENT_DIRECTORY_STRUCTURE.md docs/DIRECTORY_STRUCTURE.md
+      - name: Update DIRECTORY_STRUCTURE.md
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          cp docs/CURRENT_DIRECTORY_STRUCTURE.md docs/DIRECTORY_STRUCTURE.md
 
-            - name: Commit and push
-              if: steps.compare.outputs.changed == 'true'
-              run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
-                  git add docs/DIRECTORY_STRUCTURE.md
-                  git commit -m "docs: update DIRECTORY_STRUCTURE.md"
-                  git push origin main
+      - name: Commit and push
+        if: steps.compare.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/DIRECTORY_STRUCTURE.md
+          git commit -m "docs: update DIRECTORY_STRUCTURE.md"
+          git push origin main
 
-            - name: Clean up temp file
-              if: always()
-              run: |
-                  rm -f docs/CURRENT_DIRECTORY_STRUCTURE.md
+      - name: Clean up temp file
+        if: always()
+        run: |
+          rm -f docs/CURRENT_DIRECTORY_STRUCTURE.md
