@@ -337,8 +337,7 @@
 │   ├── dev.js
 │   ├── generate-architecture.py
 │   ├── install-all.js
-│   ├── reset-all.js
-│   └── update-geolite2.js
+│   └── reset-all.js
 ├── server
 │   ├── src
 │   │   ├── config
@@ -421,9 +420,14 @@
 │   │   │   ├── shutdown.ts
 │   │   │   └── tags.ts
 │   │   └── index.ts
+│   ├── Dockerfile
 │   ├── bun.lock
+│   ├── docker-compose.dev.yml
 │   ├── docker-compose.yml
+│   ├── entrypoint.sh
+│   ├── geolite2.js
 │   ├── package.json
+│   ├── trigger
 │   └── tsconfig.json
 ├── .editorconfig
 ├── .env.example
@@ -437,5 +441,5 @@
 ├── package.json
 └── skills-lock.json
 
-99 directories, 336 files
+99 directories, 340 files
 ```
