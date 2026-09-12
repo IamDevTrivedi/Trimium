@@ -9,7 +9,9 @@
         "start": "bun --env-file=.env.production run src/index.ts",
         "dev": "bun --env-file=.env.development --watch src/index.ts",
         "download:geoip": "bun run ./geolite2.js",
-        "typecheck": "tsc --noEmit"
+        "typecheck": "tsc --noEmit",
+        "dev:up": "docker compose -f docker-compose.dev.yml up -d",
+        "dev:down": "docker compose -f docker-compose.dev.yml down"
     },
     "keywords": [],
     "author": "Dev Trivedi <devtrivedi.work@gmail.com> (https://github.com/IamDevTrivedi)",
