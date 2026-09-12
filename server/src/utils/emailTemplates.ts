@@ -1,7 +1,7 @@
 import type { LocationData } from "@/middlewares/location";
 import { readableDate, readableTime } from "./date";
 import type { ParsedUA } from "@/middlewares/UAParser";
-import { config } from "@config/env";
+import { config } from "@/config/env";
 
 type EmailActionTone = "primary" | "danger";
 

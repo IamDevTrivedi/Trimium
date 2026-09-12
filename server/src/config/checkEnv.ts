@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { config } from "@config/env";
-import { logger } from "@utils/logger";
+import { config } from "@/config/env";
+import { logger } from "@/utils/logger";
 
 export const envSchema = z
     .object({

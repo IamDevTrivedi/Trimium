@@ -1,10 +1,10 @@
-import { getWorkspacePerformance } from "@utils/getWorkspacePerformance";
+import { getWorkspacePerformance } from "@/utils/getWorkspacePerformance";
 import { User } from "@/models/user";
 import { Workspace } from "@/models/workspace";
-import { config } from "@config/env";
-import { emailTemplates } from "@utils/emailTemplates";
-import { logger } from "@utils/logger";
-import { sendResponse } from "@utils/sendResponse";
+import { config } from "@/config/env";
+import { emailTemplates } from "@/utils/emailTemplates";
+import { logger } from "@/utils/logger";
+import { sendResponse } from "@/utils/sendResponse";
 import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
@@ -15,7 +15,7 @@ import { Invitation } from "@/models/invitation";
 import { URL } from "@/models/url";
 import { Analytics } from "@/models/analytics";
 import mongoose from "mongoose";
-import { emailQueue, QueueNames } from "@modules/queue";
+import { emailQueue, QueueNames } from "@/modules/queue";
 
 export const controllers = {
     createWorkspace: async (req: Request, res: Response) => {

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { config } from "@config/env";
-import { sendResponse } from "@utils/sendResponse";
+import { config } from "@/config/env";
+import { sendResponse } from "@/utils/sendResponse";
 
 export const controller = {
     index: (_req: Request, res: Response) => {

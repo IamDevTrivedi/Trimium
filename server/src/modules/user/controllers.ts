@@ -1,9 +1,9 @@
 import { NAME, PASSWORD, USERNAME } from "@/constants/regex";
 import { NAME_NOTICE, PASSWORD_NOTICE, USERNAME_NOTICE } from "@/constants/notice";
-import { HASH_OPTIONS } from "@config/argon2";
+import { HASH_OPTIONS } from "@/config/argon2";
 import { User } from "@/models/user";
-import { logger } from "@utils/logger";
-import { sendResponse } from "@utils/sendResponse";
+import { logger } from "@/utils/logger";
+import { sendResponse } from "@/utils/sendResponse";
 import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";

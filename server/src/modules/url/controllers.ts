@@ -1,14 +1,14 @@
 import { PASSWORD, SHORTCODE, TAGS } from "@/constants/regex";
 import { PASSWORD_NOTICE, SHORTCODE_NOTICE, TAGS_NOTICE } from "@/constants/notice";
-import { HASH_OPTIONS } from "@config/argon2";
+import { HASH_OPTIONS } from "@/config/argon2";
 import { URL } from "@/models/url";
-import { logger } from "@utils/logger";
-import { sendResponse } from "@utils/sendResponse";
+import { logger } from "@/utils/logger";
+import { sendResponse } from "@/utils/sendResponse";
 import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 import argon2 from "argon2";
-import { generateShortcode } from "@utils/generateShortCode";
+import { generateShortcode } from "@/utils/generateShortCode";
 import { Analytics } from "@/models/analytics";
 import { Workspace } from "@/models/workspace";
 import { parse } from "ts-referer-parser";

@@ -2,9 +2,9 @@ import type { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 
-import { config } from "@config/env";
-import { logger } from "@utils/logger";
-import { sendResponse } from "@utils/sendResponse";
+import { config } from "@/config/env";
+import { logger } from "@/utils/logger";
+import { sendResponse } from "@/utils/sendResponse";
 
 const verifyEndpoint = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 

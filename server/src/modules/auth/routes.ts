@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { controllers } from "@modules/auth/controllers";
+import { controllers } from "@/modules/auth/controllers";
 import { protectRoute } from "@/middlewares/protectRoute";
 import { createRateLimiter } from "@/middlewares/rateLimiter";
 import { verifyTurnstileToken } from "@/middlewares/verifyTurnstile";

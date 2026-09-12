@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
-import { sendResponse } from "@utils/sendResponse";
-import { logger } from "@utils/logger";
+import { sendResponse } from "@/utils/sendResponse";
+import { logger } from "@/utils/logger";
 import { Linkhub, LINKHUB_THEMES } from "@/models/linkhub";
 import { User } from "@/models/user";
 import { cloudinary } from "@/config/cloudinary";

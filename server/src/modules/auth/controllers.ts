@@ -4,24 +4,24 @@ import crypto from "crypto";
 import { StatusCodes } from "http-status-codes";
 import { UAParser } from "ua-parser-js";
 import type { Request, Response } from "express";
-import { config } from "@config/env";
-import { redisClient } from "@db/connectRedis";
-import { User } from "@models/user";
-import { generateOTP } from "@utils/generateOTP";
-import { logger } from "@utils/logger";
-import { sendResponse } from "@utils/sendResponse";
+import { config } from "@/config/env";
+import { redisClient } from "@/db/connectRedis";
+import { User } from "@/models/user";
+import { generateOTP } from "@/utils/generateOTP";
+import { logger } from "@/utils/logger";
+import { sendResponse } from "@/utils/sendResponse";
 import { z } from "zod";
-import { NAME, OTP as OTP_REGEX, PASSWORD, USERNAME } from "@constants/regex";
-import { HASH_OPTIONS } from "@config/argon2";
-import { LoginHistory } from "@models/loginHistory";
-import { emailTemplates } from "@utils/emailTemplates";
-import { emailQueue, QueueNames } from "@modules/queue";
+import { NAME, OTP as OTP_REGEX, PASSWORD, USERNAME } from "@/constants/regex";
+import { HASH_OPTIONS } from "@/config/argon2";
+import { LoginHistory } from "@/models/loginHistory";
+import { emailTemplates } from "@/utils/emailTemplates";
+import { emailQueue, QueueNames } from "@/modules/queue";
 import {
     checkLoginCooldown,
     recordFailedAttempt,
     clearFailedAttempts,
     loginThrottleConfig,
-} from "@utils/loginThrottle";
+} from "@/utils/loginThrottle";
 import {
     FIFTEEN_MINUTES_IN_S,
     FIVE_MINUTES_IN_MS,

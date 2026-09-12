@@ -1,5 +1,5 @@
-import { redisClient } from "@db/connectRedis";
-import { logger } from "@utils/logger";
+import { redisClient } from "@/db/connectRedis";
+import { logger } from "@/utils/logger";
 import { THIRTY_MINUTES_IN_S, FIFTEEN_MINUTES_IN_S } from "@/constants/time";
 
 const LOGIN_FAILED_PREFIX = "login:failed:";

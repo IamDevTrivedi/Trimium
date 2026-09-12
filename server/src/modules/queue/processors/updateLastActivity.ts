@@ -1,5 +1,5 @@
 import { LoginHistory } from "@/models/loginHistory";
-import { logger } from "@utils/logger";
+import { logger } from "@/utils/logger";
 import type { Job } from "bullmq";
 
 export interface UpdateLastActivityJobData {

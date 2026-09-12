@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { controller } from "@modules/contact/controller";
+import { controller } from "@/modules/contact/controller";
 import { createRateLimiter } from "@/middlewares/rateLimiter";
 import { verifyTurnstileToken } from "@/middlewares/verifyTurnstile";
 import { FIVE_MINUTES_IN_MS } from "@/constants/time";

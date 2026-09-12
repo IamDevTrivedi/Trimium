@@ -1,4 +1,4 @@
-import { logger } from "@utils/logger";
+import { logger } from "@/utils/logger";
 import type { NextFunction, Request, Response } from "express";
 
 declare module "express-serve-static-core" {

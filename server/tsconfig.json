@@ -6,14 +6,7 @@
         "rootDir": "./src",
         "outDir": "./dist",
         "paths": {
-            "@config/*": ["./src/config/*"],
-            "@db/*": ["./src/db/*"],
-            "@utils/*": ["./src/utils/*"],
-            "@/*": ["./src/*"],
-            "@modules/*": ["./src/modules/*"],
-            "@middlewares/*": ["./src/middlewares/*"],
-            "@constants/*": ["./src/constants/*"],
-            "@models/*": ["./src/models/*"]
+            "@/*": ["./src/*"]
         },
         "strict": true,
         "esModuleInterop": true,

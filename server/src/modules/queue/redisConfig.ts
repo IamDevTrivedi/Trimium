@@ -1,4 +1,4 @@
-import { config } from "@config/env";
+import { config } from "@/config/env";
 import type { ConnectionOptions } from "bullmq";
 
 export const redisConfig: ConnectionOptions = {

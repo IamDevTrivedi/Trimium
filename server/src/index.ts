@@ -3,20 +3,20 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
 
-import { checkEnv } from "@config/checkEnv";
-import { connectMongo } from "@db/connectMongo";
-import { connectRedis } from "@db/connectRedis";
-import { verifyEmailTransporter } from "@config/mailer";
+import { checkEnv } from "@/config/checkEnv";
+import { connectMongo } from "@/db/connectMongo";
+import { connectRedis } from "@/db/connectRedis";
+import { verifyEmailTransporter } from "@/config/mailer";
 
-import { config } from "@config/env";
-import { logger } from "@utils/logger";
+import { config } from "@/config/env";
+import { logger } from "@/utils/logger";
 
 import { httpLoggerMiddleware } from "@/middlewares/httpLogger";
-import { UAParserMiddleware } from "@middlewares/UAParser";
-import { IPMiddleware } from "@middlewares/IP";
-import { initializeReader, locationMiddleware } from "@middlewares/location";
+import { UAParserMiddleware } from "@/middlewares/UAParser";
+import { IPMiddleware } from "@/middlewares/IP";
+import { initializeReader, locationMiddleware } from "@/middlewares/location";
 
-import "@modules/queue";
+import "@/modules/queue";
 import { setupGracefulShutdown } from "@/utils/shutdown";
 
 const init = async () => {
@@ -55,21 +55,21 @@ const init = async () => {
     app.use(IPMiddleware);
     app.use(locationMiddleware);
 
-    const { globalRateLimiter } = await import("@middlewares/rateLimiter");
+    const { globalRateLimiter } = await import("@/middlewares/rateLimiter");
     app.use(globalRateLimiter);
 
-    const { default: rootRoutes } = await import("@modules/root/routes");
-    const { default: healthRoutes } = await import("@modules/health/routes");
-    const { default: authRoutes } = await import("@modules/auth/routes");
-    const { default: userRoutes } = await import("@modules/user/routes");
-    const { default: urlRoutes } = await import("@modules/url/routes");
-    const { default: workspaceRoutes } = await import("@modules/workspace/routes");
-    const { default: contactRoutes } = await import("@modules/contact/routes");
-    const { default: linkhubRoutes } = await import("@modules/linkhub/routes");
+    const { default: rootRoutes } = await import("@/modules/root/routes");
+    const { default: healthRoutes } = await import("@/modules/health/routes");
+    const { default: authRoutes } = await import("@/modules/auth/routes");
+    const { default: userRoutes } = await import("@/modules/user/routes");
+    const { default: urlRoutes } = await import("@/modules/url/routes");
+    const { default: workspaceRoutes } = await import("@/modules/workspace/routes");
+    const { default: contactRoutes } = await import("@/modules/contact/routes");
+    const { default: linkhubRoutes } = await import("@/modules/linkhub/routes");
 
     if (config.isDevelopment) {
         const swaggerUi = await import("swagger-ui-express");
-        const swaggerSpec = await import("@config/swagger");
+        const swaggerSpec = await import("@/config/swagger");
         app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     }
 

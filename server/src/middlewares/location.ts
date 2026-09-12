@@ -3,8 +3,8 @@ import maxmind, { type CityResponse, type Reader } from "maxmind";
 import path from "path";
 import fs from "fs";
 import axios from "axios";
-import { logger } from "@utils/logger";
-import { redisClient } from "@db/connectRedis";
+import { logger } from "@/utils/logger";
+import { redisClient } from "@/db/connectRedis";
 import { ONE_DAY_IN_S } from "@/constants/time";
 
 declare module "express-serve-static-core" {

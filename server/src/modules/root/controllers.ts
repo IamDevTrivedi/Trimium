@@ -1,4 +1,4 @@
-import { sendResponse } from "@utils/sendResponse";
+import { sendResponse } from "@/utils/sendResponse";
 import type { Request, Response } from "express";
 
 export const controllers = {

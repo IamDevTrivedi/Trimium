@@ -2,14 +2,14 @@ import jwt from "jsonwebtoken";
 import type { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 
-import { logger } from "@utils/logger";
-import { sendResponse } from "@utils/sendResponse";
-import { config } from "@config/env";
+import { logger } from "@/utils/logger";
+import { sendResponse } from "@/utils/sendResponse";
+import { config } from "@/config/env";
 import { ONE_HOUR_IN_S, THREE_MINUTES_IN_S } from "@/constants/time";
 import { LoginHistory } from "@/models/loginHistory";
 import { User } from "@/models/user";
-import { redisClient } from "@db/connectRedis";
-import { lastActivityQueue } from "@modules/queue";
+import { redisClient } from "@/db/connectRedis";
+import { lastActivityQueue } from "@/modules/queue";
 
 declare module "express-serve-static-core" {
     interface Locals {

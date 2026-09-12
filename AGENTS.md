@@ -5,20 +5,20 @@
 Bun monorepo with two packages: `client/` (Next.js 16) and `server/` (Express 5).
 Live at **trimium.vercel.app**.
 
----
-
 ## Tech Stack
 
-| Layer      | Technology                                                                 |
-| ---------- | -------------------------------------------------------------------------- |
-| **Client** | Next.js 16 (App Router), React 19, TypeScript 7, Tailwind CSS 4, shadcn/ui |
-| **Server** | Express 5, TypeScript 7, MongoDB + Mongoose, Redis (native), BullMQ       |
-| **Auth**   | JWT (cookie-based) with token versioning, Argon2 hashing                   |
-| **Infra**  | Vercel (client deploy), VPS + Docker + GHCR (server deploy), GitHub Actions CI/CD |
-| **Package Manager** | Bun 1.4.0                                                     |
-| **Linting & Formatting** | Biome                            |
+| Layer                    | Technology                                                                        |
+| ------------------------ | --------------------------------------------------------------------------------- |
+| **Client**               | Next.js 16 (App Router), React 19, TypeScript 7, Tailwind CSS 4, shadcn/ui        |
+| **Server**               | Express 5, TypeScript 7, MongoDB + Mongoose, Redis (native), BullMQ               |
+| **Auth**                 | JWT (cookie-based) with token versioning, Argon2 hashing                          |
+| **Infra**                | Vercel (client deploy), VPS + Docker + GHCR (server deploy), GitHub Actions CI/CD |
+| **Package Manager**      | Bun 1.4.0                                                                         |
+| **Linting & Formatting** | Biome                                                                             |
 
----
+## Agent Skills
+
+All available agent skills are located in the `.agents/skills/` directory. Each skill is a self-contained module that provides the agent with the capabilities and instructions required to perform a specific task.
 
 ## Monorepo Structure
 
@@ -51,8 +51,6 @@ server/              Express 5 backend
 docs/                Architecture documentation
 scripts/             Utility scripts (install, clean, reset)
 ```
-
----
 
 ## Key Architecture Patterns
 
@@ -101,27 +99,22 @@ BullMQ queues (email + activity updates), processed by workers.
 
 ### Import Aliases (server)
 
-| Alias           | Path                      |
-| --------------- | ------------------------- |
-| `@/`            | `server/src/`             |
-| `@config/`      | `server/src/config/`      |
-| `@utils/`       | `server/src/utils/`       |
-| `@middlewares/` | `server/src/middlewares/` |
-| `@modules/`     | `server/src/modules/`     |
-| `@db/`          | `server/src/db/`          |
+| Alias | Path          |
+| ----- | ------------- |
+| `@/`  | `server/src/` |
 
 ---
 
 ## Conventions
 
-| Rule              | Detail                                                   |
-| ----------------- | -------------------------------------------------------- |
-| **TypeScript**    | Strict mode everywhere                                   |
-| **Controllers**   | Exported as `controllers` object                         |
-| **Routes**        | Exported as `router`                                     |
-| **Models**        | One file per model in `server/src/models/`               |
-| **UI components** | shadcn/ui in `client/src/components/ui/`                 |
-| **Styling**       | Tailwind + `cn()` from `client/src/lib/utils.ts`         |
+| Rule              | Detail                                                                  |
+| ----------------- | ----------------------------------------------------------------------- |
+| **TypeScript**    | Strict mode everywhere                                                  |
+| **Controllers**   | Exported as `controllers` object                                        |
+| **Routes**        | Exported as `router`                                                    |
+| **Models**        | One file per model in `server/src/models/`                              |
+| **UI components** | shadcn/ui in `client/src/components/ui/`                                |
+| **Styling**       | Tailwind + `cn()` from `client/src/lib/utils.ts`                        |
 | **Formatting**    | Biome (tabWidth 4, doubleQuote true, semicolons always, printWidth 100) |
 
 ---
@@ -130,39 +123,40 @@ BullMQ queues (email + activity updates), processed by workers.
 
 ### Root
 
-| Command               | Description                        |
-| --------------------- | ---------------------------------- |
-| `bun run dev`         | Run client + server concurrently   |
-| `bun run lint:check`  | Biome lint check                  |
-| `bun run lint`        | Biome lint auto-fix               |
-| `bun run format:check` | Biome format check                |
-| `bun run format`      | Biome format auto-fix             |
-| `bun run check`       | lint:check + format:check         |
-| `bun run install:all` | Install all workspace dependencies |
-| `bun run download:geoip` | Download GeoIP database           |
-| `bun run clean:all`   | Clean node_modules and build dirs |
-| `bun run reset:all`   | clean:all + install:all           |
+| Command                  | Description                        |
+| ------------------------ | ---------------------------------- |
+| `bun run dev`            | Run client + server concurrently   |
+| `bun run lint:check`     | Biome lint check                   |
+| `bun run lint`           | Biome lint auto-fix                |
+| `bun run format:check`   | Biome format check                 |
+| `bun run format`         | Biome format auto-fix              |
+| `bun run check`          | lint:check + format:check          |
+| `bun run install:all`    | Install all workspace dependencies |
+| `bun run download:geoip` | Download GeoIP database            |
+| `bun run clean:all`      | Clean node_modules and build dirs  |
+| `bun run reset:all`      | clean:all + install:all            |
 
 ### Server (run from `server/`)
 
-| Command      | Description                                              |
-| ------------ | --------------------------------------------------------- |
-| `bun run dev`   | Bun dev mode with --env-file (watches for changes)      |
-| `bun run start` | Bun production start with --env-file                     |
-| `bun run typecheck` | TypeScript type checking (`tsc --noEmit`)            |
+| Command                  | Description                                        |
+| ------------------------ | -------------------------------------------------- |
+| `bun run dev`            | Bun dev mode with `--env-file` and `--watch`       |
+| `bun run start`          | Bun production start with `--env-file`             |
+| `bun run typecheck`      | TypeScript type checking (`tsc --noEmit`)          |
+| `bun run download:geoip` | Download GeoIP database (`geolite2.js`)            |
+| `bun run dev:up`         | Start local dev services (MongoDB, Redis, Mailpit) |
+| `bun run dev:down`       | Stop local dev services                            |
 
 > **Note:** Production server runs inside a Docker container built from `server/Dockerfile` — see "Server Runs Inside a Docker Image" above.
 
 ### Client (run from `client/`)
 
-| Command      | Description               |
-| ------------ | ------------------------- |
-| `bun run build`   | Next.js build to `.next/` |
-| `bun run dev`     | Next.js dev server        |
-| `bun run start`   | Production start          |
+| Command           | Description                |
+| ----------------- | -------------------------- |
+| `bun run build`   | Next.js build to `.next/`  |
+| `bun run dev`     | Next.js dev server         |
+| `bun run start`   | Production start           |
 | `bun run preview` | Build + serve on port 3001 |
-
----
 
 ## Critical Rules
 
