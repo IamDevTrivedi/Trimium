@@ -1,12 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
-import RedisStore from "rate-limit-redis";
-import rateLimit from "express-rate-limit";
 import crypto from "crypto";
 
 import { config } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { redisClient } from "@/db/connectRedis";
 import { ONE_MINUTE_IN_MS } from "@/constants/time";
+import { StatusCodes } from "http-status-codes";
 
 declare module "express-serve-static-core" {
     interface Locals {
@@ -14,156 +13,197 @@ declare module "express-serve-static-core" {
     }
 }
 
-interface RateLimitOptions {
+interface RateLimiterOptions {
     windowMs: number;
     max: number;
     prefix?: string;
 }
 
-const calculateAdaptiveDifficulty = (options: { windowMs: number; max: number }): number => {
-    const { windowMs, max } = options;
-    const requestsPerMinute = (max / windowMs) * 60 * 1000;
-    let add = 0;
+const SLIDING_WINDOW_LUA = `
+local key      = KEYS[1]
+local windowMs = tonumber(ARGV[1])
+local max      = tonumber(ARGV[2])
+local member   = ARGV[3]
 
-    if (requestsPerMinute <= 5) {
-        add += 3;
-    } else if (requestsPerMinute <= 20) {
-        add += 2;
-    } else if (requestsPerMinute <= 100) {
-        add += 1;
-    }
+local time = redis.call('TIME')
+local now  = tonumber(time[1]) * 1000 + math.floor(tonumber(time[2]) / 1000)
 
-    if (windowMs <= 30 * 1000) {
-        add += 1;
-    } else if (windowMs <= 60 * 1000) {
-        add += 0;
-    }
+-- keep only entries inside [now - windowMs, now]
+redis.call('ZREMRANGEBYSCORE', key, '-inf', '(' .. (now - windowMs))
 
-    return Math.min(
-        config.PoW_DIFFICULTY + 3,
-        Math.max(config.PoW_DIFFICULTY, config.PoW_DIFFICULTY + add)
-    );
-};
+local count = redis.call('ZCARD', key)
 
-const issuePoWChallenge = (
-    _req: Request,
-    res: Response,
-    options: { windowMs: number; max: number }
-) => {
-    const difficulty = calculateAdaptiveDifficulty(options);
-    const expiry = Date.now() + ONE_MINUTE_IN_MS;
-    const salt = crypto.randomBytes(16).toString("hex");
-    const challenge = `${difficulty}|${expiry}|${salt}`;
-    const integrity = crypto
-        .createHmac("sha256", config.PoW_SECRET)
-        .update(challenge)
-        .digest("hex");
+if count < max then
+    redis.call('ZADD', key, now, member)
+    redis.call('PEXPIRE', key, windowMs)
+    return 1
+end
 
-    const PoW_token = Buffer.from(`${challenge}|${integrity}`).toString("base64");
+return 0
+`;
 
-    return res.status(429).json({
-        message:
-            "You're going a bit too fast. Please complete the quick security check to continue.",
-        PoW_token,
-        difficulty,
-        code: "rate_limit_pow_challenge",
-    });
-};
+const SLIDING_WINDOW_SHA = crypto.createHash("sha1").update(SLIDING_WINDOW_LUA).digest("hex");
 
-const verifyPoWAndRespond = (req: Request, res: Response, next: NextFunction) => {
-    const PoW_header = req.headers["x-pow"];
-    if (typeof PoW_header !== "string") {
-        return res.status(400).json({
-            success: false,
-            message: "Please complete the security check and try again.",
-        });
-    }
+export const createRateLimiter = ({ windowMs, max, prefix = "rl" }: RateLimiterOptions) => {
+    return async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+        res.locals.visitorID = res.locals.clientIP;
 
-    const [PoW_Token, nonce] = PoW_header.split(":");
-    if (!PoW_Token || !nonce) {
-        return res.status(400).json({
-            success: false,
-            message: "Your security check response looks incomplete. Please try the check again.",
-        });
-    }
+        if (config.isDevelopment) {
+            next();
+            return;
+        }
 
-    const [difficultyStr, expiryStr, salt, integrity] = Buffer.from(PoW_Token, "base64")
-        .toString("utf-8")
-        .split("|");
+        const key = `${prefix}:${res.locals.visitorID}`;
+        const member = crypto.randomUUID();
+        const args = [String(windowMs), String(max), member];
 
-    if (!difficultyStr || !expiryStr || !salt || !integrity) {
-        return res.status(400).json({
-            success: false,
-            message: "Your security check couldn't be verified. Please try the check again.",
-        });
-    }
+        let allowed = 0;
+        try {
+            allowed = Number(
+                await redisClient.sendCommand(["EVALSHA", SLIDING_WINDOW_SHA, "1", key, ...args])
+            );
+        } catch (err) {
+            if (err instanceof Error && err.message.includes("NOSCRIPT")) {
+                try {
+                    allowed = Number(
+                        await redisClient.sendCommand([
+                            "EVAL",
+                            SLIDING_WINDOW_LUA,
+                            "1",
+                            key,
+                            ...args,
+                        ])
+                    );
+                } catch (evalErr) {
+                    logger.error(
+                        `Rate limiter Redis error (prefix: ${prefix}): ${String(evalErr)}`
+                    );
+                    next();
+                    return;
+                }
+            } else {
+                logger.error(`Rate limiter Redis error (prefix: ${prefix}): ${String(err)}`);
+                next();
+                return;
+            }
+        }
 
-    const difficulty = parseInt(difficultyStr, 10);
-    const expiry = parseInt(expiryStr, 10);
+        if (allowed === 1) {
+            next();
+            return;
+        }
 
-    if (Date.now() > expiry) {
-        return res.status(400).json({
-            success: false,
-            message: "Your security check has expired. Please try again.",
-        });
-    }
+        const PoW_Token = req.headers["x-pow-token"];
+        const PoW_Nonce = req.headers["x-pow-nonce"];
 
-    const expectedIntegrity = crypto
-        .createHmac("sha256", config.PoW_SECRET)
-        .update(`${difficulty}|${expiry}|${salt}`)
-        .digest("hex");
+        if (typeof PoW_Token === "undefined") {
+            const requestsPerMinute = (max / windowMs) * 60 * 1000;
 
-    if (integrity !== expectedIntegrity) {
-        return res.status(400).json({
-            success: false,
-            message: "Your security check couldn't be verified. Please try the check again.",
-        });
-    }
-
-    const hash = crypto.createHash("sha256").update(`${PoW_Token}|${nonce}`).digest("hex");
-
-    const leadingZeros = hash.match(/^0+/);
-    const leadingZeroCount = leadingZeros ? leadingZeros[0].length : 0;
-
-    if (leadingZeroCount < difficulty) {
-        return res.status(400).json({
-            success: false,
-            message: "Your security check didn't pass. Please try again.",
-        });
-    }
-
-    return next();
-};
-
-export const createRateLimiter = ({ windowMs, max, prefix = "rl" }: RateLimitOptions) => {
-    return rateLimit({
-        store: new RedisStore({
-            sendCommand: (...args: string[]) => redisClient.sendCommand(args),
-            prefix,
-        }),
-        windowMs,
-        max: config.isDevelopment ? Infinity : max,
-        standardHeaders: true,
-        legacyHeaders: false,
-        skipFailedRequests: false,
-        skipSuccessfulRequests: false,
-        keyGenerator: (_req: Request, res: Response) => {
-            res.locals.visitorID = res.locals.clientIP;
-            return res.locals.visitorID;
-        },
-
-        handler: (req, res, next) => {
-            logger.warn(`Rate limit exceeded for IP: ${res.locals.visitorID}, prefix: ${prefix})`);
-            logger.info(`windowMs: ${windowMs}, max: ${max}, prefix: ${prefix}`);
-
-            const PoW = req.headers["x-pow"];
-            if (typeof PoW === "undefined") {
-                return issuePoWChallenge(req, res, { windowMs, max });
+            let add = 0;
+            if (requestsPerMinute <= 5) {
+                add += 3;
+            } else if (requestsPerMinute <= 20) {
+                add += 2;
+            } else if (requestsPerMinute <= 100) {
+                add += 1;
             }
 
-            return verifyPoWAndRespond(req, res, next);
-        },
-    });
+            const difficulty = config.PoW_DIFFICULTY + add;
+            const expiry = Date.now() + ONE_MINUTE_IN_MS;
+            const salt = crypto.randomBytes(16).toString("hex");
+            const challenge = `${expiry}.${difficulty}.${salt}`;
+            const integrity = crypto
+                .createHmac("sha256", config.PoW_SECRET)
+                .update(challenge)
+                .digest("hex");
+
+            const token = `${challenge}.${integrity}`;
+
+            res.status(StatusCodes.TOO_MANY_REQUESTS).json({
+                message:
+                    "You're going a bit too fast. Please complete the quick security check to continue.",
+                token,
+                code: "rate_limit_pow_challenge",
+            });
+            return;
+        }
+
+        if (typeof PoW_Token !== "string" || typeof PoW_Nonce !== "string") {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Please complete the security check and try again.",
+            });
+            return;
+        }
+
+        const parts = PoW_Token.split(".");
+        if (parts.length !== 4) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message:
+                    "Your security check response looks incomplete. Please try the check again.",
+            });
+            return;
+        }
+
+        const [expiryStr, difficultyStr, salt, integrity] = parts;
+
+        if (!expiryStr || !difficultyStr || !salt || !integrity) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Your security check couldn't be verified. Please try the check again.",
+            });
+            return;
+        }
+
+        const difficulty = parseInt(difficultyStr, 10);
+        const expiry = parseInt(expiryStr, 10);
+
+        if (!Number.isFinite(difficulty) || !Number.isFinite(expiry)) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Your security check couldn't be verified. Please try the check again.",
+            });
+            return;
+        }
+
+        if (Date.now() > expiry) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Your security check has expired. Please try again.",
+            });
+            return;
+        }
+
+        const expectedIntegrity = crypto
+            .createHmac("sha256", config.PoW_SECRET)
+            .update(`${expiry}.${difficulty}.${salt}`)
+            .digest("hex");
+
+        if (integrity !== expectedIntegrity) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Your security check couldn't be verified. Please try the check again.",
+            });
+            return;
+        }
+
+        const hash = crypto.createHash("sha256").update(`${salt}|${PoW_Nonce}`).digest("hex");
+
+        const leadingZeros = hash.match(/^0+/);
+        const leadingZeroCount = leadingZeros ? leadingZeros[0].length : 0;
+
+        if (leadingZeroCount < difficulty) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Your security check didn't pass. Please try again.",
+            });
+            return;
+        }
+
+        next();
+        return;
+    };
 };
 
 export const globalRateLimiter = createRateLimiter({

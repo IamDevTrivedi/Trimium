@@ -31,7 +31,7 @@ flowchart LR
     I -- No --> J[Request continues to route handler]
     I -- Yes --> K[Rate limit handler]
 
-    K --> L{x-pow header present?}
+    K --> L{x-pow-token & x-pow-nonce headers present?}
     L -- No --> M[Issue PoW challenge 429]
     L -- Yes --> N[Verify PoW token and nonce]
 
@@ -95,7 +95,8 @@ sequenceDiagram
 
     Note over U: Axios interceptor detects 429 with pow challenge
     Note over U: solvePow(PoW_token, difficulty):
-    Note over U:   Iterate nonce from 0, hash SHA-256(token|nonce)
+    Note over U:   Parse token to extract expiry, difficulty, salt
+    Note over U:   Iterate nonce from 0, hash SHA-256(salt|nonce)
     Note over U:   until hash starts with `difficulty` leading zeros
     Note over U:   Timeout after 10M iterations
 
@@ -199,15 +200,15 @@ flowchart LR
 ### Token Generation (`issuePoWChallenge`)
 
 ```
-Components:  difficulty | expiry | salt
+Components:  expiry | difficulty | salt
 Integrity:   HMAC-SHA256(PoW_SECRET, components) → hex
-Token:       base64(components | integrity)
+Token:       components | integrity
 ```
 
-The token is a base64-encoded string of the pipe-delimited fields:
+The token is a dot-delimited string of the fields:
 
 ```
-base64("{difficulty}|{expiry}|{salt}|{integrity}")
+"{expiry}.{difficulty}.{salt}.{integrity}"
 ```
 
 | Field        | Description                                                |
@@ -215,20 +216,22 @@ base64("{difficulty}|{expiry}|{salt}|{integrity}")
 | `difficulty` | Adaptive difficulty (integer)                              |
 | `expiry`     | `Date.now() + 60_000` (1 minute window)                    |
 | `salt`       | `crypto.randomBytes(16).toString("hex")`                   |
-| `integrity`  | `HMAC-SHA256(PoW_SECRET, difficulty\|expiry\|salt)` as hex |
+| `integrity`  | `HMAC-SHA256(PoW_SECRET, expiry\|difficulty\|salt)` as hex |
 
 ### Client-Side Solver (`solvePow`)
 
 Located in `client/src/config/backend.ts`, integrated as an Axios response interceptor.
 
 ```typescript
-solvePow(powToken: string, difficulty: number): number
+solvePoW(token: string): string
 ```
 
+- Receives the full PoW token (format: `{expiry}.{difficulty}.{salt}.{integrity}`)
+- Parses the dot-delimited token to extract `difficulty` and `salt`
 - Iterates `nonce` from 0 upward
-- Computes `SHA-256(powToken|nonce)` as hex
+- Computes `SHA-256(salt|nonce)` as hex
 - Checks if the hex digest starts with `difficulty` leading zeros
-- Returns the first matching nonce
+- Returns the matching nonce as a **string** (not a number)
 - **Timeout:** throws after 10 million iterations
 
 **Expected work:**
@@ -245,10 +248,10 @@ solvePow(powToken: string, difficulty: number): number
 Validation steps performed on every `x-pow` header:
 
 1. **Format check:** `x-pow: token:nonce` — both parts required
-2. **Decode:** base64-decode token, split on `|` → `[difficulty, expiry, salt, integrity]`
+2. **Decode:** split token on `.` → `[expiry, difficulty, salt, integrity]`
 3. **Expiry:** `Date.now() > expiry` → 400 expired
 4. **Integrity:** recompute HMAC, compare with `!==` — 400 if mismatch
-5. **Hash target:** compute `SHA-256(token|nonce)`, count leading hex zeros — compare against difficulty
+5. **Hash target:** compute `SHA-256(salt|nonce)`, count leading hex zeros — compare against difficulty
 
 ```mermaid
 flowchart TD
@@ -256,22 +259,21 @@ flowchart TD
     B --> C{token and nonce exist?}
     C -- No --> D[400 Invalid format]
 
-    C -- Yes --> E[Base64 decode token]
-    E --> F[Split on | → difficulty, expiry, salt, integrity]
-    F --> G{All fields present?}
-    G -- No --> D
+    C -- Yes --> E[Split token on . → expiry, difficulty, salt, integrity]
+    E --> F{All fields present?}
+    F -- No --> D
 
-    G -- Yes --> H{Date.now() < expiry?}
-    H -- No --> I[400 Token expired]
+    F -- Yes --> G{Date.now() < expiry?}
+    G -- No --> H[400 Token expired]
 
-    H -- Yes --> J[Recompute HMAC-SHA256]
-    J --> K{Matches provided integrity?}
-    K -- No --> L[400 Invalid integrity]
+    G -- Yes --> I[Recompute HMAC-SHA256]
+    I --> J{Matches provided integrity?}
+    J -- No --> K[400 Invalid integrity]
 
-    K -- Yes --> M[SHA-256(token|nonce)]
-    M --> N{Leading hex zeros >= difficulty?}
-    N -- No --> O[400 Invalid solution]
-    N -- Yes --> P[next() — allow request]
+    J -- Yes --> L[SHA-256(salt|nonce)]
+    L --> M{Leading hex zeros >= difficulty?}
+    M -- No --> N[400 Invalid solution]
+    M -- Yes --> O[next() — allow request]
 ```
 
 ---
@@ -292,7 +294,7 @@ sequenceDiagram
     API-->>Axios: 429 { code: "rate_limit_pow_challenge", PoW_token, difficulty }
 
     Axios->>Axios: solvePow(PoW_token, difficulty)
-    Note over Axios: synchronous while loop<br>breaks after 10M iterations
+    Note over Axios: Parse token, iterate nonce, compute SHA-256(salt|nonce)<br>breaks after 10M iterations
 
     Axios->>API: Retry with x-pow: token:nonce header
     API-->>Axios: 200 { success: true }

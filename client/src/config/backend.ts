@@ -2,26 +2,54 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import config from "@/config/env";
 import crypto from "crypto";
 
-const solvePow = (powToken: string, difficulty: number): number => {
-    const targetPrefix = "0".repeat(difficulty);
-    let nonce = 0;
-    let hash = "";
+interface RateLimitPoWChallenge {
+    code: "rate_limit_pow_challenge";
+    message: string;
+    token: string;
+}
 
-    while (true) {
-        const data = `${powToken}|${nonce}`;
-        hash = crypto.createHash("sha256").update(data).digest("hex");
+const MAX_POW_ITERATIONS = 10_000_000;
 
-        if (hash.startsWith(targetPrefix)) {
-            return nonce;
-        }
+function isRateLimitPoWChallenge(data: unknown): data is RateLimitPoWChallenge {
+    return (
+        typeof data === "object" &&
+        data !== null &&
+        (data as { code?: unknown }).code === "rate_limit_pow_challenge" &&
+        typeof (data as { token?: unknown }).token === "string"
+    );
+}
 
-        nonce++;
+function solvePoW(token: string): string {
+    const parts = token.split(".");
+    if (parts.length !== 4) {
+        throw new Error("Invalid PoW token");
+    }
 
-        if (nonce > 10000000) {
-            throw new Error("PoW solving took too long");
+    const difficultyStr = parts[1];
+    const salt = parts[2];
+    if (!difficultyStr || !salt) {
+        throw new Error("Invalid PoW token");
+    }
+
+    const difficulty = parseInt(difficultyStr, 10);
+    if (!Number.isFinite(difficulty)) {
+        throw new Error("Invalid PoW difficulty");
+    }
+
+    for (let nonce = 0; nonce < MAX_POW_ITERATIONS; nonce++) {
+        const nonceStr = String(nonce);
+        const hash = crypto.createHash("sha256").update(`${salt}|${nonceStr}`).digest("hex");
+
+        const leadingZeros = hash.match(/^0+/);
+        const leadingZeroCount = leadingZeros ? leadingZeros[0].length : 0;
+
+        if (leadingZeroCount >= difficulty) {
+            return nonceStr;
         }
     }
-};
+
+    throw new Error(`PoW solving exceeded ${MAX_POW_ITERATIONS} iterations`);
+}
 
 export const backend = axios.create({
     baseURL: config.PUBLIC_BACKEND_URL,
@@ -34,36 +62,32 @@ export const backend = axios.create({
 backend.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
-        const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+        if (!error.config) {
+            return Promise.reject(error);
+        }
 
-        if (error.response?.status === 429 && !originalRequest._retry) {
-            const data = error.response.data as any;
+        const originalRequest = error.config as InternalAxiosRequestConfig & {
+            _retry?: boolean;
+        };
 
-            if (data?.code === "rate_limit_pow_challenge" && data?.PoW_token && data?.difficulty) {
-                originalRequest._retry = true;
+        if (
+            error.response?.status === 429 &&
+            isRateLimitPoWChallenge(error.response.data) &&
+            !originalRequest._retry
+        ) {
+            originalRequest._retry = true;
+            const token = error.response.data.token;
 
-                try {
-                    const nonce = solvePow(data.PoW_token, data.difficulty);
-                    originalRequest.headers = originalRequest.headers || {};
-                    originalRequest.headers["x-pow"] = `${data.PoW_token}:${nonce}`;
-                    return backend(originalRequest);
-                } catch (powError) {
-                    console.error("Failed to solve PoW challenge:", powError);
-                    return Promise.reject(error);
-                }
+            try {
+                const nonce = solvePoW(token);
+                originalRequest.headers["x-pow-token"] = token;
+                originalRequest.headers["x-pow-nonce"] = nonce;
+                return backend(originalRequest);
+            } catch (solveErr) {
+                return Promise.reject(error);
             }
         }
 
         return Promise.reject(error);
     }
-);
-
-backend.interceptors.request.use(
-    (config) => {
-        if (config && "_retry" in config) {
-            delete (config as any)._retry;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
 );
