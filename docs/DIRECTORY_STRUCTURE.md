@@ -427,7 +427,6 @@
 │   ├── entrypoint.sh
 │   ├── geolite2.js
 │   ├── package.json
-│   ├── trigger
 │   └── tsconfig.json
 ├── .editorconfig
 ├── .env.example
@@ -442,5 +441,5 @@
 ├── package.json
 └── skills-lock.json
 
-99 directories, 341 files
+99 directories, 340 files
 ```
