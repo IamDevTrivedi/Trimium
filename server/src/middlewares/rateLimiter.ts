@@ -45,7 +45,7 @@ return 0
 const SLIDING_WINDOW_SHA = crypto.createHash("sha1").update(SLIDING_WINDOW_LUA).digest("hex");
 
 export const createRateLimiter = ({ windowMs, max, prefix = "rl" }: RateLimiterOptions) => {
-    return async function (req: Request, res: Response, next: NextFunction): Promise<void> {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         res.locals.visitorID = res.locals.clientIP;
 
         if (config.isDevelopment) {
