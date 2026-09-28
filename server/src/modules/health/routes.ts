@@ -1,15 +1,8 @@
 import { Router } from "express";
 import { controller } from "./controllers";
-import { createRateLimiter } from "@/middlewares/rateLimiter";
-import { ONE_MINUTE_IN_MS } from "@/constants/time";
+import { healthLimiter } from "./rl";
 
 const router = Router();
-
-const healthLimiter = createRateLimiter({
-    windowMs: ONE_MINUTE_IN_MS,
-    max: 120,
-    prefix: "rl:health",
-});
 
 /**
  * @openapi

@@ -1,40 +1,15 @@
 import { Router } from "express";
 import { controllers } from "./controllers";
 import { protectRoute } from "@/middlewares/protectRoute";
-import { createRateLimiter } from "@/middlewares/rateLimiter";
-import { FIVE_MINUTES_IN_MS, ONE_MINUTE_IN_MS } from "@/constants/time";
+import {
+    workspaceCreateLimiter,
+    workspaceMutationLimiter,
+    workspaceReadLimiter,
+    invitationLimiter,
+    tagLimiter,
+} from "./rl";
 
 const router = Router();
-
-const workspaceCreateLimiter = createRateLimiter({
-    windowMs: FIVE_MINUTES_IN_MS,
-    max: 10,
-    prefix: "rl:workspace:create",
-});
-
-const workspaceMutationLimiter = createRateLimiter({
-    windowMs: ONE_MINUTE_IN_MS,
-    max: 30,
-    prefix: "rl:workspace:mutation",
-});
-
-const workspaceReadLimiter = createRateLimiter({
-    windowMs: ONE_MINUTE_IN_MS,
-    max: 60,
-    prefix: "rl:workspace:read",
-});
-
-const invitationLimiter = createRateLimiter({
-    windowMs: ONE_MINUTE_IN_MS,
-    max: 20,
-    prefix: "rl:workspace:invitation",
-});
-
-const tagLimiter = createRateLimiter({
-    windowMs: ONE_MINUTE_IN_MS,
-    max: 40,
-    prefix: "rl:workspace:tag",
-});
 
 /**
  * @openapi

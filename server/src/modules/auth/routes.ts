@@ -1,35 +1,10 @@
 import { Router } from "express";
 import { controllers } from "@/modules/auth/controllers";
 import { protectRoute } from "@/middlewares/protectRoute";
-import { createRateLimiter } from "@/middlewares/rateLimiter";
 import { verifyTurnstileToken } from "@/middlewares/verifyTurnstile";
-import { FIFTEEN_MINUTES_IN_MS, ONE_MINUTE_IN_MS } from "@/constants/time";
+import { otpLimiter, loginLimiter, authGeneralLimiter, usernameCheckLimiter } from "./rl";
 
 const router = Router();
-
-const otpLimiter = createRateLimiter({
-    windowMs: FIFTEEN_MINUTES_IN_MS,
-    max: 5,
-    prefix: "rl:auth:otp",
-});
-
-const loginLimiter = createRateLimiter({
-    windowMs: FIFTEEN_MINUTES_IN_MS,
-    max: 10,
-    prefix: "rl:auth:login",
-});
-
-const authGeneralLimiter = createRateLimiter({
-    windowMs: ONE_MINUTE_IN_MS,
-    max: 60,
-    prefix: "rl:auth:general",
-});
-
-const usernameCheckLimiter = createRateLimiter({
-    windowMs: ONE_MINUTE_IN_MS,
-    max: 30,
-    prefix: "rl:auth:username",
-});
 
 /**
  * @openapi
