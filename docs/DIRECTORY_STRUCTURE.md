@@ -437,7 +437,6 @@
 │   ├── package.json
 │   └── tsconfig.json
 ├── .editorconfig
-├── .env.example
 ├── .gitignore
 ├── .vercelignore
 ├── AGENTS.md
@@ -449,5 +448,5 @@
 ├── package.json
 └── skills-lock.json
 
-99 directories, 348 files
+99 directories, 347 files
 ```
