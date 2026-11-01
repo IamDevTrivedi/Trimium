@@ -42,7 +42,7 @@
         "nodemailer": "^9.1.1",
         "pino": "^10.1.0",
         "pino-http": "^11.0.0",
-        "redis": "^5.12.1",
+        "redis": "^6.3.0",
         "ts-referer-parser": "^1.1.0",
         "ua-parser-js": "^2.0.10",
         "zod": "^4.4.3"
