@@ -25,7 +25,7 @@
     "homepage": "https://github.com/IamDevTrivedi/Trimium/tree/main/client",
     "dependencies": {
         "@base-ui/react": "^1.6.0",
-        "@hookform/resolvers": "^5.5.7",
+        "@hookform/resolvers": "^6.0.2",
         "@types/qrcode": "^1.5.6",
         "@vercel/analytics": "^1.6.1",
         "axios": "^1.19.0",
