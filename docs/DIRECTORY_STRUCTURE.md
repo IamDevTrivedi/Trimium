@@ -2,94 +2,6 @@
 
 ```
 .
-├── .agents
-│   └── skills
-│       ├── architecture-blueprint-generator
-│       │   └── SKILL.md
-│       ├── aws-diagrams-skill
-│       │   ├── references
-│       │   │   ├── center_nodes.py
-│       │   │   └── template.py
-│       │   ├── SKILL.md
-│       │   └── gotchas.md
-│       ├── brainstorming
-│       │   ├── scripts
-│       │   │   ├── frame-template.html
-│       │   │   ├── helper.js
-│       │   │   ├── server.cjs
-│       │   │   ├── start-server.sh
-│       │   │   └── stop-server.sh
-│       │   ├── SKILL.md
-│       │   ├── spec-document-reviewer-prompt.md
-│       │   └── visual-companion.md
-│       ├── create-readme
-│       │   └── SKILL.md
-│       ├── documentation-writer
-│       │   └── SKILL.md
-│       ├── shadcn
-│       │   ├── agents
-│       │   │   └── openai.yml
-│       │   ├── assets
-│       │   │   ├── shadcn-small.png
-│       │   │   └── shadcn.png
-│       │   ├── evals
-│       │   │   └── evals.json
-│       │   ├── rules
-│       │   │   ├── base-vs-radix.md
-│       │   │   ├── composition.md
-│       │   │   ├── forms.md
-│       │   │   ├── icons.md
-│       │   │   └── styling.md
-│       │   ├── SKILL.md
-│       │   ├── cli.md
-│       │   ├── customization.md
-│       │   └── mcp.md
-│       ├── ui-ux-pro-max
-│       │   ├── data
-│       │   │   ├── stacks
-│       │   │   │   ├── astro.csv
-│       │   │   │   ├── flutter.csv
-│       │   │   │   ├── html-tailwind.csv
-│       │   │   │   ├── jetpack-compose.csv
-│       │   │   │   ├── nextjs.csv
-│       │   │   │   ├── nuxt-ui.csv
-│       │   │   │   ├── nuxtjs.csv
-│       │   │   │   ├── react-native.csv
-│       │   │   │   ├── react.csv
-│       │   │   │   ├── shadcn.csv
-│       │   │   │   ├── svelte.csv
-│       │   │   │   ├── swiftui.csv
-│       │   │   │   └── vue.csv
-│       │   │   ├── charts.csv
-│       │   │   ├── colors.csv
-│       │   │   ├── icons.csv
-│       │   │   ├── landing.csv
-│       │   │   ├── products.csv
-│       │   │   ├── react-performance.csv
-│       │   │   ├── styles.csv
-│       │   │   ├── typography.csv
-│       │   │   ├── ui-reasoning.csv
-│       │   │   ├── ux-guidelines.csv
-│       │   │   └── web-interface.csv
-│       │   ├── scripts
-│       │   │   ├── __pycache__
-│       │   │   │   ├── core.cpython-314.pyc
-│       │   │   │   ├── design_system.cpython-314.pyc
-│       │   │   │   └── search.cpython-314.pyc
-│       │   │   ├── core.py
-│       │   │   ├── design_system.py
-│       │   │   └── search.py
-│       │   └── SKILL.md
-│       └── writing-plans
-│           ├── SKILL.md
-│           └── plan-document-reviewer-prompt.md
-├── .github
-│   ├── workflows
-│   │   ├── ci.yml
-│   │   └── update-directory-structure.yml
-│   └── dependabot.yml
-├── .husky
-│   └── pre-commit
 ├── client
 │   ├── public
 │   │   ├── brand.png
@@ -436,9 +348,6 @@
 │   ├── geolite2.js
 │   ├── package.json
 │   └── tsconfig.json
-├── .editorconfig
-├── .gitignore
-├── .vercelignore
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── LICENSE
@@ -448,5 +357,5 @@
 ├── package.json
 └── skills-lock.json
 
-99 directories, 347 files
+76 directories, 279 files
 ```
